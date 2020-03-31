@@ -29,6 +29,7 @@ Wordpress网站转APP和小程序
 ## 问题与交流
 
 使用上的问题和疑问，请用微信扫码查看其他开发者的提问和回复记录，也可以在文章末尾写留言。
+
 <img src="http://yanyubao.tseo.cn/app_qrcode_percent7.png" width="120px">
 
 
@@ -36,10 +37,10 @@ Wordpress网站转APP和小程序
 
 ## 服务器：设置说明
 
-1、下载Wordpress插件，包括“WP转APP和小程序”和“WP-PostViews”两个插件，并在后台启用，
+1、**下载Wordpress插件**，包括“WP转APP和小程序”和“WP-PostViews”两个插件，并在后台启用，
 
 如下图所示：
-![WP后台插件列表截图](http://www.tseo.cn/wp-content/uploads/2020/03/Wordpress_Zhuan_APP_Xiao_Cheng_Xu_-01_Fu_Ben.jpg)](http://www.tseo.cn/wp-content/uploads/2020/03/Wordpress_Zhuan_APP_Xiao_Cheng_Xu_-01_Fu_Ben.jpg)
+[![WP后台插件列表截图](http://www.tseo.cn/wp-content/uploads/2020/03/Wordpress_Zhuan_APP_Xiao_Cheng_Xu_-01_Fu_Ben.jpg)](http://www.tseo.cn/wp-content/uploads/2020/03/Wordpress_Zhuan_APP_Xiao_Cheng_Xu_-01_Fu_Ben.jpg)
 
 
 下载插件“WP转APP和小程序”： [https://yanyubao.tseo.cn/download/wordpress-plugin/yanyubao-wp-to-app.zip](https://yanyubao.tseo.cn/download/wordpress-plugin/yanyubao-wp-to-app.zip)
@@ -47,17 +48,17 @@ Wordpress网站转APP和小程序
 下载插件“WP-PostViews”：[https://yanyubao.tseo.cn/download/wordpress-plugin/wp-postviews.zip](https://yanyubao.tseo.cn/download/wordpress-plugin/wp-postviews.zip)
 
 
- 2、在Wordpress后台的路径“设置>>网站转APP设置”中，
+ 2、**在Wordpress后台的路径“设置>>网站转APP设置”中**，
 
 （1）填写延誉宝商户编号“pQNNmSkaq”，如上图，如果没有编号，登录延誉宝后台获取。
 
 （2）设置默认的文章分类的封面，如上图。
 
-3、在Wordpress后台的路径“文章>>分类目录”中，增加或编辑某个目录的时候，设置目录封面，也可以自定义封面，如下图。
+3、**在Wordpress后台的路径“文章>>分类目录”中，**增加或编辑某个目录的时候，设置目录封面，也可以自定义封面，如下图。
 
-![WP后台插件列表截图](http://www.tseo.cn/wp-content/uploads/2020/03/Wordpress_Zhuan_APP_Xiao_Cheng_Xu_-03_Fu_Ben.jpg)](http://www.tseo.cn/wp-content/uploads/2020/03/Wordpress_Zhuan_APP_Xiao_Cheng_Xu_-03_Fu_Ben.jpg)
+[![WP后台插件列表截图](http://www.tseo.cn/wp-content/uploads/2020/03/Wordpress_Zhuan_APP_Xiao_Cheng_Xu_-03_Fu_Ben.jpg)](http://www.tseo.cn/wp-content/uploads/2020/03/Wordpress_Zhuan_APP_Xiao_Cheng_Xu_-03_Fu_Ben.jpg)
 
-4、设置电子会员卡，路径为：“信息中心>>电子会员卡”。
+4、**设置电子会员卡，路径为：“信息中心>>电子会员卡”。**
 
 电子会员卡的设置非常简单，帮助手册是针对不懂技术的用户制作的，查看地址为：
 
@@ -67,13 +68,13 @@ Wordpress网站转APP和小程序
 ## 源代码：自定义开发和重新编译
 
 
-1、下载项目源代码：
+1、**下载项目源代码：**
 
 通过uniapp网站或github或延誉服务器下载。
 
-2、在HBuilder X中打开项目。
+2、**在HBuilder X中打开项目。**
 
-3、修改配置：
+3、**修改配置：**
 
 （1）【必改】打开common/abotapi.js，如下图所示：
 
@@ -90,7 +91,7 @@ Wordpress网站转APP和小程序
 
 _备注：微信小程序、百度智能小程序、支付宝小程序对应的appid各不相同，请不要填错了。_
 
-4、通过 HBuilder X将项目导入到不同的小程序开发环境中编译并提交发布。
+4、**通过 HBuilder X将项目导入到不同的小程序开发环境中编译并提交发布。**
 
 # 链接设置说明
 
