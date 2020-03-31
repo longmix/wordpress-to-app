@@ -1,0 +1,314 @@
+<template>
+	<view>
+		<scroll-view style="height:100%;" scroll-y="true" lower-threshold="100rpx">
+			<view class="topic-common-list">
+				<block v-if="cata_topic_list_type == 1">
+					<block :key="index" v-for="(item,index) in cata_topic_list" >
+						<view class="list-item" @tap="redictToTopic($event)" :data-url="item.url">
+							<view>
+								<image :src="item.src" class="cover" :data-name="item.name" :data-url="item.url"></image>
+							</view>
+							<view class="content-title">
+								<view class="topic-name">
+									<text>{{item.name}}</text>
+								</view>
+							</view>
+							
+						</view>
+							
+					</block>
+				</block>
+				<block v-else>
+					<block :key="index" v-for="(item,index) in categoriesList" >
+						<view class="list-item" @tap="redictIndex($event)" :data-id="item.id" :data-name="item.name" :data-description="item.description" :data-src="item.category_thumbnail_image">
+							<view>
+								<image :src="item.category_thumbnail_image" class="cover" :data-id="item.id" :data-name="item.name" :data-description="item.description" :data-src="item.category_thumbnail_image"></image>
+							</view>
+							<view class="content-title">
+								<view class="topic-name">
+									<text>{{item.name}}</text>
+								</view>
+							</view>
+							<view class="content-brief">
+								<text>{{item.description}}</text>
+							</view>
+						</view>
+							
+					</block>
+					
+				</block>
+				
+			</view>
+		</scroll-view>
+		
+		<view class="copyright" :style="{display:floatDisplay}">
+			<view>{{copyright_text}}</view>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				categoriesList:null,
+				floatDisplay:'none',
+				per_page:6,
+				page:0,
+				is_OK:false,
+				wxa_shop_new_name:'',
+				copyright_text:'',
+				cata_topic_list_type:0,
+				cata_topic_list:null
+				
+			}
+		},
+		
+		
+		//下拉刷新
+		onPullDownRefresh: function () {
+			var that = this;
+			
+			setTimeout(function () {
+				uni.stopPullDownRefresh();  //停止下拉刷新动画
+			}, 1500);
+		},
+		
+		
+		//触底方法
+		onReachBottom: function () {  
+		
+			
+			this.getTopicList();
+			
+			
+		},
+		
+		
+		onLoad:function() {
+			this.abotapi.set_option_list_str(this, function(that, cb_params){
+				//====1、更新界面的颜色
+				that.abotapi.getColor();
+				
+				if(cb_params.cata_topic_list_type && (cb_params.cata_topic_list_type == 1)){
+					//that.cata_topic_list_type = 1;
+					
+					//that.cata_topic_list = cb_params.cata_topic_list;
+				}
+				else{
+					that.cata_topic_list_type = 0;
+					
+					that.getTopicList();
+				}
+			});
+			
+			
+		},
+		
+		onShow:function() {
+			this.abotapi.set_option_list_str(this, this.callback_function);
+			
+			
+		},
+		
+		
+		methods:{
+			//获取网站基础信息配置项
+			callback_function:function(that, cb_params){
+				
+				if(!cb_params){
+					return;
+				}
+				
+				console.log('cb_params====', cb_params);
+				
+				
+				//====2、其他的设置选项：商品列表风格、头条图标等等
+				
+				
+				//网站名称
+				if (cb_params.wxa_shop_new_name) {
+				  
+				    that.wxa_shop_new_name = cb_params.wxa_shop_new_name
+				  
+				}
+				
+				
+				//网站版权
+				if (cb_params.copyright_text) {
+					
+					that.copyright_text = cb_params.copyright_text
+					
+				}
+				
+				
+				uni.setNavigationBarTitle({
+					title:that.wxa_shop_new_name
+				})
+				
+				
+				if(cb_params.cata_topic_list_type && (cb_params.cata_topic_list_type == 1)){
+					that.cata_topic_list_type = 1;
+					
+					that.cata_topic_list = cb_params.cata_topic_list;
+				}
+				else{
+					that.cata_topic_list_type = 0;
+					
+					//that.getTopicList();
+				}
+				
+				
+			},
+			
+			
+			getTopicList:function(){
+				var that = this;
+				
+				var page = that.page;
+				that.page ++;
+				
+				console.log('page======>>>>>>', that.page);
+				// var that = this;
+				
+				if(this.is_OK){
+					that.page = page;
+					uni.showToast({
+						title: '已经到底啦~',
+						duration: 2000
+					});
+					return;
+				}
+				
+				this.abotapi.abotRequest({
+				    url:this.abotapi.globalData.weiduke_server_url+'openapi/Wordpress/restapi/wp-json/wp/v2/categories',
+				    method: 'get',
+				    data:{
+						per_page:that.per_page,
+						page:that.page,
+						orderby:'id',
+						order:'desc',
+				    	sellerid:this.abotapi.globalData.default_sellerid,
+				    },					
+				    success(res) {
+				    	console.log("getTopicList-res", res);
+						
+						if(!res.data.code && (!res.data.length == 0)){
+							
+							that.is_OK = false;
+							
+							if(!that.categoriesList){
+								that.categoriesList = res.data;
+							}
+							else{
+								that.categoriesList = that.categoriesList.concat(res.data);
+							}
+							
+							console.log('获取分类列表', that.categoriesList)
+							
+							if(res.data.length < that.per_page){
+								that.is_OK = true;
+							}
+							
+							//得到数据后停止下拉刷新
+							//uni.stopPullDownRefresh();
+							
+						} else {
+							
+							that.is_OK = true;
+							uni.showToast({
+								title: '已经到底啦~',
+								duration: 2000
+							});
+							return;
+							
+						}						
+						
+				    },
+				    fail: function (e) {
+						uni.showToast({
+							title: '网络异常！',
+							duration: 2000
+						});
+				    },
+				});
+			},
+			
+			//跳转至分类详情
+			redictIndex:function(e){
+				console.log("e",e);
+				
+				uni.navigateTo({
+					url:'/pages/list/list?categoryID='+e.target.dataset.id+'&categorySrc='+e.target.dataset.src+'&categoryName='+e.target.dataset.name+'&categoryDescription'+e.target.dataset.description
+				})
+			},
+			
+			redictToTopic:function(e){
+				var url = e.target.dataset.url;
+				
+				var var_list = Object();
+				console.log('redictToTopic to url ====>>>>>>', e);
+				
+				if(!url){
+					return;
+				}
+				
+				this.abotapi.call_h5browser_or_other_goto_url(url, var_list, '');
+			}
+		}
+		
+	}
+</script>
+
+<style>
+
+	.topic-common-list {
+	   padding: 48rpx 0rpx 48rpx 48rpx; 
+	   margin: 0 auto;
+	}
+	
+	.list-item {
+		position: relative;
+		float: left;
+		overflow: hidden;
+		width: 303rpx;
+		margin-bottom: 60rpx;
+		margin-right: 48rpx;
+	}
+	
+	.list-item  image.cover {
+		width: 303rpx;
+		height: 303rpx;
+		border-radius: 12rpx;
+	}
+	
+	.content-title {
+		padding: 16rpx 0rpx;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	
+	.content-title text {
+		font-size: 30rpx;
+		line-height: 30rpx;
+		color: #1b1b1b;
+	}
+	
+	.content-brief {
+		padding: 0rpx 0rpx 30rpx;
+		font-size: 23rpx;
+		line-height: 40rpx;
+		height: 40rpx;
+		font-weight: 400;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		color: #959595;
+	}
+	.topic-name {
+		float: left; 
+		width: 100%;
+		text-align: center;
+	}
+</style>

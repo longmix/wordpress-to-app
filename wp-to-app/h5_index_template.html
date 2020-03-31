@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+		<link rel="shortcut icon" href="https://yanyubao.tseo.cn/icon/yanyubao.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="https://yanyubao.tseo.cn/icon/yanyubao_ios.png" />
+		<meta name="keywords" content="延誉宝,SaaS,电商,会员" />
+		<meta name="description" content="延誉宝SaaS云，提供专业的电商管理后台和会员运营平台。" />
+        <title>
+            <%= htmlWebpackPlugin.options.title %>
+        </title>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                document.documentElement.style.fontSize = document.documentElement.clientWidth / 20 + 'px'
+            })
+        </script>
+        <link rel="stylesheet" href="<%= BASE_URL %>static/index.<%= VUE_APP_INDEX_CSS_HASH %>.css" />
+    </head>
+    <body>
+        <noscript>
+            <strong>Please enable JavaScript to continue.</strong>
+        </noscript>
+        <div id="app"></div>
+        <!-- built files will be auto injected -->
+    </body>
+</html>

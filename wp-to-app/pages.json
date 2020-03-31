@@ -1,0 +1,166 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/tabBar/index/index",
+			"style": {
+				"backgroundTextStyle":"dark",
+				"enablePullDownRefresh": true
+			}
+		}
+	    ,{	//文章详情页
+            "path" : "pages/tabBar/index/detail",
+            "style" : {
+				"backgroundTextStyle":"dark",
+				"enablePullDownRefresh": true
+			}
+        }
+		,{	//链接跳转页
+		    "path" : "pages/h5browser/h5browser",
+		    "style" : {}
+		}
+		,{	//'我的'页面
+		    "path" : "pages/tabBar/usercenter/usercenter",
+		    "style" : {
+				"backgroundTextStyle":"dark",
+				"enablePullDownRefresh": true
+			}
+		}
+		,{	//'关于'页面
+		    "path" : "pages/tabBar/about/about",
+		    "style" : {
+				"backgroundTextStyle":"dark",
+				"enablePullDownRefresh": true
+			}
+		}
+		,{	//个人信息页
+		    "path" : "pages/userinfo/userinfo",
+		    "style" : {
+				"navigationBarTitleText": "个人资料",
+				"backgroundTextStyle":"dark",
+				"enablePullDownRefresh": true
+			}
+		}
+		,{	//修改个人信息页
+		    "path" : "pages/usersetting/usersetting",
+		    "style" : {}
+		}
+		,{	//手机验证码登录页
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "手机账号登录",
+				"navigationBarTextStyle":"white",
+				"app-plus": {
+		            "bounce": "none" ,//关闭窗口回弹效果
+					"softinputNavBar":"none"
+		        }
+			}
+		}
+		,{	//'专题'页面
+		    "path" : "pages/tabBar/topic/topic",
+		    "style" : {
+				"backgroundTextStyle":"dark",
+				"enablePullDownRefresh": true
+			}
+		},
+		{	//账号密码登录页
+			"path": "pages/login/login_by_password",
+			"style": {
+				"navigationBarTitleText": "账号密码登录",
+				"navigationBarTextStyle":"white",
+				"app-plus": {
+		            "bounce": "none" ,//关闭窗口回弹效果
+					"softinputNavBar":"none"
+		        }
+			}
+		},
+		{	//账号注册页
+			"path": "pages/login/register",
+			"style": {
+				"navigationBarTitleText": "注册账号",
+				"navigationBarTextStyle":"white",
+				"app-plus": {
+				    "bounce": "none" ,//关闭窗口回弹效果
+					"softinputNavBar":"none"
+				}
+			}
+		},
+		{
+			"path": "pages/login/resetpasswd",
+			"style": {
+				"navigationBarTitleText": "重置密码",
+				"navigationBarTextStyle":"white",
+				"app-plus": {
+				    "bounce": "none" ,//关闭窗口回弹效果
+					"softinputNavBar":"none"
+				}
+			}
+		},
+		{	//文章列表页
+		    "path" : "pages/list/list",
+		    "style" : {
+				"backgroundTextStyle":"dark",
+				"enablePullDownRefresh": true
+			}
+		},
+		{	//网站关闭页
+		    "path" : "pages/shutdown_website/shutdown_website",
+		    "style" : {
+				"backgroundTextStyle":"dark",
+				"enablePullDownRefresh": true
+			}
+		}
+    ],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "Loading...",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"color": "#333333",
+		"selectedColor": "#000000",
+		"borderStyle": "black",
+		"backgroundColor": "#ffffff",
+		"list": [{
+				"pagePath": "pages/tabBar/index/index",
+				"iconPath": "static/img/index/tar-home.png",
+				"selectedIconPath": "static/img/index/tar-home-on.png",
+				"text": "首页",
+				"style" : {
+					"backgroundTextStyle":"dark",
+					"enablePullDownRefresh": true
+				}
+			},
+			{
+				"pagePath": "pages/tabBar/topic/topic",
+				"iconPath": "static/img/index/tar-topic.png",
+				"selectedIconPath": "static/img/index/tar-topic-on.png",
+				"text": "分类",
+				"style" : {
+					"backgroundTextStyle":"dark",
+					"enablePullDownRefresh": true
+				}
+			},
+			{
+				"pagePath": "pages/tabBar/usercenter/usercenter",
+				"iconPath": "static/img/index/tar-person.png",
+				"selectedIconPath": "static/img/index/tar-person-on.png",
+				"text": "我的",
+				"style" : {
+					"backgroundTextStyle":"dark",
+					"enablePullDownRefresh": true
+				}
+			},
+			{
+				"pagePath": "pages/tabBar/about/about",
+				"iconPath": "static/img/index/tar-about.png",
+				"selectedIconPath": "static/img/index/tar-about-on.png",
+				"text": "关于",
+				"style" : {
+					"backgroundTextStyle":"dark",
+					"enablePullDownRefresh": true
+				}
+			}
+		]
+	}
+}
