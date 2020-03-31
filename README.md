@@ -23,7 +23,7 @@ Wordpress网站转APP和小程序
 
 因为是uniapp项目，所以也直接直接在uniapp网站上下载。
 
-[https://github.com/longmix/wordpress-to-app](https://github.com/longmix/wordpress-to-app)
+[https://ext.dcloud.net.cn/plugin?id=1542](https://ext.dcloud.net.cn/plugin?id=1542)
 
 
 ## 问题与交流
