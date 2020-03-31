@@ -1,6 +1,6 @@
 {
     "name" : "延誉宝SaaS云",
-    "appid" : "__UNI__3E06BE0",
+    "appid" : "",
     "description" : "",
     "versionName" : "1.0.0",
     "versionCode" : "100",
@@ -62,7 +62,7 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "wx00d1e2843c3b3f77",
+        "appid" : "",
         "setting" : {
             "urlCheck" : false
         },
@@ -73,14 +73,14 @@
     },
     "mp-alipay" : {
         "usingComponents" : true,
-        "appid" : "2017092008826819",
+        "appid" : "",
         "uniStatistics" : {
             "enable" : false
         }
     },
     "mp-baidu" : {
         "usingComponents" : true,
-        "appid" : "17837086",
+        "appid" : "",
         "setting" : {
             "urlCheck" : true
         },
