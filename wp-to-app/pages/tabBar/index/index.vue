@@ -86,16 +86,31 @@
 		</view>
 		
 		<view class="u-tap-btn" v-if="wap_h5_show_kefu_button==1">
-			<block v-if="wap_h5_kefu_button_type==1">
-				<button plain="true" class="u-go-home2" @tap="call_seller" :style="{backgroundColor:wap_h5_kefu_bg_color}">
-					<image :src="wap_h5_kefu_button_icon" mode="widthFix"></image>
-				</button>
+			<block v-if="wap_h5_kefu_bg_no_color_flag == 0">
+				<block v-if="wap_h5_kefu_button_type==1">
+					<button plain="true" class="u-go-home2" @tap="call_seller" :style="{backgroundColor:wap_h5_kefu_bg_color}">
+						<image :src="wap_h5_kefu_button_icon" mode="widthFix"></image>
+					</button>
+				</block>
+				<block v-if="wap_h5_kefu_button_type==2">
+					<button plain="true" class="u-go-home2" @tap="onNavRedirect(wap_h5_kefu_form_url)" :style="{backgroundColor:wap_h5_kefu_bg_color}">
+						<image :src="wap_h5_kefu_button_icon" mode="widthFix"></image>
+					</button>
+				</block>
 			</block>
-			<block v-if="wap_h5_kefu_button_type==2">
-				<button plain="true" class="u-go-home2" @tap="onNavRedirect(wap_h5_kefu_form_url)" :style="{backgroundColor:wap_h5_kefu_bg_color}">
-					<image :src="wap_h5_kefu_button_icon" mode="widthFix"></image>
-				</button>
+			<block v-else>
+				<block v-if="wap_h5_kefu_button_type==1">
+					<button plain="true" class="u-go-home2" @tap="call_seller">
+						<image :src="wap_h5_kefu_button_icon" mode="widthFix"></image>
+					</button>
+				</block>
+				<block v-if="wap_h5_kefu_button_type==2">
+					<button plain="true" class="u-go-home2" @tap="onNavRedirect(wap_h5_kefu_form_url)">
+						<image :src="wap_h5_kefu_button_icon" mode="widthFix"></image>
+					</button>
+				</block>
 			</block>
+			
 		</view>
 	</view>
 </template>
@@ -121,8 +136,14 @@
 				wap_h5_kefu_button_icon:'',
 				wap_h5_kefu_mobile_num:'',
 				wap_h5_kefu_form_url:'',
+				
 				wap_h5_kefu_bg_color:'',
+				wap_h5_kefu_bg_no_color_flag:0,
+				
 				wap_h5_show_kefu_button:'',
+				
+				
+				
 				wp_enable_comment_option:'',
 				copyright_text:'',
 				all_option_list:null
@@ -369,6 +390,13 @@
 					this.wap_h5_kefu_bg_color = cb_params.wap_h5_kefu_bg_color
 					
 				}
+				
+				if (cb_params.wap_h5_kefu_bg_no_color_flag) {
+					
+					this.wap_h5_kefu_bg_no_color_flag = cb_params.wap_h5_kefu_bg_no_color_flag
+					
+				}
+				
 				
 				//是否开启评论
 				if (cb_params.wp_enable_comment_option) {

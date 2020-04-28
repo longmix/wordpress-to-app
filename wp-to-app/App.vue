@@ -10,7 +10,7 @@
 				
 				if(res.shutdown_website_status == 1){
 					//跳转到网站关闭的提示页面
-					console.log("???????????");   
+					console.log("???????????");
 					uni.reLaunch({
 						url:'/pages/shutdown_website/shutdown_website'
 					})
