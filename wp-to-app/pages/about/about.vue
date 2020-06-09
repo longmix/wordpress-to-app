@@ -10,7 +10,8 @@
 		
 		<view class="wrapper">
 			<view class="excerpt">
-				<u-parse :content="dialog.content.rendered" @preview="clickPreview" @navigate="toNavigate" />
+				<rich-text :nodes="dialog.content.rendered|formatRichText"></rich-text>
+				<!-- <u-parse1111 :content="dialog.content.rendered" @preview="clickPreview" @navigate="toNavigate" /> -->
 			</view>
 			
 			<view style='text-align:center'>
@@ -37,16 +38,20 @@
 </template>
 
 <script>
-	import uParse from '../../../components/gaoyia-parse/parse.vue';
+	//import uParse from '../../components/gaoyia-parse/parse.vue';
 	export default {
 		components: {
-			uParse
+			//uParse
 		},
 		data() {
 			return {
 				userInfo:'',
 				isLoginPopup: false,
-				aboutus_pageid:'',
+				
+				aboutus_pageid:0,
+				
+				current_pageid:0,
+				
 				dialog:'',
 				wxa_shop_new_name:'',
 				copyright_text:'',
@@ -64,6 +69,10 @@
 		},
 		
 		onLoad: function (options) {
+			if(options.pageid){
+				this.current_pageid = options.pageid;
+			}
+			
 		    this.abotapi.set_option_list_str(this, this.callback_function);
 		},
 		
@@ -71,7 +80,7 @@
 			return {
 		        //title: '关于“' + config.getWebsiteName +'”官方小程序',
 		        title: this.dialog.title.rendered,
-		        path: '/pages/tabBar/about/about?id='+this.dialog.id,
+		        path: '/pages/about/about?id='+this.dialog.id,
 		        success: function (res) {
 					// 转发成功
 					uni.showToast({
@@ -102,7 +111,7 @@
 				console.log('cb_params====', cb_params);
 				
 				//====1、更新界面的颜色
-				this.abotapi.getColor();
+				that.abotapi.getColor();
 				
 				//====2、其他的设置选项：商品列表风格、头条图标等等
 				
@@ -110,50 +119,60 @@
 				//网站返回'关于页面'ID值
 				if (cb_params.aboutus_pageid) {
 				  
-				    this.aboutus_pageid = cb_params.aboutus_pageid
+				    that.aboutus_pageid = cb_params.aboutus_pageid
 				  
 				}
 				
 				//网站名称
 				if (cb_params.wxa_shop_new_name) {
 				  
-				    this.wxa_shop_new_name = cb_params.wxa_shop_new_name
+				    that.wxa_shop_new_name = cb_params.wxa_shop_new_name
 				  
 				}
 				
 				//网站Logo
 				if (cb_params.wxa_shop_operation_logo_url) {
 				  
-				    this.wxa_shop_operation_logo_url = cb_params.wxa_shop_operation_logo_url
+				    that.wxa_shop_operation_logo_url = cb_params.wxa_shop_operation_logo_url
 				  
 				}
 				
 				//网站版权
 				if (cb_params.copyright_text) {
 					
-					this.copyright_text = cb_params.copyright_text
+					that.copyright_text = cb_params.copyright_text
 					
 				}
 				
 				
 				uni.setNavigationBarTitle({
-					title:this.wxa_shop_new_name
+					title:that.wxa_shop_new_name
 				})
-				this.fetchData();
+				
+				that.fetchData();
 				
 			},
 
 			//获取页面数据
 			fetchData:function(){
 				var that = this;
+				
+				if(!that.current_pageid){
+					that.current_pageid = that.aboutus_pageid;
+				}
+				
 				this.abotapi.abotRequest({
-				    url:this.abotapi.globalData.weiduke_server_url+'openapi/Wordpress/restapi/wp-json/wp/v2/pages/'+that.aboutus_pageid,
+				    url:this.abotapi.globalData.weiduke_server_url+'openapi/Wordpress/restapi/wp-json/wp/v2/pages/'+that.current_pageid,
 				    method: 'get',
 				    data:{
 				    	sellerid:this.abotapi.globalData.default_sellerid,
 				    },
 					
 				    success(res) {
+						if(res.data.title.rendered){
+							res.data.title.rendered.replace(/&#8211;/g, '——');
+						}
+						
 						that.dialog = res.data;
 				    },
 				    fail: function (e) {
@@ -200,7 +219,38 @@
 			}
 			
 			
-		}
+		},
+		
+		filters: {
+			/**
+			 * 处理富文本里的图片宽度自适应
+			 * 1.去掉img标签里的style、width、height属性
+			 * 2.img标签添加style属性：max-width:100%;height:auto
+			 * 3.修改所有style里的width属性为max-width:100%
+			 * 4.去掉<br/>标签
+			 * @param html
+			 * @returns {void|string|*}
+			 */
+			formatRichText (html) { //控制小程序中图片大小
+				let newContent= html.replace(/<img[^>]*>/gi,function(match,capture){
+					match = match.replace(/style="[^"]+"/gi, '').replace(/style='[^']+'/gi, '');
+					match = match.replace(/width="[^"]+"/gi, '').replace(/width='[^']+'/gi, '');
+					match = match.replace(/height="[^"]+"/gi, '').replace(/height='[^']+'/gi, '');
+					return match;
+				});
+				newContent = newContent.replace(/style="[^"]+"/gi,function(match,capture){
+					match = match.replace(/width:[^;]+;/gi, 'max-width:100%;').replace(/width:[^;]+;/gi, 'max-width:100%;');
+					return match;
+				});
+				//newContent = newContent.replace(/<br[^>]*\/>/gi, '');
+				
+				newContent = newContent.replace(/<p[^>]*>/gi, '<p style="margin:20px;">');
+				
+				newContent = newContent.replace(/\<img/gi, '<img style="max-width:100%;height:auto;display:inline-block;margin:10rpx auto;vertical-align: middle;"');
+				
+				return newContent;
+			}	
+		},
 	}
 </script>
 

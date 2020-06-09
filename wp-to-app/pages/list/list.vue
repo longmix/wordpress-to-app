@@ -438,7 +438,7 @@
 			    var id = e.currentTarget.id;
 				console.log("id",id);
 				uni.navigateTo({
-					url:'../tabBar/index/detail?id='+id
+					url:'../index/detail?id='+id
 				})
 			},
 			  

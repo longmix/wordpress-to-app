@@ -1,14 +1,14 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-			"path": "pages/tabBar/index/index",
+			"path": "pages/index/index",
 			"style": {
 				"backgroundTextStyle":"dark",
 				"enablePullDownRefresh": true
 			}
 		}
 	    ,{	//文章详情页
-            "path" : "pages/tabBar/index/detail",
+            "path" : "pages/index/detail",
             "style" : {
 				"backgroundTextStyle":"dark",
 				"enablePullDownRefresh": true
@@ -19,14 +19,14 @@
 		    "style" : {}
 		}
 		,{	//'我的'页面
-		    "path" : "pages/tabBar/usercenter/usercenter",
+		    "path" : "pages/usercenter/usercenter",
 		    "style" : {
 				"backgroundTextStyle":"dark",
 				"enablePullDownRefresh": true
 			}
 		}
 		,{	//'关于'页面
-		    "path" : "pages/tabBar/about/about",
+		    "path" : "pages/about/about",
 		    "style" : {
 				"backgroundTextStyle":"dark",
 				"enablePullDownRefresh": true
@@ -56,7 +56,7 @@
 			}
 		}
 		,{	//'专题'页面
-		    "path" : "pages/tabBar/topic/topic",
+		    "path" : "pages/topic/topic",
 		    "style" : {
 				"backgroundTextStyle":"dark",
 				"enablePullDownRefresh": true
@@ -108,6 +108,10 @@
 				"backgroundTextStyle":"dark",
 				"enablePullDownRefresh": true
 			}
+		},
+		{
+		    "path" : "pages/welcome_page/welcome_page",
+		    "style" : {}
 		}
     ],
 	"globalStyle": {
@@ -122,7 +126,7 @@
 		"borderStyle": "black",
 		"backgroundColor": "#ffffff",
 		"list": [{
-				"pagePath": "pages/tabBar/index/index",
+				"pagePath": "pages/index/index",
 				"iconPath": "static/img/index/tar-home.png",
 				"selectedIconPath": "static/img/index/tar-home-on.png",
 				"text": "首页",
@@ -132,7 +136,7 @@
 				}
 			},
 			{
-				"pagePath": "pages/tabBar/topic/topic",
+				"pagePath": "pages/topic/topic",
 				"iconPath": "static/img/index/tar-topic.png",
 				"selectedIconPath": "static/img/index/tar-topic-on.png",
 				"text": "分类",
@@ -142,7 +146,7 @@
 				}
 			},
 			{
-				"pagePath": "pages/tabBar/usercenter/usercenter",
+				"pagePath": "pages/usercenter/usercenter",
 				"iconPath": "static/img/index/tar-person.png",
 				"selectedIconPath": "static/img/index/tar-person-on.png",
 				"text": "我的",
@@ -152,7 +156,7 @@
 				}
 			},
 			{
-				"pagePath": "pages/tabBar/about/about",
+				"pagePath": "pages/about/about",
 				"iconPath": "static/img/index/tar-about.png",
 				"selectedIconPath": "static/img/index/tar-about-on.png",
 				"text": "关于",

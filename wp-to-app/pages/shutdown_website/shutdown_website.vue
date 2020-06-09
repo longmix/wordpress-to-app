@@ -55,7 +55,7 @@
 				
 				if(cb_params.shutdown_website_status != 1){
 					uni.switchTab({
-						url:'/pages/tabBar/index/index'
+						url:'/pages/index/index'
 					});
 					
 					return;

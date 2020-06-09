@@ -424,7 +424,7 @@
 									//===========End================
 				              
 										uni.reLaunch({
-											url: '/pages/tabBar/index/index'
+											url: '/pages/index/index'
 										})
 									}
 								}
@@ -532,7 +532,7 @@
 									//===========End================
 
 									uni.redirectTo({
-										url: '/pages/tabBar/index/index'
+										url: '/pages/index/index'
 									})
 			
 								}else {
@@ -777,7 +777,10 @@
 	left: 0upx;
 	right: 0upx;
 }
-	
+
+.btn-round{
+	border:none !important;
+}
 	
 
 

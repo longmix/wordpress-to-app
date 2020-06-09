@@ -151,7 +151,7 @@
 				
 				uni.clearStorageSync();
 				uni.switchTab({
-					url: '/pages/tabBar/index/index'
+					url: '/pages/index/index'
 				});
 			 
 			},
@@ -176,7 +176,7 @@
 							console.log('get_user_info====', res);
 							
 							if (res.data.code == "-1") {
-								var last_url = '/pages/tabBar/usercenter/usercenter';
+								var last_url = '/pages/usercenter/usercenter';
 								this.abotapi.goto_user_login(last_url, 'switchTab');
 							} else {
 								var data = res.data;

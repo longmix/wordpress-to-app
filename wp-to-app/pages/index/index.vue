@@ -47,6 +47,41 @@
 		            </view>
 		        </form>
 		
+		
+		       <!--  <view v-for="item in module_icon_list" class="mid-img">
+					     <view class="head1">电商</view>
+						    <image  class="img-h" :src="item.icon"></image>
+							<view class="txt-h">{{item.name}}</view>
+				 </view> -->
+				 
+				 <view class="mid-img" v-for="(item,index) in module_icon_list" :key="index">
+				  <view class="head1":style="{'border-left-color':item.left_color}">{{item.name}}</view>
+					<view class="icn-con" v-for="item2 in item.subs" :key="item2.index" 
+						:data-plugin_flag="item2.plugin_flag"
+						:data-plugin_name="item2.plugin_name"
+						:data-plugin_desc_basic="item2.plugin_desc_basic" 
+						@tap="block_tanchuang">
+						<image v-if="item2.plugin_flag" class="tips" src="../../static/img/index/bbq.png"></image>
+						
+						<image class="img-h" :src="item2.icon" :style="{'background-color':item2.background_color}"></image>
+						
+						<view class="txt-h">{{item2.name}}</view>
+					</view>
+					
+					
+					<!-- <view class="icn-con">
+						<image class="img-h" src="../../static/img/index/calendar.png"></image>
+						<view class="txt-h">h5商城</view>
+					</view>
+					
+					<view class="icn-con">
+						<image class="img-h" src="../../static/img/index/calendar.png"></image>
+						<view class="txt-h">h5商城</view>
+					</view> -->
+					
+				 </view>
+				 
+				 
 		    </view>
 			
 			<view class="container">
@@ -59,13 +94,13 @@
 									<text>{{item3.title.rendered}}</text>
 								</view>
 								<view class="content-date">
-									<image src="../../../static/img/index/calendar.png"></image>
+									<image src="../../static/img/index/calendar.png"></image>
 									<text>{{item3.date_to_show}}</text>
-									<image src="../../../static/img/index/comments.png"></image>
+									<image src="../../static/img/index/comments.png"></image>
 									<text class="">{{item3.total_comments}}</text>
-									<image src="../../../static/img/index/pageviews.png"></image>
+									<image src="../../static/img/index/pageviews.png"></image>
 									<text class="">{{item3.pageviews}}</text>
-									<image src="../../../static/img/index/home-like.png"></image>
+									<image src="../../static/img/index/home-like.png"></image>
 									<text class="">{{item3.like_count}}</text>        
 								</view>
 								<image :src="item3.post_thumbnail_image" mode="aspectFill" class="cover"></image>
@@ -142,12 +177,11 @@
 				
 				wap_h5_show_kefu_button:'',
 				
-				
-				
 				wp_enable_comment_option:'',
 				copyright_text:'',
-				all_option_list:null
-				
+				all_option_list:null,
+				module_icon_list:null,
+				plugin_flag:'',
 			}
 		},
 		
@@ -172,7 +206,7 @@
 				//title: '“' + config.getWebsiteName+'”网站微信小程序,基于WordPress版小程序构建.技术支持：www.watch-life.net',
 				title: share_title,
 				imageUrl:imageUrl,
-				path: '/pages/tabBar/index/index',
+				path: '/pages/index/index',
 				success: function (res) {
 					// 转发成功
 				},
@@ -195,6 +229,11 @@
 			
 			uni.removeStorageSync('wordpress_data_list_str');
 			this.abotapi.set_option_list_str(this, this.callback_function);
+			
+			uni.removeStorageSync('module_icon_list_cache');
+			//获取功能图标
+			this.get_yanyubao_module_list_for_tseo_cn()
+			
 			setTimeout(function () {
 				uni.stopPullDownRefresh();  //停止下拉刷新动画
 			}, 1500);
@@ -254,6 +293,8 @@
 		  
 		  
 		onLoad: function (options) {
+			
+			console.log('pages/index/index====>>>>', options);
 		    
 			var that = this;
 			
@@ -280,6 +321,9 @@
 					});
 				},
 			})
+			
+			//获取功能图标
+			this.get_yanyubao_module_list_for_tseo_cn()
 			
 			setTimeout(function () {
 			    uni.hideLoading();
@@ -627,15 +671,94 @@
 			// 跳转至查看文章详情
 			redictDetail: function (e) {
 				// console.log('查看文章');
-				var id = e.currentTarget.id,
-				url = '/pages/tabBar/index/detail?id=' + id;
+				var id = e.currentTarget.id;
+				
+				var url = '/pages/index/detail?id=' + id;
+				
 				uni.navigateTo({
 					url: url
 				})
 				
+				
 			},
-
+        //调用接口
+        get_yanyubao_module_list_for_tseo_cn:function(){
+        	console.log('jun')
+			
+			if(this.abotapi.globalData.show_yanyubao_module_list != 1){
+				return;
+			}
+			
+			var that = this;
+			
+			var module_icon_list = uni.getStorageSync('module_icon_list_cache');
+			
+			//console.log('module_icon_list===',module_icon_list)
+			
+			if(module_icon_list){
+				//console.log('module_icon_list===',module_icon_list)
+				
+				that.module_icon_list = module_icon_list;
+				return;
+			}
+			
+			
+        	
+        	this.abotapi.abotRequest({
+        	    url:that.abotapi.globalData.yanyubao_server_url+'Supplier/Login/show_yanyubao_module_list_for_tseo_cn',
+        	    method: 'get',
+        	    data:{
+        	
+        	    },
+        		
+        	    success(res) {
+        	    	console.log("jiangjun",res)
+					
+					if(res.data.code == 1){
+						var data = res.data.data;
+						//缓存数据
+						uni.setStorageSync('module_icon_list_cache', data);
+						 
+						 
+						that.module_icon_list = data
+					}
+        	
+        	    },
+        	    fail: function (e) {
+        			uni.showToast({
+        				title: '网络异常！',
+        				duration: 2000
+        			});
+        	    },
+        	});
+        },
+		//模态弹窗事件
+		block_tanchuang:function(e){
+			
+			console.log('block_tanchuang=======>>>>>', e);
+			
+			var plugin_flag = e.currentTarget.dataset.plugin_flag;
+			
+			if(plugin_flag && (plugin_flag == 1) ){
+				var plugin_name = e.currentTarget.dataset.plugin_name;
+				var plugin_desc_basic = e.currentTarget.dataset.plugin_desc_basic;
+				
+				uni.showModal({
+				    title: plugin_name,
+				    content: plugin_desc_basic,
+					showCancel: false,
+				    success: function (res) {
+				        
+				    }
+				});
+			}
+			
+			
+			
+			
+			  
 		}
+	},
 	}
 </script>
 
@@ -771,7 +894,49 @@
 	}
 	
 	.u-go-home2{
-		border:0;
+		border: none !important;
 	}
-
+	.mid-img{
+      width: 100%;
+	  overflow: hidden;
+	  background-color:white;
+	  margin-bottom:20upx;
+	}
+	.head1{
+		border-left:10upx solid;
+		font-size:40upx;
+		margin-top: 20upx;
+		padding-left: 20upx;
+	}
+	.img-h{
+		width:100upx;
+		height:100upx;
+		border-radius:20upx;
+		padding: 15upx;
+	}
+	.txt-h{
+		font-size: 30upx;
+		margin-top: 10upx;
+	}
+	.icn-con{
+		float: left;
+		text-align: center;
+		width: 33%;
+		margin-top: 40upx;
+		position: relative;
+		padding-bottom: 30upx;
+	}
+	
+	.icn-con .tips{
+		width: 40upx;
+		height: 40upx;
+		position: absolute;
+		right: 66upx;
+		top: -20upx;
+		z-index: 2;
+	}
+	
+	.u-tap-btn{
+		z-index:100;
+	}
 </style>

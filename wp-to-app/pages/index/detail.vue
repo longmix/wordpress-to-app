@@ -3,22 +3,23 @@
 		<view class="content-article-detail">   <!-- :style="{display:display}" -->
 			<view class="entry-title">{{detail.title.rendered}}</view>
 			<view class="entry-date">		
-	            <image src="../../../static/img/index/calendar.png" style="height:24upx;width:24upx;"></image>
+	            <image src="../../static/img/index/calendar.png" style="height:24upx;width:24upx;"></image>
 				<text class="entry-date-text">{{detail.date_to_show}}</text>
 				<block ><!-- v-if="detail.category_name != null" -->
-					<image src="../../../static/img/index/category.png" style="height:24upx;width:24upx;margin-left: 20upx;"></image>
+					<image src="../../static/img/index/category.png" style="height:24upx;width:24upx;margin-left: 20upx;"></image>
 					<text class="entry-icon-text">{{detail.category_name}}</text>
 				</block>
-				<image src="../../../static/img/index/comments.png" style="height:24upx;width:24upx;margin-left: 20upx;"></image>
+				<image src="../../static/img/index/comments.png" style="height:24upx;width:24upx;margin-left: 20upx;"></image>
 				<text class="entry-icon-text">{{detail.total_comments}}</text>
-				<image src="../../../static/img/index/pageviews.png" style="height:24upx;width:24upx;margin-left: 20upx;"></image>
+				<image src="../../static/img/index/pageviews.png" style="height:24upx;width:24upx;margin-left: 20upx;"></image>
 				<text class="entry-icon-text">{{detail.pageviews}}</text>
-				<image src="../../../static/img/index/home-like.png" style="height:24upx;width:24upx;margin-left: 20upx;"></image>
+				<image src="../../static/img/index/home-like.png" style="height:24upx;width:24upx;margin-left: 20upx;"></image>
 				<text class="entry-icon-text">{{detail.like_count}}</text>
 	        </view>
 				
 			<view class="entry-summary">
-				<u-parse :content="detail.content.rendered" @preview="clickPreview" @navigate="toNavigate" />
+				<rich-text :nodes="detail.content.rendered|formatRichText"></rich-text>
+				<!--<u-parse111 :content="detail.content.rendered" @preview="clickPreview" @navigate="toNavigate" />-->
 			</view>
 		</view>
 		
@@ -53,7 +54,7 @@
 			</view>
 	
 			<view class="likeTitle-img">
-				<image src="../../../static/img/index/home-like.png" class="img-like" id="liketop" @catchtap="clickLike"></image>
+				<image src="../../static/img/index/home-like.png" class="img-like" id="liketop" @catchtap="clickLike"></image>
 			</view>
 			<view class="likeText">
 				<block v-for="(likeList1,index2) in likeList" :key="index2">
@@ -106,14 +107,14 @@
 						<view class="comment-respond">
 							<input class="comment-input" maxlength="200" name="inputPostID" :value="detail.id" style="display:none" />
 							<view class="comment-box">
-								<image src="../../../static/img/detail/entry-home.png" class="img-plus" style="margin-left:20upx;margin-right:20upx" @tap="goHome"></image>
+								<image src="../../static/img/detail/entry-home.png" class="img-plus" style="margin-left:20upx;margin-right:20upx" @tap="goHome"></image>
 								<input class="comment-input" type='text' confirm-type="send" 
 									@focus="onRepleyFocus"
 									cursor-spacing="10" maxlength="100" name="inputComment" 
 									:value="content" :placeholder="placeholder" :focus="focus" 
 									 />
 								<button class="comment-button touch-active" formType="submit">发送</button>
-								<image src="../../../static/img/detail/plus.png" class="img-plus" @tap="ShowHideMenu" mode=""></image>
+								<image src="../../static/img/detail/plus.png" class="img-plus" @tap="ShowHideMenu" mode=""></image>
 							</view>
 							
 							<!--功能图标-->
@@ -122,7 +123,7 @@
 									<view class="iconLine">
 										<view style="width:20%; position: relative; float:left; text-align:center">
 											<view>
-												<image src="../../../static/img/detail/forwarding.png" class="img-menu"></image>
+												<image src="../../static/img/detail/forwarding.png" class="img-menu"></image>
 											</view>
 											<view>
 												<text>转发</text>
@@ -131,7 +132,7 @@
 										</view>
 										<view style="width:20%; float:left; text-align:center">
 											<view>
-												<image src="../../../static/img/detail/poster.png" :data-src001="poster_url" @tap="showPhoto" data-name='5' data-target="Image" class="img-menu"></image>
+												<image src="../../static/img/detail/poster.png" :data-src001="poster_url" @tap="showPhoto" data-name='5' data-target="Image" class="img-menu"></image>
 											</view>
 											<view>
 												<text>海报</text>
@@ -139,7 +140,7 @@
 										</view>
 										<view style="width:20%; float:left; text-align:center">
 											<view>
-												<image src="../../../static/img/detail/copy.png" class="img-menu" :data-url="detail.link" @tap="copyLink"></image>
+												<image src="../../static/img/detail/copy.png" class="img-menu" :data-url="detail.link" @tap="copyLink"></image>
 											</view>
 											<view>
 												<text>复制链接</text>
@@ -147,7 +148,7 @@
 										</view>
 										<view style="width:20%; float:left; text-align:center">
 											<view>
-												<image :src="'../../../static/img/detail/'+likeImag" @tap="Islike" id="likebottom" class="img-menu"></image>
+												<image :src="'../../static/img/detail/'+likeImag" @tap="Islike" id="likebottom" class="img-menu"></image>
 											</view>
 											<view>
 												<text>点赞</text>
@@ -156,7 +157,7 @@
 										<view style="width:20%; float:left; ">
 											
 											<view>
-												<image src="../../../static/img/detail/appreciation.png" :data-src001="wp_zanshang_shoukuan_img_url" @tap="showPhoto" data-name='6' data-target="Image" class="img-menu"></image>
+												<image src="../../static/img/detail/appreciation.png" :data-src001="wp_zanshang_shoukuan_img_url" @tap="showPhoto" data-name='6' data-target="Image" class="img-menu"></image>
 											</view>
 											<view>
 												<text>转载</text>
@@ -192,13 +193,14 @@
 </template>
 
 <script>
-	import uParse from '../../../components/gaoyia-parse/parse.vue';
+	//import uParse from '../../components/gaoyia-parse/parse.vue';
+	
 	var current_post_id;
 	var userInfo;
 	export default {
-		components: {
-			uParse
-		},
+		//components: {
+		//	uParse
+		//},
 		data() {
 			return {
 				content:'',
@@ -333,7 +335,7 @@
 		        //title: '关于“' + config.getWebsiteName +'”官方小程序',
 		        title: this.detail.title.rendered,
 				imageUrl: this.detail.content_first_image,
-		        path: '/pages/tabBar/index/detail?id=' + this.detail.id,
+		        path: '/pages/index/detail?id=' + this.detail.id,
 		        success: function (res) {
 					// 转发成功
 					uni.showToast({
@@ -450,7 +452,7 @@
 							console.log("that.detail",that.detail);
 							console.log("that.tags",that.tags);
 							console.log("that.detail.title.rendered",that.detail.title.rendered);
-							console.log("that.detail.content.rendered",that.detail.content.rendered);
+							//console.log("that.detail.content.rendered",that.detail.content.rendered);
 							
 							// 调用API从本地缓存中获取阅读记录并记录
 							var logs = uni.getStorageSync('usercenters') || [];
@@ -494,13 +496,7 @@
 				    },
 				});
 			},
-			
-			
-			clickPreview:function(src, e) {
-			      // do something
-			},
-			
-			
+						
 			onRepleyFocus: function (e) {
 				var that = this;
 				var userInfo = this.abotapi.get_user_info();
@@ -514,7 +510,7 @@
 						content: '请先登录',
 						showCancel:false,
 						success(res){
-							var last_url = '/pages/tabBar/index/detail?id='+that.current_post_id;
+							var last_url = '/pages/index/detail?id='+that.current_post_id;
 							that.abotapi.goto_user_login(last_url,'normal');
 							return;
 						}
@@ -530,7 +526,7 @@
 
 
 			//文章详情链接跳转
-			toNavigate:function(href, e) {
+			toNavigate1111:function(href, e) {
 				console.log("href",href);
 				var url = href;
 				console.log("e",e);
@@ -585,7 +581,7 @@
 			//返回首页
 			goHome: function () {
 				uni.switchTab({
-					url: '/pages/tabBar/index/index'
+					url: '/pages/index/index'
 				})
 			},
 			
@@ -601,7 +597,7 @@
 							success: function (res) {
 								uni.showToast({
 									title: '链接已复制',
-									image: '../../../static/img/detail/link.png',
+									image: '../../static/img/detail/link.png',
 									duration: 2000
 								})
 							}
@@ -623,7 +619,7 @@
 						content: '请先登录',
 						showCancel:false,
 						success(res){
-							var last_url2 = '/pages/tabBar/index/detail?id='+that.current_post_id;
+							var last_url2 = '/pages/index/detail?id='+that.current_post_id;
 							
 							that.abotapi.goto_user_login(last_url2,'normal');
 							
@@ -909,6 +905,38 @@
 			},
 		
 		},
+		
+		filters: {
+			/**
+			 * 处理富文本里的图片宽度自适应
+			 * 1.去掉img标签里的style、width、height属性
+			 * 2.img标签添加style属性：max-width:100%;height:auto
+			 * 3.修改所有style里的width属性为max-width:100%
+			 * 4.去掉<br/>标签
+			 * @param html
+			 * @returns {void|string|*}
+			 */
+			formatRichText (html) { //控制小程序中图片大小
+				let newContent= html.replace(/<img[^>]*>/gi,function(match,capture){
+					match = match.replace(/style="[^"]+"/gi, '').replace(/style='[^']+'/gi, '');
+					match = match.replace(/width="[^"]+"/gi, '').replace(/width='[^']+'/gi, '');
+					match = match.replace(/height="[^"]+"/gi, '').replace(/height='[^']+'/gi, '');
+					return match;
+				});
+				newContent = newContent.replace(/style="[^"]+"/gi,function(match,capture){
+					match = match.replace(/width:[^;]+;/gi, 'max-width:100%;').replace(/width:[^;]+;/gi, 'max-width:100%;');
+					return match;
+				});
+				//newContent = newContent.replace(/<br[^>]*\/>/gi, '');
+				
+				newContent = newContent.replace(/<p[^>]*>/gi, '<p style="margin:20px;">');
+				
+				newContent = newContent.replace(/\<img/gi, '<img style="max-width:100%;height:auto;display:inline-block;margin:10rpx auto;vertical-align: middle;"');
+				
+				return newContent;
+			}	
+		},
+		
 	}
 </script>
 

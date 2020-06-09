@@ -89,7 +89,7 @@
 			this.abotapi.set_option_list_str(this, this.callback_function);
 			if(userInfo && userInfo.userid){
 				uni.switchTab({
-					url: '/pages/tabBar/home/home'
+					url: '/pages/index/index'
 				})
 			}
 			this.click_check();
@@ -318,7 +318,7 @@
 							//===========End================
 				
 										uni.switchTab({
-											url: '/pages/tabBar/home/home'
+											url: '/pages/index/index'
 										})
 									}
 								}

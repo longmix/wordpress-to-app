@@ -190,7 +190,7 @@
 							console.log('get_user_info====', res);
 				
 							if (res.data.code == "-1") {
-								var last_url = '/pages/tabBar/usercenter/usercenter';
+								var last_url = '/pages/usercenter/usercenter';
 								this.abotapi.goto_user_login(last_url, 'switchTab');
 							} else {
 								var data = res.data;
@@ -217,7 +217,7 @@
 				var userInfo = this.abotapi.get_user_info();
 				if(!userInfo || userInfo == null){
 					
-					var last_url = '/pages/tabBar/usercenter/usercenter';
+					var last_url = '/pages/usercenter/usercenter';
 					this.abotapi.goto_user_login(last_url,'switchTab');
 					return;
 				}
@@ -232,7 +232,7 @@
 				var userInfo = this.abotapi.get_user_info();
 				if(!userInfo || userInfo == null){
 					
-					var last_url = '/pages/tabBar/usercenter/usercenter';
+					var last_url = '/pages/usercenter/usercenter';
 					this.abotapi.goto_user_login(last_url,'switchTab');
 					return;
 				}
@@ -320,15 +320,15 @@
 	
 	
 	.img{
-		width: 23vw;
-		height: 10.5vw;
+		width: 100%;
+		height: 80upx;
 		display: flex;
 		justify-content: center;
 	}
 	
 	.img image{
-		width: 9vw;
-		height: 9vw;
+		width: 80upx;
+		height: 80upx;
 	}
 	
 	
@@ -338,11 +338,13 @@
 		justify-content: center;
 		font-size: 26upx;
 		color: #3d3d3d;
+		margin-top:20upx;
 	}
 	
 	.list{
 		display: flex;
 		flex-wrap: wrap;
+		padding:10upx;
 	}
 	
 	.title{
@@ -389,7 +391,7 @@
 		width: 80%;
 		height: 100%;		
 		border-radius: 20upx;
-		background-image: url(../../../static/img/usercenter/vip.jpg);
+		background-image: url(../../static/img/usercenter/vip.jpg);
 		background-size: 100%;
 		background-repeat: no-repeat;
 	}
