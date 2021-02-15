@@ -15,7 +15,7 @@
 	  
 			<view class="flexIcon">
 				<view class="flexIcon-icon iconfont icon-password flexIcon-icon-current"></view>
-				<input type="password" class="flexIcon-text"  name="password"  placeholder-class="cl-white" @input="passInput"  placeholder="请输入密码" />
+				<input type="text" password class="flexIcon-text"  name="password"  placeholder-class="cl-white" @input="passInput"  placeholder="请输入密码" />
 			</view>
 	  
 	  
@@ -34,7 +34,12 @@
 				url="/pages/login/login">手机验证码登录</navigator>
 			</div>
 		</form>
-	</view>
+		<view class="place-buttom1"></view>
+		<view class="icon-jump1" @click="goToHomwPage1" :style="{background: icon_jump_bg_color}" v-if="wxa_show_return_to_index_in_usercenter == 0">
+			<image src="../../static/img/shouye.svg"></image>
+			<view :style="{color: wxa_shop_nav_font_color}">首页</view>
+		</view>
+	</view>	
 </template>
 
 <script>
@@ -80,7 +85,10 @@
 				password: '',
 				account: '',
 				wxa_shop_new_name:'',
-				wxa_share_img:''
+				wxa_share_img:'',
+				icon_jump_bg_color:'', //返回首页的悬浮图标的背景颜色
+				wxa_shop_nav_font_color:'#fff',
+				wxa_show_return_to_index_in_usercenter:0,  //控制返回首页是否显示
 			}
 		},
 		onLoad:function(){
@@ -375,6 +383,11 @@
 				    var that = this;
 					that.formId = e.detail.formId				
 				 
+			},
+			goToHomwPage1:function(){
+				uni.switchTab({
+					url: '/pages/index/index'
+				})
 			}
 		}
 	}
@@ -392,7 +405,30 @@
 .btn-row-submit{
 	width: 100%;
 }
-	
+
+
+.place-buttom1{
+	height: 150upx;
+}
+
+.icon-jump1{
+	height: 120rpx;
+	width: 120rpx;
+	position: fixed;
+	right: 40rpx;
+	bottom: 120rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 200rpx;
+	background-color: #2E85D8;
+	flex-direction: column;
+	font-size: 30rpx;
+}	
+.icon-jump1 image{
+	width: 60rpx;
+	height: 60rpx;
+}
 .send_btn{
 	float: right;
 	margin-top: -16upx;

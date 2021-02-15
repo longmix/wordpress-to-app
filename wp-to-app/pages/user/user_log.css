@@ -1,0 +1,157 @@
+
+	.balance_lists {
+		padding-bottom: 20rpx;
+		overflow: hidden;
+		background-color: #FFFFFF;
+		margin-bottom: 3rpx;
+		padding-top: 20rpx;
+	}
+	
+	.select {
+		margin-bottom: 30rpx;
+		width: 100%;
+		display: flow-root;
+		margin: auto;
+		text-align: center;
+		margin-top: 10rpx;
+		margin-bottom: 10rpx;
+		padding-bottom: 30rpx;
+		background-color: #FFFFFF;
+	}
+	
+	.hover_li {
+	
+		font-size: 24rpx;
+		width: 30%;
+		float: left;
+		margin-left: 15rpx;
+		margin-top: 10rpx;
+		border: none;
+		outline: none;
+		background-color: #42b983;
+		color: #FFFFFF;
+	}
+	
+	.hover {
+		font-size: 24rpx;
+		width: 30%;
+		float: left;
+		margin-left: 15rpx;
+		margin-top: 10rpx;
+		border: none;
+		outline: none;
+		background-color: #007AFF;
+		color: #FFFFFF;
+	}
+	
+	/* .headboss {
+		padding-top: 40rpx;
+		float: right;
+		margin-right: 40rpx;
+		font-size: 25rpx;
+	} */
+	
+	.headcolor {
+		margin-top: 30rpx;
+		width: 100%;
+		margin: auto;
+	}
+	
+	.jifeng_box {
+		display: flex;
+		padding: 20rpx 0;
+		font-size: 40rpx;
+		background-color: #FFFFFF;
+		margin-bottom: 10rpx;
+		line-height: 40rpx;
+	}
+	
+	.save {
+		color: red;
+		/* margin-top: 5rpx; */
+		margin-left: 20rpx;
+	}
+	
+	.edit {
+		/* margin-top: 5rpx; */
+		margin-left: 20rpx;
+	}
+	.tixian{
+			font-size: 24rpx;
+			width: 30%;
+			float: right;
+			border: none;
+			margin-right: 20rpx;
+			outline: none;
+			color: #FFFFFF;
+		}
+	.tixian_li{
+			font-size: 24rpx;
+			width: 30%;
+			float: right;
+			border: none;
+			margin-right: 10rpx;
+			outline: none;
+			background-color: #007AFF;
+			color: red;
+		}
+	.tag {
+		margin-left: 15rpx;
+		font-size: 30rpx;
+		font-weight: bold;
+		float: left;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		width: 60%;
+	}
+	.type{
+		margin-left: 15rpx;
+		float: left;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		width: 70%;
+	}
+	.time {
+		margin-top: 5rpx;
+		margin-left: 14rpx;
+		font-size: 25rpx;
+		color: #a6a6a6;
+		float: left;
+		
+	}
+	.dabox{
+		display: block;
+		overflow: hidden;
+		float: right;
+		width: 70%;
+	}
+	.dabox_li{
+		display: block;
+		overflow: hidden;
+		float: right;
+		width: 30%;
+		line-height: 40rpx;
+	}
+	.jifeng {
+		color: red;
+		font-size: 18px;
+		padding-right:20rpx ;
+		text-align: right;
+		font-weight: bold;
+	}
+	.headboss{
+		padding-right:20rpx ;
+		text-align: right;
+	}
+	.loading-text {
+		display: block;
+		text-align: center;
+		color: #666666;
+		padding-bottom: 20rpx;
+	}
+	.bottom_tip{
+		text-align: center;
+		color: #666666;
+	}

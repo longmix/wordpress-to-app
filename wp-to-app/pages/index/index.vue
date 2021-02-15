@@ -10,7 +10,8 @@
 				interval="2000"
 				indicator-color="rgba(255, 255, 255, .2)" 
 				indicator-active-color="rgba(255, 255, 255, .7)" >
-				<swiper-item v-for="(item, index)  in index_image" :key="index" @tap="onNavRedirect(item.url)">   <!-- :id="item.id" :data-redicttype="item.type" :data-appid="item.appid" :data-url="item.url" @tap="redictAppDetail()" -->
+				<swiper-item v-for="(item, index)  in roll_picture_list" :key="index" @click="onNavRedirect(roll_picture_list[index].url)">   
+				<!-- :id="item.id" :data-redicttype="item.type" :data-appid="item.appid" :data-url="item.url" @tap="redictAppDetail()" -->
 					<image @load="imageLoad($event)"  :src="item.image" mode="widthFix">
 					<view class="swiper-mask"></view>
 					<view class="swiper-desc">
@@ -20,12 +21,12 @@
 		    </swiper>
 		</view>
 
-		<view>
+		<view class="index-main">
 		    <view>
 		        <!-- 图标导航 -->
 		        <view class="top-Nav">
 		            <block v-for="(item2,index2) in index_icon_list" :key="index2">
-		                <view class="top-item" @tap="onNavRedirect(item2.url)">
+		                <view class="top-item" @click="onNavRedirect(item2.url)">
 		                    <view>
 		                        <image :src="item2.src"></image>
 		                    </view>
@@ -37,8 +38,22 @@
 		            
 		        </view>
 		        <!-- 图标导航end -->
+				
+				
+				
+				
+				<!-- 广告图 -->
+				<view v-for="(tab,index) in pingpu_picture_list" :key="index" @click="onNavRedirect(tab.url)">
+					<view class="banner" >
+						<image :src="tab.image" style="width: 100%;vertical-align: middle;" mode="widthFix"></image>
+					</view>
+				</view>
+				
+				
+				
+				
 		
-		        <form @submit="formSubmit" @reset="formReset" id="search-form">
+		        <form @submit="formSubmit" @reset="formReset" id="search-form" v-if="hidden_search_box_in_front_page != 1">
 		            <view class="search-pancel">
 		                <input value="" id="search-input" name="input" confirm-type="search" class="search-input" placeholder="搜索你感兴趣的内容..."></input>
 		                <button class="search-button" form-type="submit" size="mini" plain="true">
@@ -61,7 +76,7 @@
 						:data-plugin_name="item2.plugin_name"
 						:data-plugin_desc_basic="item2.plugin_desc_basic" 
 						@tap="block_tanchuang">
-						<image v-if="item2.plugin_flag" class="tips" src="../../static/img/index/bbq.png"></image>
+						<image v-if="item2.plugin_flag" class="tips" src="https://yanyubao.tseo.cn/Tpl/static/images/bbq.png"></image>
 						
 						<image class="img-h" :src="item2.icon" :style="{'background-color':item2.background_color}"></image>
 						
@@ -155,7 +170,11 @@
 		data() {
 			return {
 				roll_picture:'',
-				index_image:'',
+				pingpu_picture:'',
+				
+				roll_picture_list:'',
+				pingpu_picture_list:'',
+				
 				imgheights:[],
 				current_imgheight:0,
 				per_page:10,
@@ -182,6 +201,9 @@
 				all_option_list:null,
 				module_icon_list:null,
 				plugin_flag:'',
+				
+				hidden_article_list_in_front_page:0,
+				hidden_search_box_in_front_page:0,
 			}
 		},
 		
@@ -241,7 +263,12 @@
 		  
 		  
 		//触底方法
-		onReachBottom: function () {  
+		onReachBottom: function () {
+			if(this.hidden_article_list_in_front_page){
+				return;
+			}
+			
+			
 			var that = this;
 
 			// var that = this;
@@ -456,6 +483,14 @@
 					
 				}
 				
+				if(cb_params.hidden_article_list_in_front_page){
+					this.hidden_article_list_in_front_page = cb_params.hidden_article_list_in_front_page;
+				}
+				
+				if(cb_params.hidden_search_box_in_front_page){
+					this.hidden_search_box_in_front_page = cb_params.hidden_search_box_in_front_page;
+				}
+				
 				
 				uni.setNavigationBarTitle({
 					title:this.wxa_shop_new_name
@@ -470,12 +505,18 @@
 				}
 				
 				if(cb_params.roll_picture == -1){
-					that.index_image = cb_params.roll_picture_list;
+					that.roll_picture_list = cb_params.roll_picture_list;
 				}
 				else{
-					that.get_shop_index_images();
+					that.get_shop_index_images('roll');
 				}
 				
+				if(cb_params.pingpu_picture == -1){
+					that.pingpu_picture_list = cb_params.pingpu_picture_list;
+				}
+				else{
+					that.get_shop_index_images('pingpu');
+				}
 				
 				
 				that.fetchPostsData();
@@ -493,6 +534,8 @@
 
 			//首页图标、轮播图及其他h5链接跳转
 			onNavRedirect:function(url){
+				console.log('new url =====>>>>', url);
+				
 				var var_list = Object();
 				this.abotapi.call_h5browser_or_other_goto_url(url, var_list, '');
 			},
@@ -554,21 +597,33 @@
 			
 			
 			//首页广告图片
-			get_shop_index_images:function(){
+			get_shop_index_images:function(pic_type){
 				console.log("22222");
 				var that = this;
+				
+				var pic_type_id = that.roll_picture;
+				if(pic_type == 'pingpu'){
+					pic_type_id = that.pingpu_picture;
+				}
+				
 				this.abotapi.abotRequest({
 				    url:this.abotapi.globalData.yanyubao_server_url+'Yanyubao/ShopApp/get_shop_ad_image_list',
 				    method: 'post',
 				    data:{
-						ad_type:that.roll_picture,
+						ad_type:pic_type_id,
 				    	sellerid:this.abotapi.globalData.default_sellerid,
 				    },
 					
 				    success(res) {
 				    	var data = res.data;
 				    	if(data.code == 1){
-				    		that.index_image = data.data;
+							if(pic_type == 'pingpu'){
+								that.roll_picture_list = data.data;
+							}
+							else if(pic_type == 'pingpu'){
+								that.pingpu_picture_list = data.data;
+							}
+				    		
 				    	}
 				    
 				    },
@@ -629,6 +684,10 @@
 			
 			//获取文章列表
 			fetchPostsData:function(){
+				if(this.hidden_article_list_in_front_page){
+					return;
+				}
+				
 				var that = this;
 				
 				if(that.is_OK){
@@ -784,6 +843,10 @@
 		z-index: 1;
 	}
 	
+	.index-main {
+		width:100%;
+	}
+	
 	swiper.index-swiper {
 	  position: relative;
 	  height: 420upx;
@@ -818,6 +881,16 @@
 	  text-overflow: ellipsis;
 	  font-size: 30upx;
 	  text-shadow: 0px 0px 16px #646d75;
+	}
+	
+	.banner {
+		width: 100%;
+		margin: 0;
+		
+	}
+	
+	.banner >>> image {
+		border-radius: 0;
 	}
 	
 	.search-button {

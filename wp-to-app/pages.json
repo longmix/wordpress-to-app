@@ -13,8 +13,15 @@
 				"backgroundTextStyle":"dark",
 				"enablePullDownRefresh": true
 			}
-        }
-		,{	//链接跳转页
+        },
+		{	//'关于'页面
+		    "path" : "pages/index/page",
+		    "style" : {
+				"backgroundTextStyle":"dark",
+				"enablePullDownRefresh": true
+			}
+		},
+		{	//链接跳转页
 		    "path" : "pages/h5browser/h5browser",
 		    "style" : {}
 		}
@@ -25,11 +32,29 @@
 				"enablePullDownRefresh": true
 			}
 		}
+		,{	//'我的'页面
+		    "path" : "pages/user/log",
+		    "style" : {
+				"backgroundTextStyle":"dark",
+				"enablePullDownRefresh": true,
+				"navigationBarTitleText": "余额明细"
+			}
+		}
+		
+		,{	//'我的'页面
+		    "path" : "pages/user/logscore",
+		    "style" : {
+				"backgroundTextStyle":"dark",
+				"enablePullDownRefresh": true,
+				"navigationBarTitleText": "积分明细"
+			}
+		}
 		,{	//'关于'页面
 		    "path" : "pages/about/about",
 		    "style" : {
 				"backgroundTextStyle":"dark",
 				"enablePullDownRefresh": true
+				
 			}
 		}
 		,{	//个人信息页
@@ -135,7 +160,7 @@
 					"enablePullDownRefresh": true
 				}
 			},
-			{
+			/*{
 				"pagePath": "pages/topic/topic",
 				"iconPath": "static/img/index/tar-topic.png",
 				"selectedIconPath": "static/img/index/tar-topic-on.png",
@@ -144,7 +169,7 @@
 					"backgroundTextStyle":"dark",
 					"enablePullDownRefresh": true
 				}
-			},
+			},*/
 			{
 				"pagePath": "pages/usercenter/usercenter",
 				"iconPath": "static/img/index/tar-person.png",

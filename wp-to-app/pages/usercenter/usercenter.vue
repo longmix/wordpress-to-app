@@ -15,10 +15,12 @@
 					<text class="card_num" :style="{color:vip_detail.card_no_color}">{{vip_member_no}}</text>
 				</view>
 			</view>
+			
+			
 		</view>
 		
 		<!-- 赠款、余额、积分 -->
-		<view class="daohang_box" :style="{display:show_daohang_box}">
+	<!-- 	<view class="daohang_box" :style="{display:show_daohang_box}">
 			<view class="biaoti_box">
 				<view class="num" v-if="data2 && data2.fenxiao_info && data2.fenxiao_info.balance_yuan">{{data2.fenxiao_info.balance_yuan}}</view>
 				<view class="num" v-else>88.88</view>
@@ -35,8 +37,29 @@
 				<view class="num" v-else>888</view>
 				<view class="text2">积分</view>
 			</view>
-		</view>
+		</view> -->
 
+		<!-- 余额显示 积分显示-->
+		
+		<view class="jifeng_box">
+			
+				<view class="money_box">
+					余额
+					<view @tap="toPage('/pages/user/log')" class="num" style="align-items: center;">{{balance_total}}</view>
+				</view>
+				
+				<view @tap="toPage('/pages/user/log?type=zengkuan')" class="money_box" style="border-left: 1px solid #c3c3c3;">
+					赠款
+					<view class="num">{{balance_zengkuan_total}}</view>
+				</view>
+				
+				<view @tap="toPage('/pages/user/logscore')" class="money_box" style="border-left: 1px solid #c3c3c3;">
+					积分
+					<view class="num">{{balance_score_total}}</view>
+				</view>
+			
+		</view>
+		
 		<!-- 工具栏 -->
 		<view class="toolbar">
 			<view class="title">我的工具栏</view>
@@ -70,6 +93,11 @@
 				data2:'',
 				vip_member_no:'0123456789',
 				show_daohang_box:'block',
+				
+				balance_total:'888.88',
+				balance_zengkuan_total:'888.88',
+				balance_score_total:'88888',
+				
 			}
 		},
 		
@@ -175,6 +203,7 @@
 				
 				
 				var that = this;
+				
 				if(userInfo && userInfo.userid){
 					this.abotapi.abotRequest({
 						url: this.abotapi.globalData.yanyubao_server_url + '?g=Yanyubao&m=ShopAppWxa&a=get_user_info',
@@ -201,6 +230,10 @@
 									if(data.data && data.data.fenxiao_info && data.data.fenxiao_info.member_no){
 										that.vip_member_no = data.data.fenxiao_info.member_no;
 									}
+									
+									that.balance_total = that.data2.fenxiao_info.balance_yuan;
+									that.balance_zengkuan_total = that.data2.fenxiao_info.balance_zengsong_yuan;
+									that.balance_score_total = that.data2.fenxiao_info.score;
 								}
 								
 								
@@ -226,6 +259,18 @@
 				})
 			},
 			
+			//跳转至积分，或是余额详情页
+			tolog:function(){
+				uni.navigateTo({
+				    url: '/pages/user/log'
+				});
+			},
+			
+			tologscore:function(){
+				uni.navigateTo({
+				    url: '/pages/user/logscore'
+				});
+			},
 			
 			//工具栏图标跳转
 			toPage:function(url){
@@ -470,5 +515,21 @@
 		    float: left;
 		    display: block;
 		    margin-top: 8upx;
+	}
+	.jifeng_box{
+		width: 100%;
+		height: 150rpx;
+		background-color: #FFFFFF;
+		border-radius: 15rpx;
+		margin-top: 15rpx;
+	}
+	.money_box{
+		float: left;
+		display: block;
+		text-align: center;
+		width: 33%;
+		margin-top: 35rpx; 
+		line-height: 45rpx;
+		
 	}
 </style>

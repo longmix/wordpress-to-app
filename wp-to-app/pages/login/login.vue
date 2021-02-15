@@ -109,7 +109,16 @@
 			<!-- #endif -->
 			
 		</form>
+	     <!--站位-->
+		 <div class="place-buttom"></div>
+		 <div class="icon-jump" @click="gotoHomePage" :style="{background:icon_jump_bg_color}" v-if="wxa_show_return_to_index_in_usercenter == 0">
+		 <image src="../../static/img/shouye.svg"></image>
+		 <div :style="{color:wxa_shop_nav_font_color}">首页</div>
+		 </div>
+		 
+		 
 	</view>
+	
 </template>
 
 <script>
@@ -157,7 +166,10 @@
 				tokenstr :'',
 				wxa_share_img:'',
 				user_info:'',
-				wxa_shop_new_name:''
+				wxa_shop_new_name:'',
+				icon_jump_bg_color:'#2E85D8',
+				wxa_shop_nav_font_color:'#fff',
+				wxa_show_return_to_index_in_usercenter:0,  //控制返回首页是否显示
 			}
 		},
 		onLoad:function(){
@@ -223,8 +235,9 @@
 				uni.setNavigationBarTitle({
 					title: '登录' + this.wxa_shop_new_name
 				})
-			
 			},
+			
+			
 			
 			
 			
@@ -314,6 +327,11 @@
 				console.log('111111111111====>>>btn_wxa_get_userinfo====>>', e);
 				
 				this.btnWxaGetUserinfo(e);
+			},
+			gotoHomePage:function(){
+				uni.switchTab({
+					url: '/pages/index/index'
+				})	
 			},
 			
 			//手机验证码登录
@@ -650,6 +668,7 @@
 			},
 			
 			
+			
 			//获取用户信息
 			getUserInfo: function () {
 				var userInfo = this.abotapi.get_user_info();
@@ -671,11 +690,11 @@
 					    }
 					})
 						
-				}
-					
+				}		
 			},
+			
 		}
-	}
+}
 </script>
 
 <style>
@@ -700,9 +719,7 @@
 	float: right;
 	margin-top: -4upx;
 	margin-right: 16upx;
-	
 }
-	
 	
 	.otherBox {
 	position: relative;
@@ -781,7 +798,34 @@
 .btn-round{
 	border:none !important;
 }
-	
+.place{
+		//background-color: #f06c7a;
+		height: 100upx;
+		/*  #ifdef  APP-PLUS  */
+		margin-top: var(--status-bar-height);
+		/*  #endif  */
+	}
+.place-buttom{
+	height: 150upx;
+}
+.icon-jump{
+	height: 120rpx;
+	width: 120rpx;
+	position: fixed;
+	right: 40rpx;
+	bottom: 120rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 200rpx;
+	background-color: #2E85D8;
+	flex-direction: column;
+	font-size: 30rpx;
+}
+.icon-jump image{
+	  width: 60rpx;
+	  height: 60rpx;
+	}
 
 
 </style>

@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
 		<view class="content-article-detail">   <!-- :style="{display:display}" -->
-			<view class="entry-title">{{detail.title.rendered}}</view>
+			<view class="entry-title">{{article_title}}</view>
 			<view class="entry-date">		
 	            <image src="../../static/img/index/calendar.png" style="height:24upx;width:24upx;"></image>
 				<text class="entry-date-text">{{detail.date_to_show}}</text>
@@ -18,13 +18,17 @@
 	        </view>
 				
 			<view class="entry-summary">
-				<rich-text :nodes="detail.content.rendered|formatRichText"></rich-text>
-				<!--<u-parse111 :content="detail.content.rendered" @preview="clickPreview" @navigate="toNavigate" />-->
+<!-- #ifdef MP-ALIPAY -->
+				<rich-text :nodes="article_content"></rich-text>
+<!-- #endif -->				
+<!-- #ifndef MP-ALIPAY -->
+				<rich-text :nodes="article_content|formatRichText"></rich-text>
+<!-- #endif -->								
 			</view>
 		</view>
 		
 		<!--  上一篇，下一篇  -->
-		<view class="pagination">
+		<view class="pagination" v-if="show_more_article == 1">
 			<view v-if="detail.previous_post_id" class="nav-previous">
 				<navigator :url="'../index/detail?id='+detail.previous_post_id" open-type="redirect" hover-class="relatedNavigator">←{{detail.previous_post_title}}</navigator>
 			</view>
@@ -34,7 +38,7 @@
 		</view>
 		
 		<!-- 猜你喜欢 -->
-		<view class="relatedPost" :style="{display:display}"><!--  -->
+		<view class="relatedPost" :style="{display:display}"  v-if="show_more_article == 1"><!--  -->
 			<view class="relatedTitle">猜你喜欢</view>
 			<view class="entry-gap-like"></view>
 			<view class="relatedText">
@@ -67,7 +71,7 @@
 		<view style="margin-bottom: 50upx;" v-if="wp_enable_comment_option == 1">
             <view class="relatedTitle">评论交流</view>
             <view class="entry-gap-like"></view>
-            <view class="commentheader">有{{detail.total_comments}}条评论</view>
+            <view class="commentheader" v-if="detail && detail.total_comments">有{{detail.total_comments}}条评论</view>
 
             <block  v-for="(item, index) in commentsList" :key="index">
                 <view v-if="item.parent == 0">
@@ -79,12 +83,12 @@
                                 <view>{{item.date}}</view>
                             </view>
                         </view>
-                        <view class="comment-summary" v-html="item.content.rendered"></view>
+                        <view class="comment-summary" v-html="item.content.rendered" v-if="item.content"></view>
                     </view>
                 </view>
             </block>
 			
-			<view :style="{display:display}">
+			<view  style="margin-bottom: 100rpx;" :style="{display:display}">
 			    <view>
 			        <view class="no-more">---无更多评论---</view>
 			    </view>
@@ -194,6 +198,9 @@
 
 <script>
 	//import uParse from '../../components/gaoyia-parse/parse.vue';
+// #ifdef MP-ALIPAY
+	import parseHtml from "../../common/html-parser.js"
+// #endif	
 	
 	var current_post_id;
 	var userInfo;
@@ -203,7 +210,9 @@
 		//},
 		data() {
 			return {
-				content:'',
+				article_title:'',
+				article_content:'',
+				
 				postID:'',
 				toFromId: '',
 				formId:'',
@@ -224,7 +233,7 @@
 				page:1,
 				per_page:5,
 				current_post_id:'',
-				detail:'',
+				detail:[],
 				tags:'',
 				postList: '',
 				display: 'none',
@@ -244,6 +253,8 @@
 				wp_enable_comment_option:'',
 				wp_zanshang_shoukuan_img_url:'',
 				wxa_shop_new_name:'',
+				
+				show_more_article:1
 			}
 		},
 		
@@ -316,14 +327,22 @@
 
 		
 		onLoad: function (options) {
-			console.log("options",options);
-			console.log('rendered====0', this.rendered)
-			console.log('placeholder===', this.placeholder);
+			//console.log("options",options);
+			//console.log('rendered====0', this.rendered)
+			//console.log('placeholder===', this.placeholder);
 			
-		    console.log('detail onLoad', options);
+		    console.log('detail onLoad options ===>>> ', options);
 			this.current_post_id = options.id
 			
+			if(options.one_article && (options.one_article == 1)){
+				this.show_more_article = 0;
+			}
+			
 			var that = this;
+			
+			this.detail['total_comments'] = 0;
+			
+			console.log('====>>>>>>', this.detail);
 			
 			this.abotapi.set_option_list_str(this, this.callback_function);
 		},
@@ -422,8 +441,9 @@
 				
 				
 				
-				this.fetchCommentData();
+				
 				this.fetchDetailData();
+				this.fetchCommentData();
 				
 				setTimeout(() => {
 					that.getPoster();
@@ -446,13 +466,45 @@
 				    success(res) {
 				    	
 						if(!res.data.code){
+							
 							var tyu = '';
 							that.detail = res.data;
 							that.tags = that.detail.tags.join(',');
 							console.log("that.detail",that.detail);
 							console.log("that.tags",that.tags);
-							console.log("that.detail.title.rendered",that.detail.title.rendered);
-							//console.log("that.detail.content.rendered",that.detail.content.rendered);
+							
+							if(!res.data.title){
+								return;
+							}
+							
+							if(res.data.title.rendered){
+								res.data.title.rendered.replace(/&#8211;/g, '——');
+							}
+							
+							that.article_title = res.data.title.rendered;
+							that.article_content = res.data.content.rendered;
+							
+// #ifdef MP-ALIPAY		
+							
+							const filter = that.$options.filters["formatRichText"];
+							that.article_content = filter(that.article_content);
+							
+							//console.log('that.article_content====>>>>', that.article_content);
+							
+							let data001 = that.article_content;
+							let newArr = [];
+							let arr = parseHtml(data001);
+							arr.forEach((item, index)=>{
+								newArr.push(item);
+							});
+							
+							//console.log('arr arr arr====>>>>', arr);
+							//console.log('newArr newArr newArr====>>>>', newArr);
+							
+							that.article_content = newArr;
+
+// #endif						
+							
 							
 							// 调用API从本地缓存中获取阅读记录并记录
 							var logs = uni.getStorageSync('usercenters') || [];
@@ -472,6 +524,7 @@
 							if (logs.length > 19) {
 								logs.pop();//去除最后一个
 							}
+							
 							logs.unshift([that.detail.id, that.detail.title.rendered]);
 							uni.setStorageSync('usercenters', logs);
 							//end 
@@ -719,28 +772,25 @@
 				console.log("e22",e);
 				that.postID = e.detail.value.inputPostID;
 				// var userid = self.userid;
-				that.content = e.detail.value.inputComment;
+				var comment_content = e.detail.value.inputComment;
 				that.toFromId = e.detail.toFromId;
 				that.formId = e.detail.formId;
-				if (that.content == '') {
+				if (comment_content == '') {
 					uni.showToast({
 						title: '评论不能为空',
 						icon: 'none',
 						duration: 2000
 					});
 					return;
-				} else {
-					that.setCommon();
 				}
-			},
-			
-			
-			//重置输入框内容
-			setCommon:function(){
-				var that = this;
+				
 				console.log("userInfo",that.abotapi.get_user_info());
 				var userdelite = uni.getStorageSync('userDelite');
 				console.log('user???????????',userdelite);
+				
+				if(!userdelite){
+					return;
+				}
 				
 				that.abotapi.abotRequest({
 					url: that.abotapi.globalData.weiduke_server_url + 'openapi/Wordpress/restapi/wp-json/yanyubao-wp-api/v1/comment/add',
@@ -750,7 +800,7 @@
 						author_name: userdelite.nickname,
 						author_url: userdelite.headimgurl,
 						company: '来自小程序的评论',
-						content: that.content,
+						content: comment_content,
 						formId:that.formId,
 						mobile:userdelite.mobile,
 						// openid:userdelite.openid,
@@ -762,7 +812,7 @@
 					success(res){
 						console.log("delite_res",res);
 						if(res.data.code == 'success'){
-							that.content = '';
+							comment_content = '';
 							uni.showToast({
 								title: '评论成功',
 								icon: 'success',
@@ -777,7 +827,11 @@
 						}
 					}
 				});
+				
+				
 			},
+			
+			
 
 
 			//获取评论
@@ -932,6 +986,9 @@
 				newContent = newContent.replace(/<p[^>]*>/gi, '<p style="margin:20px;">');
 				
 				newContent = newContent.replace(/\<img/gi, '<img style="max-width:100%;height:auto;display:inline-block;margin:10rpx auto;vertical-align: middle;"');
+				//newContent = newContent.replace(/\<img/gi, '<img width="5rem"');
+				
+				newContent = newContent.replace(/<h2[^>]*>/gi, '<h2 class="content-article-detail_h2">');
 				
 				return newContent;
 			}	
@@ -942,12 +999,19 @@
 
 <style>
 	
-	
 	.content-article-detail {
 	  border-bottom: 5upx solid #eee;
 	  margin-bottom: 50upx;
 	}
 	
+	/* 需要使用CSS穿透，在H5中才会生效。 */
+	.entry-summary >>> .content-article-detail_h2 {
+		border-left: 10rpx solid #EA6418;
+		padding: 10rpx;
+		text-indent: 0em;
+		font-size: 40rpx;
+		margin: 20rpx 0rpx;
+	}
 	
 	
 	.entry-title {
@@ -1214,7 +1278,7 @@
 	  text-align: center;
 	  color: #999;
 	  margin-top: 20upx;
-	  margin-bottom: 120upx;
+	  padding-bottom: 120upx;
 	}
 
 	.menu-box {
@@ -1348,6 +1412,13 @@
 	  left: 0;
 	}
 	
+	/* 从wordpress中带过来的CSS */
+	.size-large {
+		max-width: 100%;
+	}
+	.alignnone {
+		max-width: 100%  !important;
+	}
 
 
 </style>

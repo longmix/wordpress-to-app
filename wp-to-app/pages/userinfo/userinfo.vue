@@ -4,7 +4,7 @@
 		<view class='tx_box' :style="{backgroundColor:wxa_shop_nav_bg_color}">
 			<view style='height:30upx;'></view>
 			<view class='btn1'>
-				<image :src="user_info.headimgurl" @tap="upLoad()"></image>
+				<image :src="user_info.fenxiao_info.headimgurl" @tap="upLoad()"></image>
 			</view>
 		</view>
 		
@@ -15,7 +15,7 @@
 					<view class="weui_cell_bd">
 						<view class="weui_cell_bd_p"> 昵称 </view>
 					</view>
-					<view class="badge">{{user_info.nickname}}</view>
+					<view class="badge">{{user_info.fenxiao_info.nickname}}</view>
 				</view>
 			</navigator>
 		</view>

@@ -1,21 +1,18 @@
 const globalData = {
-		//xiaochengxu_appid: 'wx00d1e2843c3b3f77',
-		//default_sellerid : 'fJxSPaVgj',
-		//wxa_website_name : '又一个新网站',
-		
-		//current_platform : 'mp-weixin',
-		//current_platform : 'mp-baidu',
-		//current_platform : 'mp-alipay',
-		//current_platform : 'h5',
-		
+		xiaochengxu_appid: 'wx00d1e2843c3b3f77',
+		default_sellerid : 'fXxJPaWag',
+		//default_sellerid : 'pQNNmSkaq',
+
+		wxa_website_name : '夏日炎炎的网站111',
+
 		xiaochengxu_appid: 'wx3b4958c4ec41868f',
 		default_sellerid : 'pQNNmSkaq',
 		wxa_website_name : '延誉宝SaaS云',
 		
 		//current_platform : 'mp-weixin',
 		//current_platform : 'mp-baidu',
-		//current_platform : 'mp-alipay',
-		current_platform : 'h5',
+		current_platform : 'mp-alipay',
+		//current_platform : 'h5',
 		
 		
 		
@@ -795,9 +792,9 @@ module.exports = {
 	
 	    this.globalData.option_list = option_list;
 	
-	    console.log('oplist-----', option_list.wxa_shop_nav_bg_color);
+	    //console.log('oplist-----', option_list.wxa_shop_nav_bg_color);
 	
-	    console.log('111111111111111111111111111111::' + this.globalData.navigationBarBackgroundColor_fixed);
+	    //console.log('111111111111111111111111111111::' + this.globalData.navigationBarBackgroundColor_fixed);
 	
 	
 	    if (this.globalData.navigationBarBackgroundColor_fixed != 1){

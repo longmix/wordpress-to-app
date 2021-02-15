@@ -8,12 +8,7 @@
 		
 		<block v-if="content_type == 'cms'">
 		<view class='wenzhang_detail'>
-		    <import src="../../wxParse/wxParse.wxml"/> 
-		    <view class="wxParse"> 
-		        <scroll-view  scroll-y='true'>
-		           <template is="wxParse" :data='{wxParseData:content.nodes}'/>
-		        </scroll-view>
-		    </view>
+		    <rich-text v-if="describe" :nodes="describe|formatRichText"></rich-text>
 		</view>
 		</block>
 		
@@ -360,7 +355,6 @@ export default {
 		        that.current_title = res.data.data.title;
 		
 				that.describe = res.data.data.info;
-		        //WxParse.wxParse('content', 'html', res.data.data.info, that, 15);
 		
 		        if(res.data.data.video_url){
 					that.video_url = res.data.data.video_url;

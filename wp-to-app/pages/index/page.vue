@@ -9,27 +9,28 @@
 		</view>
 		
 		<view class="wrapper">
-						
 			<view class="excerpt">
+				
 <!-- #ifdef MP-ALIPAY -->
 				<rich-text :nodes="article_content"></rich-text>
 <!-- #endif -->				
 <!-- #ifndef MP-ALIPAY -->
 				<rich-text :nodes="article_content|formatRichText"></rich-text>
-<!-- #endif -->	
+<!-- #endif -->
+				
 			</view>
-			
-			<!-- #ifdef MP-WEIXIN -->	
-			
+		</view>
+		<view class="wrapper" style="display:none;">	
 			<view style='text-align:center'>
 				<button class="gotowebpage-button" formType="submit" size="mini" @tap="gotowebpage()">问题反馈收集表</button>
 			</view>
+			
 			<view style='text-align:center'>
 				<button class="praise-button" formType="submit" size="mini" @tap="praise">赞赏软件开发记</button>
 			</view>
 			
 			
-			
+			<!-- #ifndef MP-ALIPAY -->	
 			<view class="praisePost">
 				<view style='text-align:center'>
 					<button class="payonline-button" formType="submit" size="mini" @tap="payonline">微信支付宝转账</button>
@@ -45,18 +46,19 @@
 </template>
 
 <script>
-
 // #ifdef MP-ALIPAY
 	import parseHtml from "../../common/html-parser.js"
-// #endif	
-	
-
+// #endif
+		
 	export default {
 		components: {
 			//uParse
 		},
 		data() {
 			return {
+				article_title:'',
+				article_content:'',
+				
 				userInfo:'',
 				isLoginPopup: false,
 				
@@ -67,10 +69,7 @@
 				dialog:'',
 				wxa_shop_new_name:'',
 				copyright_text:'',
-				wxa_shop_operation_logo_url:'',
-				
-				article_title:'',
-				article_content:'',
+				wxa_shop_operation_logo_url:''
 			}
 		},
 		
@@ -87,12 +86,6 @@
 			if(options.pageid){
 				this.current_pageid = options.pageid;
 			}
-			
-			//var test001 = '<p><a href="http://www.abot.cn/988.html" target="_blank" rel="noopener"><img class="size-large aligncenter" src="http://www.abot.cn/wp-content/themes/abotcn/uploads/2018/05/2018050103263341.jpg" width="800" height="267" /></a></p>';
-			//test001 = test001.replace(/width="[^"]+"/gi, '').replace(/width='[^']+'/gi, '');
-			//test001 = test001.replace(/height="[^"]+"/gi, '').replace(/height='[^']+'/gi, '');
-			//console.log('test001 test001====>>>>', test001);
-			//return;
 			
 		    this.abotapi.set_option_list_str(this, this.callback_function);
 		},
@@ -189,8 +182,7 @@
 				    	sellerid:this.abotapi.globalData.default_sellerid,
 				    },
 					
-				    success:function(res) {
-						console.log('res====>>>', res);
+				    success(res) {
 						
 						if(!res.data.title){
 							return;
@@ -200,22 +192,15 @@
 							res.data.title.rendered.replace(/&#8211;/g, '——');
 						}
 						
-						that.dialog = res.data;
-						
 						that.article_title = res.data.title.rendered;
 						that.article_content = res.data.content.rendered;
 						
-						
-// #ifdef MP-ALIPAY
-						
+// #ifdef MP-ALIPAY		
 						
 						const filter = that.$options.filters["formatRichText"];
 						that.article_content = filter(that.article_content);
 						
-						//that.article_content = that.article_content.replace(/width="[^"]+"/gi, '').replace(/width='[^']+'/gi, '');
-						
-						console.log('that.article_content====>>>>', that.article_content);
-						
+						//console.log('that.article_content====>>>>', that.article_content);
 						
 						let data001 = that.article_content;
 						let newArr = [];
@@ -224,17 +209,14 @@
 							newArr.push(item);
 						});
 						
-						console.log('arr arr arr====>>>>', arr);
+						//console.log('arr arr arr====>>>>', arr);
 						//console.log('newArr newArr newArr====>>>>', newArr);
 						
 						that.article_content = newArr;
 
 // #endif
 						
-						
-						//console.log(res.data.title.rendered)
-						//console.log(res.data.content.rendered)
-						
+						that.dialog = res.data;
 						
 				    },
 				    fail: function (e) {
@@ -300,28 +282,16 @@
 					match = match.replace(/height="[^"]+"/gi, '').replace(/height='[^']+'/gi, '');
 					return match;
 				});
-				
-				
-				
 				newContent = newContent.replace(/style="[^"]+"/gi,function(match,capture){
-					match = match.replace(/width:[^;]+;/gi, 'max-width:100% important;').replace(/width:[^;]+;/gi, 'max-width:100% important; ');
+					match = match.replace(/width:[^;]+;/gi, 'max-width:100%;').replace(/width:[^;]+;/gi, 'max-width:100%;');
 					return match;
 				});
 				//newContent = newContent.replace(/<br[^>]*\/>/gi, '');
 				
 				newContent = newContent.replace(/<p[^>]*>/gi, '<p style="margin:20px;">');
 				
-				//newContent = newContent.replace(/\<img/gi, '<img style="max-width:100%;height:auto;display:inline-block;margin:10rpx auto;vertical-align: middle;"');
+				newContent = newContent.replace(/\<img/gi, '<img style="max-width:100%;height:auto;display:inline-block;margin:10rpx auto;vertical-align: middle;"');
 				
-				//newContent = newContent.replace(/width="[^"]+"/gi, 'width="5rem"').replace(/width='[^']+'/gi, '');
-					
-					//console.log('newContent newContent newContent ===>>>', newContent);
-				
-				//如果是在支付宝中，直接去掉图片
-				//newContent = newContent.replace(/<img[^>]*>/gi, '');	
-					
-					
-					  
 				return newContent;
 			}	
 		},
@@ -407,7 +377,7 @@
 	
 	/* 从wordpress中带过来的CSS */
 	.size-large {
-		max-width: 100%  !important;
+		max-width: 100%;
 	}
 	.alignnone {
 		max-width: 100%  !important;
