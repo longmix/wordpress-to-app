@@ -131,14 +131,14 @@
 			})
 			
 			this.abotapi.abotRequest({
-				url: this.abotapi.globalData.yanyubao_server_url + '?g=Yanyubao&m=Xiaochengxu&a=get_tokenstr',
+				url: this.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=Xiaochengxu&a=get_tokenstr',
 			    
 				method: "POST",
 				success: function (res) {
 			        //console.log(res.data);
 					that.abotapi.globalData.tokenstr = res.data.tokenstr;
 			
-					that.img_checkcode_url = that.abotapi.globalData.yanyubao_server_url + '?g=Yanyubao&m=Xiaochengxu&a=getverifycodeimg' + '&tokenstr=' + res.data.tokenstr
+					that.img_checkcode_url = that.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=Xiaochengxu&a=getverifycodeimg' + '&tokenstr=' + res.data.tokenstr
 			
 			      }
 			})
@@ -222,7 +222,7 @@
 				var userInfo = this.abotapi.get_user_info();
 				console.log(1111555555);
 				this.abotapi.abotRequest({
-					url: this.abotapi.globalData.yanyubao_server_url + '?g=Yanyubao&m=ShopAppWxa&a=user_info_save', 
+					url: this.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=ShopAppWxa&a=user_info_save', 
 					method: "POST",  
 					data: {
 						nickname:that.nicknames,
@@ -260,14 +260,14 @@
 			    var that = this
 			
 				this.abotapi.abotRequest({
-					url: this.abotapi.globalData.yanyubao_server_url + '?g=Yanyubao&m=Xiaochengxu&a=get_tokenstr',
+					url: this.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=Xiaochengxu&a=get_tokenstr',
 			      
 					method: "POST",
 					success: function (res) {
 						// console.log(res.data);
 						that.abotapi.globalData.tokenstr = res.data.tokenstr;
 			
-						that.img_checkcode_url = that.abotapi.globalData.yanyubao_server_url + '?g=Yanyubao&m=Xiaochengxu&a=getverifycodeimg' + '&tokenstr=' + res.data.tokenstr
+						that.img_checkcode_url = that.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=Xiaochengxu&a=getverifycodeimg' + '&tokenstr=' + res.data.tokenstr
 			
 					}
 			    });
@@ -297,7 +297,7 @@
 			    //发起网络请求update_mobile
 			    //console.log(app.globalData.http_server);
 				this.abotapi.abotRequest({
-					url: this.abotapi.globalData.yanyubao_server_url + '?g=Yanyubao&m=ShopAppWxa&a=set_user_mobile',
+					url: this.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=ShopAppWxa&a=set_user_mobile',
 			     
 					method: "POST",
 					data: {
@@ -358,7 +358,7 @@
 			    }
 			
 			    this.abotapi.abotRequest({
-			        url: this.abotapi.globalData.yanyubao_server_url + '?g=Yanyubao&m=ShopAppWxa&a=sendsms_change_mobile',
+			        url: this.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=ShopAppWxa&a=sendsms_change_mobile',
 					data: {
 						mobile: this.mobile,
 						verifycode: this.img,
@@ -392,7 +392,7 @@
 							});
 			
 							that.abotapi.globalData.tokenstr = request_data.data.tokenstr;
-							that.img_checkcode_url = that.abotapi.globalData.yanyubao_server_url + '?g=Yanyubao&m=Xiaochengxu&a=getverifycodeimg' + '&tokenstr=' + request_data.data.tokenstr
+							that.img_checkcode_url = that.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=Xiaochengxu&a=getverifycodeimg' + '&tokenstr=' + request_data.data.tokenstr
 						}
 					}
 			    })
@@ -430,7 +430,7 @@
 			    }
 			    
 			    this.abotapi.abotRequest({
-					url: this.abotapi.globalData.yanyubao_server_url + '?g=Yanyubao&m=ShopApp&a=set_user_password',
+					url: this.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=ShopApp&a=set_user_password',
 					data: {
 						checkstr: userInfo.checkstr,
 						userid: userInfo.userid,

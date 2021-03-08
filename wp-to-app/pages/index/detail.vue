@@ -19,11 +19,21 @@
 				
 			<view class="entry-summary">
 <!-- #ifdef MP-ALIPAY -->
-				<rich-text :nodes="article_content"></rich-text>
-<!-- #endif -->				
-<!-- #ifndef MP-ALIPAY -->
-				<rich-text :nodes="article_content|formatRichText"></rich-text>
-<!-- #endif -->								
+				<rich-text :nodes="article_content_array"></rich-text>
+<!-- #endif -->
+
+<!-- #ifdef H5 -->
+				<view v-html="article_content_html" ></view>
+<!-- #endif -->
+
+<!-- #ifndef MP-ALIPAY | H5 -->
+				<!-- 富媒体组件 2021.1.18. -->
+				<!-- rich-text  和 v-html 都有各自的优缺点 -->
+				<u-parse v-if="index_rich_html_content" 
+					:content="index_rich_html_content" 
+					@preview="index_rich_html_preview_image" 
+					@navigate="index_rich_html_click_link" />
+<!-- #endif -->
 			</view>
 		</view>
 		
@@ -37,13 +47,29 @@
 			</view>
 		</view>
 		
+		
+		<view style="display: block; height:50rpx;">
+			
+		</view>
+		
+		
 		<!-- 猜你喜欢 -->
-		<view class="relatedPost" :style="{display:display}"  v-if="show_more_article == 1"><!--  -->
+		<view class="relatedPost" v-if="show_more_article == 1"><!--  -->
 			<view class="relatedTitle">猜你喜欢</view>
 			<view class="entry-gap-like"></view>
 			<view class="relatedText">
-				<block v-for="(postList1, index)  in postList" :key="index">
-					<navigator :url="'../index/detail?id='+postList1.id" open-type="redirect" hover-class="relatedNavigator">{{index+1}}.{{postList1.title.rendered}}</navigator>
+				<block v-if="related_post_list != null">
+					<block v-for="(postList1, index)  in related_post_list" :key="index">
+						<navigator :url="'../index/detail?id='+postList1.id" open-type="redirect" hover-class="relatedNavigator">{{index+1}} - {{postList1.title.rendered}}</navigator>
+					</block>
+				</block>
+				<block v-else>
+					<view style="text-align: center;">
+						<image src="https://yanyubao.tseo.cn/Tpl/static/images/empty_order.png" 
+							style="width:200rpx;" mode="widthFix"></image>
+						<view style="color:#555">暂无相关内容</view>
+					</view>
+					
 				</block>
 			</view>
 		</view>
@@ -73,24 +99,36 @@
             <view class="entry-gap-like"></view>
             <view class="commentheader" v-if="detail && detail.total_comments">有{{detail.total_comments}}条评论</view>
 
-            <block  v-for="(item, index) in commentsList" :key="index">
-                <view v-if="item.parent == 0">
-                    <view class="comment">
-                        <view class="comment-user">
-                            <image :src="item.author_url" class="gravatarImg"></image>
-                            <view style='display:flex;flex-direction: row; justify-content: space-between;width: 100%'>
-                                <view style='font-weight:bold;'>{{item.author_name}}</view>
-                                <view>{{item.date}}</view>
-                            </view>
-                        </view>
-                        <view class="comment-summary" v-html="item.content.rendered" v-if="item.content"></view>
-                    </view>
-                </view>
+            <block v-if="commentsList != null" >
+                <block  v-for="(item, index) in commentsList" :key="index">
+					<view v-if="item.parent == 0">
+						<view class="comment">
+							<view class="comment-user">
+								<image :src="item.author_url" class="gravatarImg"></image>
+								<view style='display:flex;flex-direction: row; justify-content: space-between;width: 100%'>
+									<view style='font-weight:bold;'>{{item.author_name}}</view>
+									<view>{{item.date}}</view>
+								</view>
+							</view>
+							<view class="comment-summary" 
+								 v-if="item.content"
+								v-html="item.content.rendered"></view>
+						</view>
+					</view>
+				</block>
             </block>
+			<block v-else>
+				<view style="text-align: center;">
+					<image src="https://yanyubao.tseo.cn/Tpl/static/images/empty_remark.png" 
+						style="width:200rpx;" mode="widthFix"></image>
+					<view style="color:#555">哎呀，还没有评论哦，抢个沙发吧！</view>
+				</view>
+				
+			</block>
 			
-			<view  style="margin-bottom: 100rpx;" :style="{display:display}">
+			<view  style="margin: 200rpx 0rpx 100rpx;" :style="{display:commentsList_display}">
 			    <view>
-			        <view class="no-more">---无更多评论---</view>
+			        <view class="no-more" style="font-size:25rpx;">一篇文章水有多深？到这里清可见底 ~</view>
 			    </view>
 			</view>
 		</view>
@@ -111,11 +149,16 @@
 						<view class="comment-respond">
 							<input class="comment-input" maxlength="200" name="inputPostID" :value="detail.id" style="display:none" />
 							<view class="comment-box">
-								<image src="../../static/img/detail/entry-home.png" class="img-plus" style="margin-left:20upx;margin-right:20upx" @tap="goHome"></image>
+								<image src="../../static/img/detail/entry-home.png" 
+									class="img-plus" 
+									style="margin-left:20upx;margin-right:20upx" 
+									@tap="goHome"></image>
 								<input class="comment-input" type='text' confirm-type="send" 
 									@focus="onRepleyFocus"
 									cursor-spacing="10" maxlength="100" name="inputComment" 
-									:value="content" :placeholder="placeholder" :focus="focus" 
+									:value="input_comment_content" 
+									:placeholder="placeholder" 
+									:focus="focus" 
 									 />
 								<button class="comment-button touch-active" formType="submit">发送</button>
 								<image src="../../static/img/detail/plus.png" class="img-plus" @tap="ShowHideMenu" mode=""></image>
@@ -198,29 +241,44 @@
 
 <script>
 	//import uParse from '../../components/gaoyia-parse/parse.vue';
-// #ifdef MP-ALIPAY
+// #ifdef MP-ALIPAY 
 	import parseHtml from "../../common/html-parser.js"
 // #endif	
+
+	import uParse from '@/components/gaoyia-parse/parse.vue'
 	
 	var current_post_id;
 	var userInfo;
 	export default {
-		//components: {
-		//	uParse
-		//},
+		components: {
+			uParse
+		},
 		data() {
 			return {
 				article_title:'',
-				article_content:'',
+				
+				//v-html使用
+				article_content_html:'',				
+				//rich-text使用
+				article_content_array:null,
+				//uparse使用
+				index_rich_html_content:'<h1></h1>',
 				
 				postID:'',
 				toFromId: '',
 				formId:'',
 				
-				commentsList:'',
+				commentsList: null,
+				commentsList_display: 'none',
+				commentsList_is_loading_OK:false,
+				
 				result:'',
 				
-				is_OK:false,
+				input_comment_content:'',
+				
+				
+				
+				
 				displayLike: 'none',
 				likeList:'',
 				parentID: "0",
@@ -234,9 +292,10 @@
 				per_page:5,
 				current_post_id:'',
 				detail:[],
+				
 				tags:'',
-				postList: '',
-				display: 'none',
+				related_post_list: null,
+				
 				likeImag: "like.png",
 				user_info:'',
 				mobile:"",
@@ -258,74 +317,6 @@
 			}
 		},
 		
-		
-		//下拉刷新
-		onPullDownRefresh: function () {
-			var that = this;
-			that.fetchDetailData();
-
-			setTimeout(function () {
-				uni.stopPullDownRefresh();  //停止下拉刷新动画
-			}, 1500);
-		},
-		
-		//触底方法
-		onReachBottom: function () {  
-			var that = this;
-			// var that = this;
-			if(this.is_OK){
-				//that.page = page;
-				uni.showToast({
-					title: '暂无数据',
-					duration: 2000
-				});
-				return;
-			}
-			
-			that.page++;
-			console.log('page',that.page);
-			
-			that.abotapi.abotRequest({
-				url: that.abotapi.globalData.weiduke_server_url + 'openapi/Wordpress/restapi/wp-json/wp/v2/comments',
-				method: "get",
-				data: {
-					per_page: that.per_page,
-					orderby: 'date',
-					order: 'asc',
-					post: that.current_post_id,
-					page:that.page,
-					sellerid:that.abotapi.globalData.default_sellerid,
-				},
-				success(res){
-					
-					
-					
-					console.log("pinglun_res",res);
-					if(res.statusCode == 200 && res.data.length != 0){
-						that.is_OK = false;
-						that.commentsList = that.commentsList.concat(res.data);
-						console.log('超过一页',that.commentsList);
-						that.display = 'none';
-						var str = that.commentsList;
-						
-						for(var i=0; i<str.length; i++){
-						   str[i].date = str[i].date.replace('T',' ');
-						}
-						
-						that.commentsList = str;
-						console.log("commentsList",that.commentsList);
-
-					}else{
-						that.display = 'block';
-						that.is_OK = true;
-
-						return;
-					}
-				}
-			});
-		},
-
-		
 		onLoad: function (options) {
 			//console.log("options",options);
 			//console.log('rendered====0', this.rendered)
@@ -346,8 +337,83 @@
 			
 			this.abotapi.set_option_list_str(this, this.callback_function);
 		},
+		// onShow:function(){
+		// 	this.fetchDetailData();
+		// },
 		
 		
+		//下拉刷新
+		onPullDownRefresh: function () {
+			var that = this;
+			that.fetchDetailData();
+
+			setTimeout(function () {
+				uni.stopPullDownRefresh();  //停止下拉刷新动画
+			}, 1500);
+		},
+		
+		//触底方法
+		onReachBottom: function () {  
+			var that = this;
+			// var that = this;
+			if(this.commentsList_is_loading_OK){
+				//that.page = page;
+				uni.showToast({
+					title: '到底啦~',
+					duration: 2000
+				});
+				return;
+			}
+			
+			that.page++;
+			console.log('page',that.page);
+			
+			that.abotapi.abotRequest({
+				url: that.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/comments',
+				method: "get",
+				data: {
+					per_page: that.per_page,
+					orderby: 'date',
+					order: 'asc',
+					post: that.current_post_id,
+					page:that.page,
+					sellerid:that.abotapi.globalData.default_sellerid,
+				},
+				success(res){
+					
+					console.log("获取评论====>>>>", res);
+					
+					if(res.statusCode == 200 && res.data.length > 0){
+						that.commentsList_is_loading_OK = false;
+						that.commentsList = that.commentsList.concat(res.data);
+						
+						console.log('超过一页',that.commentsList);
+						
+						that.display = 'none';
+						
+						var str = that.commentsList;
+						
+						for(var i=0; i<str.length; i++){
+						   str[i].date = str[i].date.replace('T',' ');
+						}
+						
+						that.commentsList = str;
+						
+						console.log("commentsList",that.commentsList);
+
+					}
+					else{
+						that.commentsList_display = 'block';
+						that.commentsList_is_loading_OK = true;
+
+						
+					}
+					
+					console.log("当前评论====>>>>", that.commentsList);
+				}
+			});
+		},
+
 		//分享文章
 		onShareAppMessage: function () {
 			return {
@@ -373,13 +439,33 @@
 		        }
 			}
 		},
+		
+		onShareTimeline: function () {
+			return this.share_return();
+		},
+		onAddToFavorites: function () {
+			return this.share_return();
+		},
+		
 
 	
-		// onShow:function(){
-		// 	this.fetchDetailData();
-		// },
 		
 		methods: {
+			share_return: function() {
+				
+				var share_title = this.detail.title.rendered;
+	
+				var imageUrl = this.detail.content_first_image;				
+				
+				var share_path = 'id=' + this.detail.id;
+								
+				return {
+					title: share_title,
+					query: share_path,
+					imageUrl: imageUrl,
+				}
+			},
+			
 			//获取网站基础信息配置项
 			callback_function:function(that, cb_params){
 				
@@ -455,9 +541,11 @@
 			
 			//获取文章内容
 			fetchDetailData: function () {
+				
 				var that = this;
+				
 				this.abotapi.abotRequest({
-				    url:this.abotapi.globalData.weiduke_server_url+'openapi/Wordpress/restapi/wp-json/wp/v2/posts/'+that.current_post_id,
+				    url:this.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/posts/'+that.current_post_id,
 				    method: 'get',
 				    data:{
 				    	sellerid:this.abotapi.globalData.default_sellerid,
@@ -482,16 +570,61 @@
 							}
 							
 							that.article_title = res.data.title.rendered;
-							that.article_content = res.data.content.rendered;
 							
-// #ifdef MP-ALIPAY		
+							//设置页面的标题一遍更好的SEO
+							var new_title = that.article_title;
+							
+							uni.setNavigationBarTitle({
+								title: new_title
+							})
+							
+							
+							
+							//设置百度小程序中的页面SEO信息
+// #ifdef MP-BAIDU
+							swan.setPageInfo({
+								title: that.article_title,
+								keywords: res.data.seo_keywords,
+								description: res.data.seo_description,
+								articleTitle: res.data.mp_baidu_seo_articleTitle,
+								releaseDate: res.data.mp_baidu_seo_releaseDate,
+								image: res.data.mp_baidu_seo_image,
+								video: res.data.mp_baidu_seo_video,
+								visit: {},
+								likes: '75',
+								comments: '13',
+								collects: '23',
+								shares: '8',
+								followers: '35',
+								success: res => {
+									console.log('setPageInfo success');
+								},
+								fail: err => {
+									console.log('setPageInfo fail', err);
+								}
+							});
+// #endif							
+							
+							
+							
+							//v-html使用
+							that.article_content_html = res.data.content.rendered;
+							
+							//uparse使用
+							that.index_rich_html_content = res.data.content.rendered;
+							
+							console.log('that.article_content_html====>>>>', that.article_content_html);
 							
 							const filter = that.$options.filters["formatRichText"];
-							that.article_content = filter(that.article_content);
+							that.article_content_html = filter(that.article_content_html);
 							
-							//console.log('that.article_content====>>>>', that.article_content);
+							//console.log('that.article_content_html====>>>>', that.article_content_html);
 							
-							let data001 = that.article_content;
+// #ifdef MP-ALIPAY 
+							
+							
+							
+							let data001 = that.article_content_html;
 							let newArr = [];
 							let arr = parseHtml(data001);
 							arr.forEach((item, index)=>{
@@ -501,7 +634,8 @@
 							//console.log('arr arr arr====>>>>', arr);
 							//console.log('newArr newArr newArr====>>>>', newArr);
 							
-							that.article_content = newArr;
+							//rich-text使用
+							that.article_content_array = newArr;
 
 // #endif						
 							
@@ -595,7 +729,7 @@
 				
 				console.log("that.tags22222",that.tags);
 				this.abotapi.abotRequest({
-				    url:that.abotapi.globalData.weiduke_server_url+'openapi/Wordpress/restapi/wp-json/wp/v2/posts',
+				    url:that.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/posts',
 				    method: 'get',
 				    data:{
 						page:1,
@@ -606,8 +740,11 @@
 				    },
 					
 				    success(res) {
-				    	console.log("showLikeImg_res",res);
-						that.postList = res.data;
+				    	console.log("showLikeImg 猜你喜欢的内容 ==>> ",  res);
+						
+						if(res && res.data && (res.data.length > 0) ){
+							that.related_post_list = res.data;
+						}
 				    },
 				    fail: function (e) {
 						uni.showToast({
@@ -684,7 +821,7 @@
 					console.log('user???????????',userdelite);
 					
 					this.abotapi.abotRequest({
-					    url:that.abotapi.globalData.weiduke_server_url+'openapi/Wordpress/restapi/wp-json/yanyubao-wp-api/v1/post/like',
+					    url:that.abotapi.globalData.wordpress_rest_api_url + '/wp-json/yanyubao-wp-api/v1/post/like',
 					    method: 'post',
 					    data:{
 							// openid:that.abotapi.get_current_openid(),
@@ -723,7 +860,7 @@
 				console.log('user???????????',userdelite);
 				
 				this.abotapi.abotRequest({
-				    url:that.abotapi.globalData.weiduke_server_url+'openapi/Wordpress/restapi/wp-json/yanyubao-wp-api/v1/post/islike',
+				    url:that.abotapi.globalData.wordpress_rest_api_url + '/wp-json/yanyubao-wp-api/v1/post/islike',
 				    method: 'post',
 				    data:{
 						userid:userdelite.userid,
@@ -793,7 +930,7 @@
 				}
 				
 				that.abotapi.abotRequest({
-					url: that.abotapi.globalData.weiduke_server_url + 'openapi/Wordpress/restapi/wp-json/yanyubao-wp-api/v1/comment/add',
+					url: that.abotapi.globalData.wordpress_rest_api_url + '/wp-json/yanyubao-wp-api/v1/comment/add',
 					method: "POST",
 					data: {
 						author_email: userdelite.email,
@@ -837,12 +974,12 @@
 			//获取评论
 			fetchCommentData: function () {
 				var that = this;
-				if(that.is_OK){
+				if(that.commentsList_is_loading_OK){
 
 					return;
 				}
 				that.abotapi.abotRequest({
-					url: that.abotapi.globalData.weiduke_server_url + 'openapi/Wordpress/restapi/wp-json/wp/v2/comments',
+					url: that.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/comments',
 					method: "get",
 					data: {
 						per_page: that.per_page,
@@ -853,12 +990,13 @@
 						sellerid:that.abotapi.globalData.default_sellerid,
 					},
 					success(res){
-						console.log("pinglun_res",res);
-						if(res.statusCode == 200 && res.data.length != 0){
-							that.is_OK = false;
+						console.log("获取评论====>>>>", res);
+						
+						if(res.statusCode == 200 && res.data.length > 0){
+							that.commentsList_is_loading_OK = false;
 							if(that.page == 1){
 								that.commentsList = res.data;
-								that.display = 'none';
+								that.commentsList_display = 'none';
 								var str = that.commentsList;
 								
 								for(var i=0; i<str.length; i++){
@@ -866,10 +1004,11 @@
 								}
 								
 								that.commentsList = str;
-								console.log("commentsList",that.commentsList);
 							}
 							
 						}
+						
+						console.log("当前评论====>>>>", that.commentsList);
 					}
 				});
 			},
@@ -897,7 +1036,7 @@
 			getPhoto:function(){
 				var that = this;
 				uni.downloadFile({
-					url: this.abotapi.globalData.weiduke_server_url+ 'openapi/Wordpress/download_file?url='+ encodeURIComponent(that.targetSrc)+'&type=image',
+					url: this.abotapi.globalData.weiduke_server_url + '/openapi/Wordpress/download_file?url='+ encodeURIComponent(that.targetSrc)+'&type=image',
 					success: (res) =>{
 						console.log('uni.downloadFile======>>>>', res);
 						
@@ -927,6 +1066,7 @@
 			//获取海报
 			getPoster:function(){
 				var that = this;
+				
 				var qrcode_type = 'qrcode';
 				
 				// #ifdef MP-WEIXIN
@@ -942,7 +1082,7 @@
 				// #endif
 				
 				this.abotapi.abotRequest({
-					url: this.abotapi.globalData.weiduke_server_url + 'openapi/Wordpress/rest_qrcode_poster',
+					url: this.abotapi.globalData.weiduke_server_url + '/openapi/Wordpress/rest_qrcode_poster',
 					method: "get",
 					data: {
 						postid: this.current_post_id,
@@ -952,13 +1092,38 @@
 					success(res){
 						console.log("Poster_res",res);
 						if(res.data.code == 1){
+							
 							that.poster_url = res.data.url;
 						}
 					}
 				});
 			},
+			
+			//2021.2.17. 富媒体 链接点击事件
+			//富媒体 图片被点击
+			index_rich_html_preview_image:function(img_src, e){
+				console.log('index_rich_html_preview_image====>>>>>', img_src);
+				console.log('index_rich_html_preview_image====>>>>>', e);
+			},
+			
+			//富媒体 链接点击事件
+			index_rich_html_click_link:function(new_url, e){
+				
+				console.log('index_rich_html_click_link====>>>>>', new_url);
+				console.log('index_rich_html_click_link====>>>>>', e);
+				
+				this.abotapi.call_h5browser_or_other_goto_url(new_url);
+				
+				
+			},
+			
+			
+			
+			
 		
 		},
+		
+		
 		
 		filters: {
 			/**
@@ -977,18 +1142,22 @@
 					match = match.replace(/height="[^"]+"/gi, '').replace(/height='[^']+'/gi, '');
 					return match;
 				});
+				
 				newContent = newContent.replace(/style="[^"]+"/gi,function(match,capture){
 					match = match.replace(/width:[^;]+;/gi, 'max-width:100%;').replace(/width:[^;]+;/gi, 'max-width:100%;');
 					return match;
 				});
 				//newContent = newContent.replace(/<br[^>]*\/>/gi, '');
 				
-				newContent = newContent.replace(/<p[^>]*>/gi, '<p style="margin:20px;">');
+				newContent = newContent.replace(/<p[^>]*>/gi, '<p class="article_content_p_css">');
 				
 				newContent = newContent.replace(/\<img/gi, '<img style="max-width:100%;height:auto;display:inline-block;margin:10rpx auto;vertical-align: middle;"');
 				//newContent = newContent.replace(/\<img/gi, '<img width="5rem"');
 				
 				newContent = newContent.replace(/<h2[^>]*>/gi, '<h2 class="content-article-detail_h2">');
+				
+				newContent = newContent.replace(/<blockquote[^>]*>/gi, '<blockquote class="article_blockquote_css">');
+				newContent = newContent.replace(/<pre[^>]*>/gi, '<pre class="article_pre_css">');
 				
 				return newContent;
 			}	
@@ -1004,6 +1173,24 @@
 	  margin-bottom: 50upx;
 	}
 	
+	.article_content_p_css{
+		margin:40rpx;
+		word-wrap: break-word;
+		white-space: normal;
+		word-break: break-all;
+	}
+	
+	.article_blockquote_css{
+		margin:20rpx 0 20rpx 0;
+		border-left: 6rpx solid #999;
+		padding-left: 10rpx;
+		font-size:25rpx;
+	}
+	
+	.article_pre_css {
+		white-space:pre;
+	}
+	
 	/* 需要使用CSS穿透，在H5中才会生效。 */
 	.entry-summary >>> .content-article-detail_h2 {
 		border-left: 10rpx solid #EA6418;
@@ -1015,12 +1202,13 @@
 	
 	
 	.entry-title {
-	  font-size: 48upx;
-	  line-height: 1.6;
+	  font-size: 36rpx;
+	  line-height: 60rpx;
 	  font-weight: bold;
 	  outline: none;
 	  color: #3a4040;
 	  margin-bottom: 24upx;
+	  padding:25rpx;
 	}
 	
 	.entry-gap-like {
@@ -1182,16 +1370,19 @@
 	.relatedPost {
 	  position: relative;
 	  text-align: left;
-	  margin: 32upx 0 60upx;
+	  margin: 60rpx 0 60rpx;
 	}
 	
 	.relatedTitle {
 	  text-align: left;
 	  font-weight: normal;
 	  line-height: 40upx;
-	  margin-top: 20upx;
+	  
+	  margin-top: 100upx;
 	  margin-bottom: 20upx;
+	  
 	  font-size: 32upx;
+	  
 	  color: #4c4c4c !important;
 	}
 	

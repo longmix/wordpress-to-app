@@ -238,7 +238,7 @@ export default {
 		      title: '数据加载中……',
 		    });
 		
-		    var url = this.abotapi.globalData.weiduke_server_url + 'index.php/openapi/ArticleImgApi/article_detail.shtml';
+		    var url = this.abotapi.globalData.weiduke_server_url + '/openapi/ArticleImgApi/article_detail.shtml';
 		    var data = {
 		      token: this.abotapi.get_current_weiduke_token(),
 		      id: imgid,

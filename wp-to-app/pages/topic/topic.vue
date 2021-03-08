@@ -6,7 +6,8 @@
 					<block :key="index" v-for="(item,index) in cata_topic_list" >
 						<view class="list-item" @tap="redictToTopic($event)" :data-url="item.url">
 							<view>
-								<image :src="item.src" class="cover" :data-name="item.name" :data-url="item.url"></image>
+								<image class="cover" mode="widthFix"
+									:src="item.src" :data-name="item.name" :data-url="item.url"></image>
 							</view>
 							<view class="content-title">
 								<view class="topic-name">
@@ -22,7 +23,13 @@
 					<block :key="index" v-for="(item,index) in categoriesList" >
 						<view class="list-item" @tap="redictIndex($event)" :data-id="item.id" :data-name="item.name" :data-description="item.description" :data-src="item.category_thumbnail_image">
 							<view>
-								<image :src="item.category_thumbnail_image" class="cover" :data-id="item.id" :data-name="item.name" :data-description="item.description" :data-src="item.category_thumbnail_image"></image>
+								<image class="cover" mode="widthFix"
+									:src="item.category_thumbnail_image" 
+									:data-id="item.id" 
+									:data-slug="item.slug" 
+									:data-name="item.name" 
+									:data-description="item.description" 
+									:data-src="item.category_thumbnail_image"></image>
 							</view>
 							<view class="content-title">
 								<view class="topic-name">
@@ -181,7 +188,7 @@
 				}
 				
 				this.abotapi.abotRequest({
-				    url:this.abotapi.globalData.weiduke_server_url+'openapi/Wordpress/restapi/wp-json/wp/v2/categories',
+				    url:this.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/categories',
 				    method: 'get',
 				    data:{
 						per_page:that.per_page,
@@ -236,10 +243,18 @@
 			
 			//跳转至分类详情
 			redictIndex:function(e){
-				console.log("e",e);
+				console.log("redictIndex e ===>>> ", e);
+				
+				var new_url = '/pages/list/list?';
+				
+				//new_url += 'categoryID='+e.target.dataset.id;
+				//new_url += '&categorySrc='+e.target.dataset.src+'&categoryName='+e.target.dataset.name+'&categoryDescription'+e.target.dataset.description;
+				
+				//2021.2.24. 通过slug请求分类的信息，包括了分类图标和分类名称以及分类描述
+				new_url += 'categorySlug='+e.target.dataset.slug;
 				
 				uni.navigateTo({
-					url:'/pages/list/list?categoryID='+e.target.dataset.id+'&categorySrc='+e.target.dataset.src+'&categoryName='+e.target.dataset.name+'&categoryDescription'+e.target.dataset.description
+					url:new_url
 				})
 			},
 			
@@ -278,7 +293,6 @@
 	
 	.list-item  image.cover {
 		width: 303rpx;
-		height: 303rpx;
 		border-radius: 12rpx;
 	}
 	

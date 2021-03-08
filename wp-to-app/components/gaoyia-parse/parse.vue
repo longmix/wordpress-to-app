@@ -69,12 +69,13 @@ import wxParseTemplate from './components/wxParseTemplate0';
 			},
 			startHandler: {
 				type: Function,
-				default () {
+				default: null
+				/*default () {
 					return node => {
 						node.attr.class = null;
 						node.attr.style = null;
 					};
-				}
+				}*/
 			},
 			endHandler: {
 				type: Function,

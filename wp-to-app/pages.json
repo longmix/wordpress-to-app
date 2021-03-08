@@ -1,4 +1,42 @@
 {
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "Loading...",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"color": "#333333",
+		"selectedColor": "#000000",
+		"borderStyle": "black",
+		"backgroundColor": "#ffffff",
+		"list": [{
+				"pagePath": "pages/index/index",
+				"iconPath": "static/img/index/tar-home.png",
+				"selectedIconPath": "static/img/index/tar-home-on.png",
+				"text": "首页"
+			},
+			{
+				"pagePath": "pages/topic/topic",
+				"iconPath": "static/img/index/tar-topic.png",
+				"selectedIconPath": "static/img/index/tar-topic-on.png",
+				"text": "分类"
+			},
+			{
+				"pagePath": "pages/usercenter/usercenter",
+				"iconPath": "static/img/index/tar-person.png",
+				"selectedIconPath": "static/img/index/tar-person-on.png",
+				"text": "我的"
+			},
+			{
+				"pagePath": "pages/about/about",
+				"iconPath": "static/img/index/tar-about.png",
+				"selectedIconPath": "static/img/index/tar-about-on.png",
+				"text": "关于"
+			}
+		]
+	},
+	
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
 			"path": "pages/index/index",
@@ -138,58 +176,7 @@
 		    "path" : "pages/welcome_page/welcome_page",
 		    "style" : {}
 		}
-    ],
-	"globalStyle": {
-		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "Loading...",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
-	},
-	"tabBar": {
-		"color": "#333333",
-		"selectedColor": "#000000",
-		"borderStyle": "black",
-		"backgroundColor": "#ffffff",
-		"list": [{
-				"pagePath": "pages/index/index",
-				"iconPath": "static/img/index/tar-home.png",
-				"selectedIconPath": "static/img/index/tar-home-on.png",
-				"text": "首页",
-				"style" : {
-					"backgroundTextStyle":"dark",
-					"enablePullDownRefresh": true
-				}
-			},
-			/*{
-				"pagePath": "pages/topic/topic",
-				"iconPath": "static/img/index/tar-topic.png",
-				"selectedIconPath": "static/img/index/tar-topic-on.png",
-				"text": "分类",
-				"style" : {
-					"backgroundTextStyle":"dark",
-					"enablePullDownRefresh": true
-				}
-			},*/
-			{
-				"pagePath": "pages/usercenter/usercenter",
-				"iconPath": "static/img/index/tar-person.png",
-				"selectedIconPath": "static/img/index/tar-person-on.png",
-				"text": "我的",
-				"style" : {
-					"backgroundTextStyle":"dark",
-					"enablePullDownRefresh": true
-				}
-			},
-			{
-				"pagePath": "pages/about/about",
-				"iconPath": "static/img/index/tar-about.png",
-				"selectedIconPath": "static/img/index/tar-about-on.png",
-				"text": "关于",
-				"style" : {
-					"backgroundTextStyle":"dark",
-					"enablePullDownRefresh": true
-				}
-			}
-		]
-	}
+    ]
+	
+	
 }

@@ -206,7 +206,7 @@
 				
 				if(userInfo && userInfo.userid){
 					this.abotapi.abotRequest({
-						url: this.abotapi.globalData.yanyubao_server_url + '?g=Yanyubao&m=ShopAppWxa&a=get_user_info',
+						url: this.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=ShopAppWxa&a=get_user_info',
 						data: {
 							sellerid: this.abotapi.globalData.default_sellerid,
 							checkstr: userInfo.checkstr,
@@ -291,7 +291,7 @@
 			getToolIcon:function(){
 				var that = this;
 				this.abotapi.abotRequest({
-				    url: this.abotapi.globalData.yanyubao_server_url + '?g=Yanyubao&m=ShopAppWxa&a=get_shop_icon_list',
+				    url: this.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=ShopAppWxa&a=get_shop_icon_list',
 				    method: 'post',
 				    data: {
 						icon_type:that.user_function_icon_type,

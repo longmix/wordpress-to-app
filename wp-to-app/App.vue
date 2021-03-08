@@ -1,7 +1,13 @@
 <script>
+	import abot_data from 'abot_data.js';
+	
 	export default {
 		onLaunch: function() {
-			console.log('App Launch')
+			console.log('App Launch - wordpress vue')
+			
+			console.log('aa===>>>', abot_data);
+			
+			this.abotapi.globalData = abot_data.globalData;
 			
 			
 			//判断是否是关闭状态，如果是，跳转到指定page，并显示关站提示。

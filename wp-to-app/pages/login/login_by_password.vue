@@ -157,7 +157,7 @@
 			
 			
 			    uni.request({
-			      url: that.abotapi.globalData.yanyubao_server_url + '?g=Yanyubao&m=ShopApp&a=get_tokenstr',
+			      url: that.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=ShopApp&a=get_tokenstr',
 			      header: {
 			        "Content-Type": "application/x-www-form-urlencoded"
 			      },
@@ -167,7 +167,7 @@
 			
 			        that.tokenstr = res.data.tokenstr;		
 			        //console.log(res.data.tokenstr);			
-					that.img_checkcode_url = that.abotapi.globalData.yanyubao_server_url + '?g=Yanyubao&m=ShopAppWxa&a=getverifycodeimg' + '&tokenstr=' + that.tokenstr
+					that.img_checkcode_url = that.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=ShopAppWxa&a=getverifycodeimg' + '&tokenstr=' + that.tokenstr
 			        // that.setData({
 			        //   img_checkcode_url: 
 			        // });
@@ -209,7 +209,7 @@
 				var that = this;
 				//console.log(code+'hehe');
 				uni.request({
-					url: that.abotapi.globalData.yanyubao_server_url + '?g=Yanyubao&m=ShopApp&a=login_by_password',
+					url: that.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=ShopApp&a=login_by_password',
 					header: {
 						"Content-Type": "application/x-www-form-urlencoded"
 					},
@@ -258,7 +258,7 @@
 							  
 				 		  
 							uni.request({
-								url: that.abotapi.globalData.yanyubao_server_url + '?g=Yanyubao&m=ShopApp&a=get_user_info',
+								url: that.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=ShopApp&a=get_user_info',
 								data: {
 									sellerid: that.abotapi.globalData.default_sellerid,
 									checkstr: request_res.data.checkstr,

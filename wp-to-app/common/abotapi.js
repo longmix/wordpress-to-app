@@ -1,44 +1,3 @@
-const globalData = {
-		xiaochengxu_appid: 'wx00d1e2843c3b3f77',
-		default_sellerid : 'fXxJPaWag',
-		//default_sellerid : 'pQNNmSkaq',
-
-		wxa_website_name : '夏日炎炎的网站111',
-
-		xiaochengxu_appid: 'wx3b4958c4ec41868f',
-		default_sellerid : 'pQNNmSkaq',
-		wxa_website_name : '延誉宝SaaS云',
-		
-		//current_platform : 'mp-weixin',
-		//current_platform : 'mp-baidu',
-		current_platform : 'mp-alipay',
-		//current_platform : 'h5',
-		
-		
-		
-		//  current_platform 定义当前的平台，用于服务器端识别
-		//  支持 app  mp-weixin mp-baidu  mp-alipay  
-		
-		//问题反馈收集表
-		url_for_feedback : 'https://cms.weiduke.com/Wap/Selfform/index/token/gwcuuk1411034699/id/298.shtml',
-		img_url_for_weixinpay : 'http://www.abot.cn/wp-content/themes/abotcn/uploads/2017/12/2017120214024867.png',
-		img_url_for_alipay : 'http://www.abot.cn/wp-content/themes/abotcn/uploads/2017/12/2017120214024865.jpg',
-		
-		//顶部导航栏背景颜色和文字颜色
-		navigationBarBackgroundColor_fixed:1,	//是否固定导航栏颜色
-		wxa_website_nav_font_color:"#ffffff",
-		wxa_website_nav_bg_color:"#2d96ff",
-		
-		userInfo: {},
-		isGetUserInfo:false,
-		isGetOpenid:false,
-		openid:'',
-		
-		weiduke_server_url: 'https://cms.weiduke.com/',
-		yanyubao_server_url: 'https://yanyubao.tseo.cn/',
-		
-		show_yanyubao_module_list:1
-};
 
 const abotRequest = (params) => {
   uni.request({
@@ -74,7 +33,7 @@ const abotRequest = (params) => {
 module.exports = {
 	abotRequest,
 	
-	globalData,
+	//globalData,
 	
 	set_current_weiduke_token: function (weiduke_token) {
 	    if (!weiduke_token) {
@@ -430,7 +389,7 @@ module.exports = {
 	//     }
 	
 	//     uni.request({
-	// 		url: that.globalData.yanyubao_server_url + '?g=Yanyubao&m=ShopAppWxa&a=get_shop_info',
+	// 		url: that.globalData.yanyubao_server_url + '/?g=Yanyubao&m=ShopAppWxa&a=get_shop_info',
 	// 		method: 'post',
 	// 		data: {
 	// 			sellerid: that.globalData.default_sellerid
@@ -484,6 +443,21 @@ module.exports = {
 	
 	set_wordpress_data_list : function (that, callback_function) {
 		
+		// #ifdef MP-WEIXIN
+		this.globalData.current_platform = 'mp-weixin'
+		// #endif
+		// #ifdef MP-BAIDU
+		this.globalData.current_platform = 'mp-baidu'
+		// #endif
+		// #ifdef MP-ALIPAY
+		this.globalData.current_platform = 'mp-alipay'
+		// #endif
+		// #ifdef H5
+		this.globalData.current_platform = 'h5'
+		// #endif
+		
+		
+		
 		var currentTime = (new Date()).getTime();//获取当前时间
 				
 		if (uni.getStorageSync("wordpress_data_list_str") && (currentTime - uni.getStorageSync("wordpress_data_list_time")) < 3600 * 1000) {
@@ -497,13 +471,14 @@ module.exports = {
 			
 			return;
 				
-		} 
+		}
+		
 		
 		
 		var that002 = this;
 			
 		this.abotRequest({
-			url: this.globalData.yanyubao_server_url + 'openapi/WordpressData/get_option_list',
+			url: this.globalData.yanyubao_server_url + '/openapi/WordpressData/get_option_list',
 			method: 'post',
 			data: {
 				sellerid: this.globalData.default_sellerid,
@@ -525,6 +500,9 @@ module.exports = {
 				var option_list = res.data;
 			
 				//that002.globalData.option_list = option_list;
+				
+				//if(wxa_domain_allow_list)....
+				
 			
 			
 				//保存到本地
@@ -843,7 +821,7 @@ module.exports = {
 	    var that002 = this;
 	
 	    uni.request({
-			url: this.globalData.yanyubao_server_url + 'openapi/FaquanData/get_faquan_setting',
+			url: this.globalData.yanyubao_server_url + '/openapi/FaquanData/get_faquan_setting',
 			method: 'post',
 			data: {
 				sellerid: this.globalData.default_sellerid
@@ -1002,7 +980,7 @@ module.exports = {
 			var that = this;
 			
 			uni.request({
-				url: this.globalData.yanyubao_server_url + '?g=Yanyubao&m=ShopAppWxa&a=one_click_login_str',
+				url: this.globalData.yanyubao_server_url + '/?g=Yanyubao&m=ShopAppWxa&a=one_click_login_str',
 				method: 'post',
 				data: {
 				  sellerid: this.get_sellerid(),
@@ -1083,18 +1061,72 @@ module.exports = {
    
 			}
    
-		} else if ((url.indexOf('http://') == 0)||(url.indexOf('https://') == 0)) {
+		} 
+		else if ((url.indexOf('http://') == 0)
+			||(url.indexOf('https://') == 0)
+			||(url.indexOf('/hybrid/html/') == 0)) {
+				
+			console.log('abotapi.js call_h5browser_or_other_goto_url ==>> 准备跳转网址：'+url);
+			
+			if((this.globalData.current_platform == 'mp-weixin')
+				||(this.globalData.current_platform == 'mp-baidu')
+				||(this.globalData.current_platform == 'mp-alipay')){
+				//如果是小程序平台的本地hybrid请求
+				if(url.indexOf('/hybrid/html/') == 0){
+					uni.showToast({
+						title:'不合法本地路径'
+					})
+					
+					return;
+				}
+				
+				
+				var is_domain_in_allow_list = false;
+				
+				if(!this.globalData.option_list.wxa_domain_allow_list){
+					is_domain_in_allow_list = true;
+				}
+				else{
+					for(var ii=0; ii<this.globalData.option_list.wxa_domain_allow_list.length; ii++){
+						if(url.indexOf(this.globalData.option_list.wxa_domain_allow_list[ii]) == 0){
+							is_domain_in_allow_list = true;
+							break;
+						}
+					}
+				}
+				
+				if(!is_domain_in_allow_list){
+					uni.setClipboardData({
+						data: url,
+						success: function () {
+						    console.log('小程序中将链接复制到剪切板');
+							
+							uni.showToast({
+								title:'链接已经复制'
+							})
+						}
+					})
+					
+					return;
+				}
+				
+			}
+			
+			var new_url = '/pages/h5browser/h5browser?url=' + encodeURIComponent(url);
+			if(ret_page){
+				new_url +=  '&ret_page=' + ret_page;
+			}
 			
 			if (url.indexOf('#redirectTo') != -1){
 				//如果指定了跳转方式为 #redirectTo
 				url = url.replace(/#redirectTo/, '');
 				uni.redirectTo({
-				  url: '/pages/h5browser/h5browser?url=' + encodeURIComponent(url) + '&ret_page=' + ret_page,
+					url: new_url,
 				})
 			}
 			else{
 				uni.navigateTo({
-					url: '/pages/h5browser/h5browser?url=' + encodeURIComponent(url) + '&ret_page=' + ret_page,
+					url: new_url,
 				})
 			}
 		}

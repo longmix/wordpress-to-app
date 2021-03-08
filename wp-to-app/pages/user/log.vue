@@ -116,7 +116,7 @@
 				var balance = this.current_balance_type;
 				var userInfo = this.abotapi.get_user_info();
 				this.abotapi.abotRequest({
-					url: this.abotapi.globalData.yanyubao_server_url + 'index.php/openapi/UserData/user_balance_list',
+					url: this.abotapi.globalData.yanyubao_server_url + '/index.php/openapi/UserData/user_balance_list',
 					method: 'post',
 					data: {
 						sellerid: that.abotapi.globalData.default_sellerid,
@@ -167,7 +167,7 @@
 				var balance = this.current_balance_type;
 				var userInfo = this.abotapi.get_user_info();
 				this.abotapi.abotRequest({
-					url: this.abotapi.globalData.yanyubao_server_url + 'index.php/openapi/UserData/user_balance_tag_list',
+					url: this.abotapi.globalData.yanyubao_server_url + '/index.php/openapi/UserData/user_balance_tag_list',
 					method: 'post',
 					data: {
 						sellerid: that.abotapi.globalData.default_sellerid,

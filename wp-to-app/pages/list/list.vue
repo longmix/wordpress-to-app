@@ -32,7 +32,7 @@
 
 		<view class="container">
 			<view class="showerror" v-if="!fetch_list">
-				<image src="../../static/img/index/cry80.png" style="height:100upx;width:100upx"></image>
+				<image src="../../static/img/index/smile.png" style="height:100upx;width:100upx"></image>
 
 				<view class="errortext">
 					列表数据加载中……
@@ -99,6 +99,121 @@
 				copyright_text:''
 			}
 		},
+		onLoad: function (options) {
+			console.log("options",options);
+			
+			var that = this;
+			that.categoriesList = options;
+			
+			//设置标题
+			if(that.categoriesList.categoryName){
+				uni.setNavigationBarTitle({
+					title:that.categoriesList.categoryName,
+				});
+			}
+			
+			if (that.categoriesList.categoryID && that.categoriesList.categoryID != 0) {
+				that.categoriesId = that.categoriesList.categoryID;
+				
+				that.categorySrc = that.categoriesList.categorySrc;
+				
+				that.isCategoryPage = "block"
+				
+				that.fetchCategoriesData();
+				
+				
+				
+		    }
+			else if (that.categoriesList.search && that.categoriesList.search != '') {
+				console.log(1111111);
+				that.search = that.categoriesList.search;
+				that.isSearchPage = "block";
+				that.searchKey = that.categoriesList.search;
+				
+				that.fetchPostsData();
+				
+				uni.setNavigationBarTitle({
+					title: "搜索关键字："+that.categoriesList.search,
+				});
+		    }
+			else if(that.categoriesList.categorySlug){
+				//根据分类的别名，获取分类的ID，然后再请求
+				this.abotapi.abotRequest({
+				    url:that.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/categories',
+				    method: 'get',
+				    data:{
+						slug:that.categoriesList.categorySlug,						
+				    	sellerid:that.abotapi.globalData.default_sellerid,
+				    },
+				    success(res) {
+						console.log('categories slug ====>>>>', res.data);
+						
+						if(res.data){
+							var cataItem = res.data[0];
+							
+							console.log('categories slug ====>>>>', cataItem);
+							
+							that.categoriesList.categoryID = cataItem['id'];
+							that.categoriesList.categoryName = cataItem['name'];
+							that.categoriesList.categorySrc = cataItem['category_thumbnail_image'];
+							that.categoriesList.categoryDescription = cataItem['description'];
+							
+							uni.setNavigationBarTitle({
+								title: that.categoriesList.categoryName,
+							});
+							
+							
+							that.categoriesId = that.categoriesList.categoryID;							
+							that.categorySrc = that.categoriesList.categorySrc;							
+							that.isCategoryPage = "block";
+							
+							that.fetchCategoriesData();
+							
+							//设置百度小程序中的页面SEO信息
+							// #ifdef MP-BAIDU
+								swan.setPageInfo({
+									title: that.categoriesList.categoryName,
+									keywords: that.categoriesList.categoryName,
+									description: that.categoriesList.categoryDescription,
+									articleTitle: that.categoriesList.categoryName,
+									releaseDate: res.data.mp_baidu_seo_releaseDate,
+									image: [that.categoriesList.categorySrc],
+									video: [],
+									visit: {},
+									likes: '75',
+									comments: '13',
+									collects: '23',
+									shares: '8',
+									followers: '35',
+									success: res => {
+										console.log('setPageInfo success');
+									},
+									fail: err => {
+										console.log('setPageInfo fail', err);
+									}
+								});
+							// #endif			
+							
+							
+						}
+						
+					},
+				    fail: function (e) {
+						uni.showToast({
+							title: '网络异常！',
+							duration: 2000
+						});
+				    },
+				});
+			}
+			
+			if(!this.categorySrc){
+				this.categorySrc = '../../static/img/usercenter/vip.jpg';
+			}
+			
+			this.abotapi.set_option_list_str(this, this.callback_function);
+			
+		},
 
 		reload:function(e){
 			var that = this;
@@ -143,7 +258,7 @@
 			if(this.is_OK){
 				that.page = page;
 				uni.showToast({
-					title: '暂无数据',
+					title: '到底啦~',
 					duration: 2000
 				});
 				return;
@@ -151,7 +266,7 @@
 			if(that.search){
 				that.isSearchPage = 'block';
 				this.abotapi.abotRequest({
-				    url:this.abotapi.globalData.weiduke_server_url+'openapi/Wordpress/restapi/wp-json/wp/v2/posts',
+				    url:this.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/posts',
 				    method: 'get',
 				    data:{
 						search:that.search,
@@ -195,7 +310,7 @@
 			}else if(that.categoriesId){
 				that.isSearchPage = 'none';
 				this.abotapi.abotRequest({
-				    url:this.abotapi.globalData.weiduke_server_url+'openapi/Wordpress/restapi/wp-json/wp/v2/posts',
+				    url:this.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/posts',
 				    method: 'get',
 				    data:{
 						categories:that.categoriesId,
@@ -238,51 +353,7 @@
 				});
 			}
 			
-		},
-		
-		
-		onLoad: function (options) {
-			console.log("options",options);
-			
-			var that = this;
-			that.categoriesList = options;
-			
-			if (that.categoriesList.categoryID && that.categoriesList.categoryID != 0) {
-				that.categoriesId = that.categoriesList.categoryID;
-				
-				that.categorySrc = that.categoriesList.categorySrc;
-				
-				that.isCategoryPage = "block"
-				
-				that.fetchCategoriesData();
-				
-				uni.setNavigationBarTitle({
-					title:that.categoriesList.categoryName,
-				});
-				
-		    }else if (that.categoriesList.search && that.categoriesList.search != '') {
-				console.log(1111111);
-				that.search = that.categoriesList.search;
-				that.isSearchPage = "block";
-				that.searchKey = that.categoriesList.search;
-				
-				that.fetchPostsData();
-				
-				uni.setNavigationBarTitle({
-					title: "搜索关键字："+that.categoriesList.search,
-				});
-		    }
-			
-			if(!this.categorySrc){
-				this.categorySrc = '../../static/img/usercenter/vip.jpg';
-			}
-			
-			this.abotapi.set_option_list_str(this, this.callback_function);
-			
-		},
-	  
-	  
-	  
+		},	  
 		methods:{
 			//获取网站基础信息配置项
 			callback_function:function(that, cb_params){
@@ -341,7 +412,7 @@
 				console.log(2222222);
 				console.log(that.search);
 				this.abotapi.abotRequest({
-					url:this.abotapi.globalData.weiduke_server_url+'openapi/Wordpress/restapi/wp-json/wp/v2/posts',
+					url:this.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/posts',
 					method: 'get',
 					data:{
 						search:that.search,
@@ -391,7 +462,7 @@
 			   console.log(that.categorySrc);
 			   
 			   this.abotapi.abotRequest({
-					url:this.abotapi.globalData.weiduke_server_url+'openapi/Wordpress/restapi/wp-json/wp/v2/posts',
+					url:this.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/posts',
 					method: 'get',
 					data:{
 						categories:that.categoriesId,

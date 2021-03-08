@@ -1,24 +1,29 @@
 <template>
 	<view class="content">
 		<view class="index-header">
-		    <swiper class="index-swiper"    
-				circular="true" 
-				autoplay="true" 
-				@change="swiperChange" 
-				:style="{height:current_imgheight + 'px'}"
-				indicator-dots="true" 
+		    
+			
+			<swiper circular="true" autoplay="true" 
+				@change="swiperChange"
+				class="index-swiper"
+				:style="{height:swiper_box_height + 'px'} "
+				indicator-dots="true"
 				interval="2000"
 				indicator-color="rgba(255, 255, 255, .2)" 
-				indicator-active-color="rgba(255, 255, 255, .7)" >
-				<swiper-item v-for="(item, index)  in roll_picture_list" :key="index" @click="onNavRedirect(roll_picture_list[index].url)">   
-				<!-- :id="item.id" :data-redicttype="item.type" :data-appid="item.appid" :data-url="item.url" @tap="redictAppDetail()" -->
-					<image @load="imageLoad($event)"  :src="item.image" mode="widthFix">
+				indicator-active-color="rgba(255, 255, 255, .7)">
+				<swiper-item v-for="(swiper, index) in roll_picture_list" :key="swiper.id" @click="onNavRedirect(roll_picture_list[index].url)">
+					<image class="img_swiper" @load="imageLoad($event)" 
+						 :style="{height:swiper_img_heights[currentSwiper] + 'px'} "
+						:data-id='index' :src="swiper.image" mode="widthFix"></image>
 					<view class="swiper-mask"></view>
 					<view class="swiper-desc">
-						<text>{{item.name}}</text>
+						<text>{{swiper.name}}</text>
 					</view>
 				</swiper-item>
-		    </swiper>
+			</swiper>
+			
+			
+			
 		</view>
 
 		<view class="index-main">
@@ -69,8 +74,13 @@
 							<view class="txt-h">{{item.name}}</view>
 				 </view> -->
 				 
-				 <view class="mid-img" v-for="(item,index) in module_icon_list" :key="index">
-				  <view class="head1":style="{'border-left-color':item.left_color}">{{item.name}}</view>
+		    </view>
+			
+			
+			<!-- 显示功能模块列表 -->
+			<view class="container">
+				<view class="mid-img" v-for="(item, index) in module_icon_list" :key="item.index">
+				  <view class="head1" :style="{'border-left-color':item.left_color}">{{item.name}}</view>
 					<view class="icn-con" v-for="item2 in item.subs" :key="item2.index" 
 						:data-plugin_flag="item2.plugin_flag"
 						:data-plugin_name="item2.plugin_name"
@@ -94,13 +104,13 @@
 						<view class="txt-h">h5商城</view>
 					</view> -->
 					
-				 </view>
-				 
-				 
-		    </view>
+				</view>
+				
+			</view>
 			
-			<view class="container">
+			
 			<!-- 加载图文列表 -->
+			<view class="container">
 				<view class="index-container">
 					<view class="common-list" v-if="fetch_list">
 						<block >
@@ -132,6 +142,11 @@
 					</view>
 			    </view>
 			</view>
+			
+			
+			
+			
+			
 		    
 		</view>
 		
@@ -175,13 +190,19 @@
 				roll_picture_list:'',
 				pingpu_picture_list:'',
 				
-				imgheights:[],
-				current_imgheight:0,
+				// 轮播图片
+				currentSwiper: 0,
+				swiper_img_heights: [],
+				swiper_box_height:100,
+				
+				
+				
 				per_page:10,
 				page:1,
-				current:0,
+				
 				fetch_list:'',
 				is_OK:false,
+				
 				wxa_shop_new_name:'',
 				aboutus_pageid:'',
 				index_icon_list:'',
@@ -208,116 +229,6 @@
 		},
 		
 		
-		//点击分享
-		onShareAppMessage: function () {
-			//var share_title = '' + config.getWebsiteName + '：一个专注软件开发的小程序！';
-			var share_title = '';
-			
-			console.log('11111111111111111111====>>>', this.all_option_list);
-			
-			if(this.all_option_list.wxa_share_title){
-				share_title = this.all_option_list.wxa_share_title;
-			}
-			
-			var imageUrl = null;
-			if(this.all_option_list.wxa_share_img){
-				imageUrl = this.all_option_list.wxa_share_img;
-			}
-			
-			return {
-				//title: '“' + config.getWebsiteName+'”网站微信小程序,基于WordPress版小程序构建.技术支持：www.watch-life.net',
-				title: share_title,
-				imageUrl:imageUrl,
-				path: '/pages/index/index',
-				success: function (res) {
-					// 转发成功
-				},
-				fail: function (res) {
-					// 转发失败
-				}
-			}
-		},
-		
-		
-		onReady:function () {
-			
-		},
-		
-		
-		//下拉刷新
-		onPullDownRefresh: function () {
-			var that = this;
-			that.page=0;
-			
-			uni.removeStorageSync('wordpress_data_list_str');
-			this.abotapi.set_option_list_str(this, this.callback_function);
-			
-			uni.removeStorageSync('module_icon_list_cache');
-			//获取功能图标
-			this.get_yanyubao_module_list_for_tseo_cn()
-			
-			setTimeout(function () {
-				uni.stopPullDownRefresh();  //停止下拉刷新动画
-			}, 1500);
-		},
-		  
-		  
-		//触底方法
-		onReachBottom: function () {
-			if(this.hidden_article_list_in_front_page){
-				return;
-			}
-			
-			
-			var that = this;
-
-			// var that = this;
-			if(this.is_OK){
-				that.page = page;
-				return;
-			}
-			
-			that.page++;
-			console.log('page',that.page);
-			
-			this.abotapi.abotRequest({
-			    url:this.abotapi.globalData.weiduke_server_url+'openapi/Wordpress/restapi/wp-json/wp/v2/posts',
-			    method: 'get',
-			    data:{
-					per_page:that.per_page,
-					page:that.page,
-					orderby:'date',
-					order:'desc',
-			    	sellerid:this.abotapi.globalData.default_sellerid,
-			    },
-				
-			    success(res) {
-			    	
-					if(!res.data.code){
-						
-						that.is_OK = false;
-						that.fetch_list = that.fetch_list.concat(res.data);
-						console.log('超过一页',that.fetch_list)
-						
-						//得到数据后停止下拉刷新
-						uni.stopPullDownRefresh();
-						
-					} else {
-						
-						that.is_OK = true;
-						return;
-						
-					}
-			    },
-			    fail: function (e) {
-					uni.showToast({
-						title: '网络异常！',
-						duration: 2000
-					});
-			    },
-			});
-		},
-		  
 		  
 		onLoad: function (options) {
 			
@@ -365,9 +276,150 @@
 			uni.setStorageSync('openLinkCount', 0);
 		
 		},
+		onReady:function () {
+			
+		},
 		
+		
+		//下拉刷新
+		onPullDownRefresh: function () {
+			var that = this;
+			that.page=0;
+			
+			uni.removeStorageSync('wordpress_data_list_str');
+			this.abotapi.set_option_list_str(this, this.callback_function);
+			
+			uni.removeStorageSync('module_icon_list_cache');
+			//获取功能图标
+			this.get_yanyubao_module_list_for_tseo_cn()
+			
+			setTimeout(function () {
+				uni.stopPullDownRefresh();  //停止下拉刷新动画
+			}, 1500);
+		},
+		  
+		  
+		//触底方法
+		onReachBottom: function () {
+			if(this.hidden_article_list_in_front_page == 1){
+				return;
+			}
+			
+			
+			var that = this;
+
+			// var that = this;
+			if(this.is_OK){
+				that.page = page;
+				return;
+			}
+			
+			that.page++;
+			console.log('page',that.page);
+			
+			this.abotapi.abotRequest({
+			    url:this.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/posts',
+			    method: 'get',
+			    data:{
+					per_page:that.per_page,
+					page:that.page,
+					orderby:'date',
+					order:'desc',
+			    	sellerid:this.abotapi.globalData.default_sellerid,
+			    },
+				
+			    success(res) {
+			    	
+					if(!res.data.code){
+						
+						that.is_OK = false;
+						that.fetch_list = that.fetch_list.concat(res.data);
+						console.log('超过一页',that.fetch_list)
+						
+						//得到数据后停止下拉刷新
+						uni.stopPullDownRefresh();
+						
+					} else {
+						
+						that.is_OK = true;
+						return;
+						
+					}
+			    },
+			    fail: function (e) {
+					uni.showToast({
+						title: '网络异常！',
+						duration: 2000
+					});
+			    },
+			});
+		},
+		
+		
+		
+		
+		//点击分享
+		onShareAppMessage: function () {
+			//var share_title = '' + config.getWebsiteName + '：一个专注软件开发的小程序！';
+			var share_title = '';
+			
+			console.log('11111111111111111111====>>>', this.all_option_list);
+			
+			if(this.all_option_list.wxa_share_title){
+				share_title = this.all_option_list.wxa_share_title;
+			}
+			
+			var imageUrl = null;
+			if(this.all_option_list.wxa_share_img){
+				imageUrl = this.all_option_list.wxa_share_img;
+			}
+			
+			return {
+				//title: '“' + config.getWebsiteName+'”网站微信小程序,基于WordPress版小程序构建.技术支持：www.watch-life.net',
+				title: share_title,
+				imageUrl:imageUrl,
+				path: '/pages/index/index',
+				success: function (res) {
+					// 转发成功
+				},
+				fail: function (res) {
+					// 转发失败
+				}
+			}
+		},
+		
+		onShareTimeline: function () {
+			return this.share_return();
+		},
+		onAddToFavorites: function () {
+			return this.share_return();
+		},
 		
 		methods: {
+			share_return: function() {
+				
+				var share_title = '';
+				
+				console.log('11111111111111111111====>>>', this.all_option_list);
+				
+				if(this.all_option_list.wxa_share_title){
+					share_title = this.all_option_list.wxa_share_title;
+				}
+				
+				var imageUrl = null;
+				if(this.all_option_list.wxa_share_img){
+					imageUrl = this.all_option_list.wxa_share_img;
+				}
+				
+				
+				var share_path = 'sellerid=' + this.abotapi.get_sellerid();
+								
+				return {
+					title: share_title,
+					query: share_path,
+					imageUrl: imageUrl,
+				}
+			},
 			
 			//获取网站基础信息配置项
 			callback_function:function(that, cb_params){
@@ -382,6 +434,7 @@
 				if(cb_params.shutdown_website_status == 1){
 					//跳转到网站关闭的提示页面
 					console.log("???????????");
+					
 					uni.reLaunch({
 						url:'/pages/shutdown_website/shutdown_website'
 					})
@@ -519,6 +572,37 @@
 				}
 				
 				
+				//设置百度小程序中的页面SEO信息
+				// #ifdef MP-BAIDU
+					swan.setPageInfo({
+						title: cb_params.wxa_share_title,
+						keywords: cb_params.wxa_share_keywords,
+						description: cb_params.wxa_share_description,
+						articleTitle: cb_params.wxa_share_title,
+						releaseDate: cb_params.wxa_share_datetime,
+						image: [cb_params.wxa_share_img],
+						video: [],
+						visit: {},
+						likes: '75',
+						comments: '13',
+						collects: '23',
+						shares: '8',
+						followers: '35',
+						success: res => {
+							console.log('setPageInfo success');
+						},
+						fail: err => {
+							console.log('setPageInfo fail', err);
+						}
+					});
+				// #endif				
+				
+				
+				
+				
+				
+				
+				
 				that.fetchPostsData();
 			},
 			
@@ -572,7 +656,7 @@
 				console.log("11111111");
 				var that = this;
 				this.abotapi.abotRequest({
-				    url:this.abotapi.globalData.yanyubao_server_url+'Yanyubao/ShopApp/get_shop_icon_list',
+				    url:this.abotapi.globalData.yanyubao_server_url + '/Yanyubao/ShopApp/get_shop_icon_list',
 				    method: 'post',
 				    data:{
 						icon_type:that.navigation_icon,
@@ -646,45 +730,40 @@
 			
 			//获取图片真实宽度  
 			imageLoad: function(e) {
-				console.log("e",e);
-			    var imgwidth = e.detail.width;
+				var imgwidth = e.detail.width;
 				var imgheight = e.detail.height;
-				//宽高比  
+				  //宽高比  
 				var ratio = imgwidth / imgheight;
-				console.log('imgwidth==>>',imgwidth);
-				console.log('imgheight==>',imgheight);
-				console.log('ratio==',ratio);
-				//return;
 				
-				console.log("windowWidth", this.windowWidth);
-				console.log("windowWidth", uni.upx2px(this.windowWidth));
+				console.log('imageLoad id===>>> '+e.target.dataset.id +'实际大小：');
+				console.log(imgwidth, imgheight)
 				
 				//计算的高度值  
-				var viewHeight = this.windowWidth / ratio;
+				var imgheight = (this.windowWidth * 0.92)/ ratio;
 				
+				console.log('imageLoad id===>>> '+e.target.dataset.id +'显示大小：');
+				console.log(this.windowWidth * 0.92, imgheight)
 				
-				//this.current_imgheight = uni.upx2px(viewHeight); //  this.windowHeight 本身就是像素
-				this.current_imgheight = viewHeight;
+				var imgheights = this.swiper_img_heights;
 				
-				console.log("viewHeight",viewHeight);
-				console.log("viewHeight",this.current_imgheight);
+				console.log('sdhsdshjdsk',imgheights);
 				
-				return;
+				//把每一张图片的对应的高度记录到数组里  
+				//imgheights[e.target.dataset.id] = uni.upx2px(imgheight);
+				imgheights[e.target.dataset.id] = imgheight;
 				
-			    var imgheight = viewHeight;
-				
-			    var imgheights = this.imgheights;
-			    //把每一张图片的对应的高度记录到数组里  
-			    imgheights[e.target.dataset.id] = uni.upx2px(imgheight);
-				this.imgheights = imgheights
-				console.log('this.imgheights',this.imgheights);
+				this.swiper_box_height = imgheight;
+					
+				console.log('imageLoad id===>>> '+e.target.dataset.id +", imgheights====>>>", imgheights);		
+					
+				this.swiper_img_heights = imgheights
 				
 				
 			},
 			
 			//获取文章列表
 			fetchPostsData:function(){
-				if(this.hidden_article_list_in_front_page){
+				if(this.hidden_article_list_in_front_page == 1){
 					return;
 				}
 				
@@ -695,7 +774,7 @@
 				}
 				
 				this.abotapi.abotRequest({
-				    url:this.abotapi.globalData.weiduke_server_url+'openapi/Wordpress/restapi/wp-json/wp/v2/posts',
+				    url:this.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/posts',
 				    method: 'get',
 				    data:{
 						per_page:this.per_page,
@@ -740,84 +819,83 @@
 				
 				
 			},
-        //调用接口
-        get_yanyubao_module_list_for_tseo_cn:function(){
-        	console.log('jun')
 			
-			if(this.abotapi.globalData.show_yanyubao_module_list != 1){
-				return;
-			}
-			
-			var that = this;
-			
-			var module_icon_list = uni.getStorageSync('module_icon_list_cache');
-			
-			//console.log('module_icon_list===',module_icon_list)
-			
-			if(module_icon_list){
+			//调用接口
+			get_yanyubao_module_list_for_tseo_cn:function(){
+				console.log('jun')
+				
+				
+				
+				if(this.abotapi.globalData.show_yanyubao_module_list != 1){
+					return;
+				}
+				
+				var that = this;
+				
+				var module_icon_list = uni.getStorageSync('module_icon_list_cache');
+				
 				//console.log('module_icon_list===',module_icon_list)
 				
-				that.module_icon_list = module_icon_list;
-				return;
-			}
-			
-			
-        	
-        	this.abotapi.abotRequest({
-        	    url:that.abotapi.globalData.yanyubao_server_url+'Supplier/Login/show_yanyubao_module_list_for_tseo_cn',
-        	    method: 'get',
-        	    data:{
-        	
-        	    },
-        		
-        	    success(res) {
-        	    	console.log("jiangjun",res)
+				if(module_icon_list){
+					//console.log('module_icon_list===',module_icon_list)
 					
-					if(res.data.code == 1){
-						var data = res.data.data;
-						//缓存数据
-						uni.setStorageSync('module_icon_list_cache', data);
-						 
-						 
-						that.module_icon_list = data
-					}
-        	
-        	    },
-        	    fail: function (e) {
-        			uni.showToast({
-        				title: '网络异常！',
-        				duration: 2000
-        			});
-        	    },
-        	});
-        },
-		//模态弹窗事件
-		block_tanchuang:function(e){
-			
-			console.log('block_tanchuang=======>>>>>', e);
-			
-			var plugin_flag = e.currentTarget.dataset.plugin_flag;
-			
-			if(plugin_flag && (plugin_flag == 1) ){
-				var plugin_name = e.currentTarget.dataset.plugin_name;
-				var plugin_desc_basic = e.currentTarget.dataset.plugin_desc_basic;
+					that.module_icon_list = module_icon_list;
+					return;
+				}
 				
-				uni.showModal({
-				    title: plugin_name,
-				    content: plugin_desc_basic,
-					showCancel: false,
-				    success: function (res) {
-				        
-				    }
+				
+				
+				this.abotapi.abotRequest({
+					url:that.abotapi.globalData.yanyubao_server_url + '/Supplier/Login/show_yanyubao_module_list_for_tseo_cn',
+					method: 'get',
+					data:{
+				
+					},
+					
+					success(res) {
+						console.log("jiangjun",res)
+						
+						if(res.data.code == 1){
+							var data = res.data.data;
+							//缓存数据
+							uni.setStorageSync('module_icon_list_cache', data);
+							 
+							 
+							that.module_icon_list = data
+						}
+				
+					},
+					fail: function (e) {
+						uni.showToast({
+							title: '网络异常！',
+							duration: 2000
+						});
+					},
 				});
+			},
+			//模态弹窗事件
+			block_tanchuang:function(e){
+			
+				console.log('block_tanchuang=======>>>>>', e);
+				
+				var plugin_flag = e.currentTarget.dataset.plugin_flag;
+				
+				if(plugin_flag && (plugin_flag == 1) ){
+					var plugin_name = e.currentTarget.dataset.plugin_name;
+					var plugin_desc_basic = e.currentTarget.dataset.plugin_desc_basic;
+					
+					uni.showModal({
+						title: plugin_name,
+						content: plugin_desc_basic,
+						showCancel: false,
+						success: function (res) {
+							
+						}
+					});
+				}
+				
 			}
-			
-			
-			
-			
-			  
-		}
-	},
+		},
 	}
 </script>
 

@@ -99,7 +99,7 @@
 				})
 				return;
 			}
-			console.log(this.abotapi.globalData.yanyubao_server_url+'0100000')
+			console.log('userinfo onLoad 0100000')
 		},
 		
 		methods: {
@@ -163,7 +163,7 @@
 				var that = this;
 				if(userInfo && userInfo.userid){
 					this.abotapi.abotRequest({
-						url: this.abotapi.globalData.yanyubao_server_url + '?g=Yanyubao&m=ShopAppWxa&a=get_user_info',
+						url: this.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=ShopAppWxa&a=get_user_info',
 						data: {
 							sellerid: this.abotapi.globalData.default_sellerid,
 							checkstr: userInfo.checkstr,
@@ -208,7 +208,7 @@
 						var headimgurl = chooseImageRes.tempFilePaths[0];
 						//上传头像文件
 						uni.uploadFile({
-							url: that.abotapi.globalData.yanyubao_server_url + '?g=Yanyubao&m=ShopAppWxa&a=upload_image_file',
+							url: that.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=ShopAppWxa&a=upload_image_file',
 							filePath: headimgurl,
 							name: 'file',
 							formData: {
@@ -224,7 +224,7 @@
 								if(obj.code == 1){
 									//更新头像文件
 									this.abotapi.abotRequest({
-										url: that.abotapi.globalData.yanyubao_server_url + '?g=Yanyubao&m=ShopAppWxa&a=set_image_headimgurl', 
+										url: that.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=ShopAppWxa&a=set_image_headimgurl', 
 										data: {
 											sellerid: that.abotapi.globalData.default_sellerid,
 											checkstr: userInfo.checkstr,

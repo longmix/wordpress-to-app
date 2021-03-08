@@ -176,7 +176,7 @@
 				}
 				
 				this.abotapi.abotRequest({
-				    url:this.abotapi.globalData.weiduke_server_url+'openapi/Wordpress/restapi/wp-json/wp/v2/pages/'+that.current_pageid,
+				    url:this.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/pages/'+that.current_pageid,
 				    method: 'get',
 				    data:{
 				    	sellerid:this.abotapi.globalData.default_sellerid,
