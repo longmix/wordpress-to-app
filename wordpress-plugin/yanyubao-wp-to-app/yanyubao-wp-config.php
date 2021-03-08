@@ -51,9 +51,13 @@ function wp_to_app_settings_page() {
          -->    
 
         <tr valign="top">
-        <th scope="row">文章分类默认封面</th>
-        <td><input type="text" name="yanyubao_category_default_cover" style="width:600px" value="<?php echo esc_attr( get_option('yanyubao_category_default_cover') ); ?>" />
-        <br/>请输完整的图片地址，例如：<span style="color: blue">https://yanyubao.tseo.cn/Tpl/static/images/module_list_icon/jfzs.png</span></td>
+        	<th scope="row">文章分类默认封面</th>
+        	<td><input type="text" name="yanyubao_category_default_cover" style="width:600px" value="<?php echo esc_attr( get_option('yanyubao_category_default_cover') ); ?>" />
+        		<br />请输完整的图片地址，例如：<span style="color: blue">http://www.tseo.cn/wp-content/uploads/2019/12/Tu_Pian_1.png</span>
+        		<br />在“设置后台>>文章>>分类目录”中，编辑具体某个分类，“APP封面”字段中分别定义文章分类封面。</span>
+        		<br />如果文章中没有图片，显示在文章列表中的图片也是这里设置的封面。</span>
+        		<br />封面尺寸没有具体要求，只要宽高比例统一即可，建议400*400，或者500*300像素。</span>
+        	</td>
         </tr>
         
         <!-- 
@@ -62,6 +66,32 @@ function wp_to_app_settings_page() {
         <td><input type="text" name="wf_poster_imageurl" style="width:600px" value="<?php echo esc_attr( get_option('wf_poster_imageurl') ); ?>" />
         <br/>(请输完整的图片地址,例如:<span style="color: blue">https://www.watch-life.net/images/2017/06/winxinapp-wordpress-watch-life-new-700.jpg</span>)</td>
         </tr> -->
+        
+        <tr valign="top">
+        	<th scope="row">微信小程序SEO</th>
+        	<td>微信小程序的SEO入口为sitemap.json，小程序源代码中已经集成了格式化完成的站点导航设置，不建议修改。
+        	</td>
+        </tr>
+        
+        <tr valign="top">
+        	<th scope="row">百度小程序SEO</th>
+        	<td>百度小程序的SEO，除了在站长平台做Web页面与小程序页面的映射关系之外，每个页面如果提交了setPageInfo信息，效果会更好。
+        		<br />文章页面设置setPageInfo信息，需要做在文章编辑页面，设置“自定义栏目”，名称和值如下：
+        		<br><br>
+        		<div><b>mp_baidu_seo_articleTitle</b>：<i>文章【内容】标题（适用于当前页面是图文、视频类的展示形式，文章标题需要准确标识当前文章的主要信息点；至少 6 个字，不可以全英文。）。</i>
+        			<br><b>mp_baidu_seo_releaseDate</b>：<i>原始发布时间（年-月-日 时:分:秒 带有前导零），如：2010-07-01 16:30:30。不填写默认为文章发布时间。</i>
+        			<br><b>mp_baidu_seo_image</b>：<i>图片线上地址，用于信息流/搜索等流量场景分发、用户收藏后的页面封面显示，展现时有图片可提升用户点击率。最多设置 3 张，图片必须为页面内图片。单张图片最大 2M ；封面图尺寸：宽>=375px ，高>=250px ，图片宽高比例 3：2 为佳，不是这个尺寸百度APP会自动裁剪。多张图的网址用空格分开。</i>
+        			<br><b>mp_baidu_seo_video</b>：<i>当前页面包含视频信息时 video 为必填字段。如果有视频，请这样填写<pre>[{
+                url: 'https://www.baidu.com/mx/v12.mp4',
+                duration: '100',
+                image: 'https://ms-static.cdn.bcebos.com/miniappdocs/img/image-scaleToFill.png'
+            }]。</pre>   url为视频网址，duration为视频时长（单位：秒），image为视频封面网址。</i>
+        			<br>
+        			<br>以上字段如果不填写，不影响正常的内容展示。
+        		</div>
+        	</td>
+        </tr>
+        
                
     </table>
     
@@ -99,7 +129,7 @@ add_filter('rest_allow_anonymous_comments','abot_wp2app_set_rest_allow_anonymous
 // 自定义文章输出的字段
 
 //获取文章的缩略图，评论数目，分类名称
-add_filter( 'rest_prepare_post', 'abot_wp2app_custom_fields_rest_prepare_post', 10, 3 );
+add_filter('rest_prepare_post', 'abot_wp2app_custom_fields_rest_prepare_post', 10, 3 );
 
 //在rest api 增加显示字段
 function abot_wp2app_custom_fields_rest_prepare_post( $data, $post, $request) {
@@ -110,7 +140,7 @@ function abot_wp2app_custom_fields_rest_prepare_post( $data, $post, $request) {
 	//$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
 	$post_id =$post->ID;
 
-	$content =get_the_content();
+	$content = get_the_content();
 	 
 	$siteurl = get_option('siteurl');
 	$upload_dir = wp_upload_dir();
@@ -121,6 +151,7 @@ function abot_wp2app_custom_fields_rest_prepare_post( $data, $post, $request) {
 	//$_data['siteurl']=$content;
 
 	$images = abot_wp2app_getPostImages($content, $post_id);
+	
 	$_data['post_thumbnail_image']=$images['post_thumbnail_image'];
 	$_data['content_first_image']=$images['content_first_image'];
 	//$_data['content_first_image11111']=$images['content_first_image'];
@@ -168,12 +199,15 @@ function abot_wp2app_custom_fields_rest_prepare_post( $data, $post, $request) {
     	//unset($_data['excerpt']);
     }
 
-    		//去除html标签
+    //去除html标签
 	$_data['excerpt']['rendered'] = preg_replace( "/<\/?[^>]+>/i", '', $_data['excerpt']['rendered']);
 
-	$category_id=$category[0]->term_id;
+	$category_id = $category[0]->term_id;
+	
 	$next_post = get_next_post($category_id, '', 'category');
+	
 	$previous_post = get_previous_post($category_id, '', 'category');
+	
 	$_data['next_post_id'] = !empty($next_post->ID)?$next_post->ID:null;
 	$_data['next_post_title'] = !empty($next_post->post_title)?$next_post->post_title:null;
 	$_data['previous_post_id'] = !empty($previous_post->ID)?$previous_post->ID:null;
@@ -181,8 +215,65 @@ function abot_wp2app_custom_fields_rest_prepare_post( $data, $post, $request) {
 	
 	
 	$_data['date_to_show'] = date('Y-m-d', strtotime($_data['date']));
+	
+	
+	
 
-	 
+	//==== 2021.2.20. 补充几个SEO相关的参数 ====
+	$seo_keywords = get_post_meta($post_id, 'keywords', true);
+	if(!$seo_keywords){
+		$seo_keywords = $_data['title']['rendered'];
+	}
+	$seo_description = get_post_meta($post_id, 'description', true);
+	if(!$seo_description){
+		$seo_description = $_data['excerpt']['rendered'];
+	}
+	
+	$_data['seo_keywords'] = $seo_keywords;
+	$_data['seo_description'] = $seo_description;
+	$_data['seo_datetime'] = date('Y-m-d H:i:s', strtotime($_data['date']));
+	
+	//百度小程序优化相关
+	
+	$_data['mp_baidu_seo_articleTitle'] = get_post_meta($post_id, 'mp_baidu_seo_articleTitle', true);
+	if(!$_data['mp_baidu_seo_articleTitle']){
+		$_data['mp_baidu_seo_articleTitle'] = $_data['title']['rendered'];
+	}
+	
+	$_data['mp_baidu_seo_releaseDate'] = get_post_meta($post_id, 'mp_baidu_seo_releaseDate', true);
+	if(!$_data['mp_baidu_seo_releaseDate']){
+		$_data['mp_baidu_seo_releaseDate'] = $_data['seo_datetime'];
+	}
+	
+	//图片列表
+	$_data['mp_baidu_seo_image'] = get_post_meta($post_id, 'mp_baidu_seo_image', true);
+	if(strlen($_data['mp_baidu_seo_image']) < 10){
+		$_data['mp_baidu_seo_image'] = array($_data['post_thumbnail_image']);
+	}
+	else{
+		//将空格分开的URL转为数组
+		$temp_list = explode(' ', $_data['mp_baidu_seo_image']);
+		
+		$_data['mp_baidu_seo_image'] = array();
+		
+		foreach ($temp_list as $temp_item){
+			$_data['mp_baidu_seo_image'][] = $temp_item;
+		}
+	}
+	
+	$_data['mp_baidu_seo_video'] = get_post_meta($post_id, 'mp_baidu_seo_video', true);
+	if(strlen($_data['mp_baidu_seo_video']) < 10){
+		$_data['mp_baidu_seo_video'] = array();
+	}
+	else{		
+		$_data['mp_baidu_seo_video'] = json_decode($_data['mp_baidu_seo_video'], true);
+		
+		$_data['mp_baidu_seo_video'] = array();
+	}
+	//============= End ==============
+	
+	
+	/* 
 	unset($_data['featured_media']);
 	unset($_data['format']);
 	unset($_data['ping_status']);
@@ -191,6 +282,7 @@ function abot_wp2app_custom_fields_rest_prepare_post( $data, $post, $request) {
 			//unset($_data['slug']);
 	unset($_data['modified_gmt']);
 	unset($_data['date_gmt']);
+	
 	unset($_data['meta']);
 	unset($_data['guid']);
 	unset($_data['curies']);
@@ -198,7 +290,7 @@ function abot_wp2app_custom_fields_rest_prepare_post( $data, $post, $request) {
 	unset($_data['status']);
 	unset($_data['comment_status']);
 	unset($_data['sticky']);
-	unset($_data['author']);
+	unset($_data['author']);*/
 
 	$data->data = $_data;
 
@@ -209,7 +301,7 @@ function abot_wp2app_custom_fields_rest_prepare_post( $data, $post, $request) {
 //======扩展REST API接口返回的对象的属性==
 // 自定义评论输出的字段
 
-add_filter( 'rest_prepare_comment', 'abot_wp2app_custom_fields_rest_prepare_comment', 10, 3 );
+add_filter('rest_prepare_comment', 'abot_wp2app_custom_fields_rest_prepare_comment', 10, 3 );
 //在rest api 增加显示字段
 function abot_wp2app_custom_fields_rest_prepare_comment( $data, $comment, $request) {
 
@@ -260,7 +352,7 @@ function abot_wp2app_custom_fields_rest_prepare_comment( $data, $comment, $reque
 // 设置分类的微信小程序封面，同时给REST API返回的分类对象增加属性 category_thumbnail_image
 
 //获取分类的封面图片
-add_filter( 'rest_prepare_category', 'abot_wp2app_custom_fields_rest_prepare_category', 10, 3 );
+add_filter('rest_prepare_category', 'abot_wp2app_custom_fields_rest_prepare_category', 10, 3 );
 
 function abot_wp2app_custom_fields_rest_prepare_category( $data, $item, $request ) {
 	
@@ -273,7 +365,7 @@ function abot_wp2app_custom_fields_rest_prepare_category( $data, $item, $request
 	if (!$category_thumbnail_image){
 		$category_thumbnail_image = get_option('yanyubao_category_default_cover');
 		if (!$category_thumbnail_image){
-			$category_thumbnail_image = 'https://yanyubao.tseo.cn/Tpl/static/images/module_list_icon/jfzs.png';
+			$category_thumbnail_image = 'http://www.tseo.cn/wp-content/uploads/2019/12/Tu_Pian_1.png';
 		}
 	}
 
@@ -334,6 +426,7 @@ function wp2app_app_save_term_catcover( $term_id ) {
  */
 
 //禁止在rest api里显示用户列表
+/*
 add_filter( 'rest_endpoints', function( $endpoints ){
 	if ( isset( $endpoints['/wp/v2/users'] ) ) {
 		unset( $endpoints['/wp/v2/users'] );
@@ -343,7 +436,7 @@ add_filter( 'rest_endpoints', function( $endpoints ){
 	}
 	return $endpoints;
 });
-
+*/
 
 
 

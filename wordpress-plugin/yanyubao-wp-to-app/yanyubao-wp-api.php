@@ -40,6 +40,8 @@ function abot_wp2app_getPostImages($post_content,$post_id){
     {
         $content_first_image='';
     }
+    
+    
 
     $post_thumbnail_image_150='';
     $post_medium_image_300='';
@@ -86,7 +88,30 @@ function abot_wp2app_getPostImages($post_content,$post_id){
     else
     {
         $post_thumbnail_image='';
-    }   
+    }
+    
+    //设置 图片的 默认值
+    if(strlen($post_thumbnail_image) == 0){
+    	
+    	$category_thumbnail_image = get_option('yanyubao_category_default_cover');
+    	if (!$category_thumbnail_image){
+    		$category_thumbnail_image = 'http://www.tseo.cn/wp-content/uploads/2019/12/Tu_Pian_1.png';
+    	}
+    	
+    	$post_thumbnail_image = $category_thumbnail_image;
+    }
+    if(strlen($content_first_image) == 0){
+    	
+    	$category_thumbnail_image = get_option('yanyubao_category_default_cover');
+    	if (!$category_thumbnail_image){
+    		$category_thumbnail_image = 'http://www.tseo.cn/wp-content/uploads/2019/12/Tu_Pian_1.png';
+    	}
+    	
+    	$content_first_image = $category_thumbnail_image;
+    }
+    
+    
+    
 
     if(strlen($post_medium_image_300)>0)
     {
@@ -114,6 +139,8 @@ function abot_wp2app_getPostImages($post_content,$post_id){
     		$_data[$key] = 'http:'.$value;
     	}
     }
+    
+    
     
     return  $_data;
 }
