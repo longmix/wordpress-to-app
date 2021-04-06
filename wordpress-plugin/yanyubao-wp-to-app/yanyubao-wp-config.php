@@ -170,6 +170,23 @@ function abot_wp2app_custom_fields_rest_prepare_post( $data, $post, $request) {
 	 $_content['rendered'] =$content;
 	 $_data['content']= $_content;
 	 */
+	
+	
+	//2021.4.1. 将文章内容转成纯文本
+	$_data['content_text'] = strip_tags($content);
+	$_data['content_text'] = str_replace(array('&nbsp;'), array(''), $_data['content_text']);
+	
+	//2021.4.1. 标签ID转成名称
+	$_data['tags_name'] = array();
+	foreach ($_data['tags'] as $ttt){
+		$t2 = get_tag($ttt);
+		if($t2){
+			$_data['tags_name'][] = $t2->name;
+		}
+		
+	}
+	
+	
 
 
 	$like_count = $wpdb->get_var("SELECT COUNT(1) FROM ".$wpdb->postmeta." where meta_value='like' and post_id=".$post_id);
