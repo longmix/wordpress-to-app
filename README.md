@@ -1,11 +1,12 @@
-# wordpress-to-app
-Wordpress网站转APP和小程序
+# Wordpress网站转APP和小程序
+
+本项目旨在将Wordpress网站转成原生的APP和小程序项目，而不是通过简单粗暴的H5套用。同时，集成了一些会员登录和会员卡的功能，避免了与移动端浏览器相同的用户体验，极大提高了提高苹果应用商店和微信小程序、百度智能小程序的审核通过率。
 
 
-# 项目概况
+## 项目概况
 
 
-## 项目主页
+### 项目主页
 
 项目的设置和使用说明发布在这里：
 
@@ -14,7 +15,7 @@ Wordpress网站转APP和小程序
 需要注册才能查看，使用手机号码登录即可。
 
 
-## 最新代码
+### 最新代码
 
 最新的代码发布在Github上，喜欢记得点个小星星！
 
@@ -26,14 +27,14 @@ Wordpress网站转APP和小程序
 [https://ext.dcloud.net.cn/plugin?id=1542](https://ext.dcloud.net.cn/plugin?id=1542)
 
 
-## 问题与交流
+### 问题与交流
 
 使用上的问题和疑问，请用微信扫码查看其他开发者的提问和回复记录，也可以在文章末尾写留言。
 
 <img src="http://www.tseo.cn/wp-content/uploads/2020/04/9be115d08294dd9f1eb588d52d662dde.png" width="150px">
 
 
-## 主要升级记录
+### 主要升级记录
 
 **2020.3.6.**
 
@@ -73,9 +74,9 @@ Wordpress网站转APP和小程序
 
 
 
-# 项目设置说明
+## 项目设置说明
 
-## 服务器：设置说明
+### 服务器：设置说明
 
 1、**下载Wordpress插件**，包括“WP转APP和小程序”和“WP-PostViews”两个插件，并在后台启用，
 
@@ -105,7 +106,7 @@ Wordpress网站转APP和小程序
 [http://www.abot.cn/627.html](http://www.abot.cn/627.html)，所以对于开发者来说，属于傻瓜文档！
 
 
-## 源代码：自定义开发和重新编译
+### 源代码：自定义开发和重新编译
 
 
 1、**下载项目源代码：**
@@ -116,14 +117,14 @@ Wordpress网站转APP和小程序
 
 3、**修改配置：**
 
-（1）【必改】打开common/abotapi.js，如下图所示：
+（1）【必改】打开项目根目录下的 abot_data.js，如下图所示：
 
 > 修改 default_sellerid 为自己的延誉宝商户编号；
 修改xiaochengxu_appid为自己的小程序appid；
 修改current_platform为当前要发布的平台名称，可以设置的值有： app， h5， mp-weixin，  mp-alipay，   mp-baidu。
 
 
-![源代码修改](http://www.tseo.cn/wp-content/uploads/2020/03/TIM_Jie_Tu_20200331145423.png)
+![源代码修改](http://www.abot.cn/wp-content/themes/abotcn/uploads/2021/04/202104140916377859.png)
 
 （2）【选改】在项目根目录下，打开pages.json，
 
@@ -133,9 +134,9 @@ _备注：微信小程序、百度智能小程序、支付宝小程序对应的a
 
 4、**通过 HBuilder X将项目导入到不同的小程序开发环境中编译并提交发布。**
 
-# 链接设置说明
+## 链接设置说明
 
-## 小程序内链接设置
+### 小程序内链接设置
 
 跳转文章列表  /pages/list/list?categoryID=1234，categoryID为分类ID，可以在Wordpress网站后台找到。
 
@@ -154,7 +155,7 @@ _备注：微信小程序、百度智能小程序、支付宝小程序对应的a
 “关于”页面  switchTab pages/tabBar/about/about，需要增加 switchTab，没有其他特殊要求。
 
 
-## Tab页面和非Tab页面跳转
+### Tab页面和非Tab页面跳转
 
 如果页面被tabBar包含，那么跳转的时候，需要指定，具体格式为：
 
@@ -174,7 +175,7 @@ _navigateTo [pagepath]_
 用空格分开，navigateTo跳转的页面，可以带参数，参数放在“?”后面。
 
 
-## 跳转到H5页面链接设置
+### 跳转到H5页面链接设置
 
 跳转到H5页面，直接填写https://开头的网址，需要说明的是，对应的域名必须是在小程序登记的业务域名中，否则无法显示页面。
 
@@ -195,7 +196,7 @@ http链接中支持的变量有：%oneclicklogin%， %ensellerid%，  %wxa_appid
 如果是在APP中引用延誉宝的H5，请在页面网址中增加参数“hidden_nav_header_h5=1”以达到隐藏的目的。
 
 
-## 跳转到其他小程序链接设置
+### 跳转到其他小程序链接设置
 
 跳转到其他小程序，使用填写以下格式：
 
@@ -217,9 +218,13 @@ _ miniprogram [url] [appid] [pagepath] [extraData]_
 项目设置 &gt;&gt;小程序版本控制。[如果已经登录，点击这里设置](http://cms.weiduke.com/User/WechatThirdMiniProgram/wxa_version_ctrl.shtml)。
 
 
-# 在线预览
+## 在线预览
 
 ![在线预览](http://saas.tseo.cn/staticsvc/uploads/2020/03/26/21945247ab3e1e5df10c8daaec620f993352.jpg)
+
+### 更多关于此项目的案例请参考下图
+
+![在线预览](http://www.abot.cn/wp-content/themes/abotcn/uploads/2020/08/202008280733442920.png)
 
 
 # 常见问题（FAQ）
