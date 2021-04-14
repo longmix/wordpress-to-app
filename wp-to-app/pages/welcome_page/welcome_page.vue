@@ -399,7 +399,7 @@ export default {
 		    var lookid = e.currentTarget.dataset.procuctid;
 		    console.log(lookid);
 		    uni.navigateTo({
-		      url: "../index/detail?id=" + lookid.id
+		      url: "../wordpress/detail?id=" + lookid.id
 		    })
 		  },
 		  

@@ -66,7 +66,9 @@
 				wxa_shop_new_name:'',
 				copyright_text:'',
 				cata_topic_list_type:0,
-				cata_topic_list:null
+				cata_topic_list:null,
+				
+				all_option_list:null,
 				
 			}
 		},
@@ -97,6 +99,10 @@
 				//====1、更新界面的颜色
 				that.abotapi.getColor();
 				
+				
+				that.all_option_list = cb_params;
+				
+				
 				if(cb_params.cata_topic_list_type && (cb_params.cata_topic_list_type == 1)){
 					//that.cata_topic_list_type = 1;
 					
@@ -118,8 +124,71 @@
 			
 		},
 		
+		//分享文章
+		onShareAppMessage: function () {
+			var share_title = '';
+			
+			console.log('11111111111111111111====>>>', this.all_option_list);
+			
+			if(this.all_option_list.wxa_share_title){
+				share_title = this.all_option_list.wxa_share_title;
+			}
+			
+			var imageUrl = null;
+			if(this.all_option_list.wxa_share_img){
+				imageUrl = this.all_option_list.wxa_share_img;
+			}
+			
+			return {
+				//title: '“' + config.getWebsiteName+'”网站微信小程序,基于WordPress版小程序构建.技术支持：www.watch-life.net',
+				title: share_title,
+				imageUrl:imageUrl,
+				path: '/pages/index/index',
+				success: function (res) {
+					// 转发成功
+				},
+				fail: function (res) {
+					// 转发失败
+				}
+			}
+			
+			
+		},
+		
+		onShareTimeline: function () {
+			return this.share_return();
+		},
+		onAddToFavorites: function () {
+			return this.share_return();
+		},
+		
 		
 		methods:{
+			share_return: function() {
+				
+				var share_title = '';
+				
+				console.log('11111111111111111111====>>>', this.all_option_list);
+				
+				if(this.all_option_list.wxa_share_title){
+					share_title = this.all_option_list.wxa_share_title;
+				}
+				
+				var imageUrl = null;
+				if(this.all_option_list.wxa_share_img){
+					imageUrl = this.all_option_list.wxa_share_img;
+				}
+				
+				
+				var share_path = 'sellerid=' + this.abotapi.get_sellerid();
+								
+				return {
+					title: share_title,
+					query: share_path,
+					imageUrl: imageUrl,
+				}
+			},
+			
 			//获取网站基础信息配置项
 			callback_function:function(that, cb_params){
 				
@@ -245,7 +314,7 @@
 			redictIndex:function(e){
 				console.log("redictIndex e ===>>> ", e);
 				
-				var new_url = '/pages/list/list?';
+				var new_url = '/pages/wordpress/list?';
 				
 				//new_url += 'categoryID='+e.target.dataset.id;
 				//new_url += '&categorySrc='+e.target.dataset.src+'&categoryName='+e.target.dataset.name+'&categoryDescription'+e.target.dataset.description;

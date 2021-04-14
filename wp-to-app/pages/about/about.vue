@@ -1,23 +1,26 @@
 <template>
 
 	<view class="container" ><!-- :style="{display:display}" -->
-		<view class="header">
-		    <image :src="wxa_shop_operation_logo_url" style="width:10%;margin:0 3%" mode="widthFix"></image>
-		    <view class="headerTitle">
+	
+		<view class="header" style="display:none;">
+			<image :src="wxa_shop_operation_logo_url" style="width:10%;margin:0 3%" mode="widthFix"></image>
+			<view class="headerTitle">
 				{{article_title}}
 			</view>
 		</view>
-		
-		<view class="wrapper">
-						
-			<view class="excerpt">
-<!-- #ifdef MP-ALIPAY -->
-				<rich-text :nodes="article_content"></rich-text>
-<!-- #endif -->				
-<!-- #ifndef MP-ALIPAY -->
-				<rich-text :nodes="article_content|formatRichText"></rich-text>
-<!-- #endif -->	
-			</view>
+	
+	
+		<contentList :article_title="article_title"
+					:content_html="index_rich_html_content"
+					:content_v_html="article_content_html"
+					:content_array_html="article_content_array"
+					:attr_list="attr_list" />
+		</contentList>
+			
+			
+			
+				
+			
 			
 			<!-- #ifdef MP-WEIXIN -->	
 			
@@ -35,9 +38,9 @@
 					<button class="payonline-button" formType="submit" size="mini" @tap="payonline">微信支付宝转账</button>
 				</view>
 			</view>
-			<!-- #endif -->
+			<!-- #endif --> 
 			
-		</view>
+
 		<view class="copyright">
 			<view>{{copyright_text}}</view>
 		</view>
@@ -50,10 +53,12 @@
 	import parseHtml from "../../common/html-parser.js"
 // #endif	
 	
-
+	import contentList from '../../components/wp-article-detail.vue'
+	
 	export default {
 		components: {
 			//uParse
+			contentList
 		},
 		data() {
 			return {
@@ -64,13 +69,22 @@
 				
 				current_pageid:0,
 				
-				dialog:'',
 				wxa_shop_new_name:'',
 				copyright_text:'',
 				wxa_shop_operation_logo_url:'',
 				
 				article_title:'',
-				article_content:'',
+				
+				//v-html使用
+				article_content_html:'',				
+				//rich-text使用
+				article_content_array:null,
+				//uparse使用
+				index_rich_html_content:'<h1></h1>',
+				
+				
+				article_detail:'',
+				attr_list:''
 			}
 		},
 		
@@ -100,8 +114,8 @@
 		onShareAppMessage: function () {
 			return {
 		        //title: '关于“' + config.getWebsiteName +'”官方小程序',
-		        title: this.dialog.title.rendered,
-		        path: '/pages/about/about?id='+this.dialog.id,
+		        title: this.article_detail.title.rendered,
+		        path: '/pages/about/about?id='+this.article_detail.id,
 		        success: function (res) {
 					// 转发成功
 					uni.showToast({
@@ -200,24 +214,29 @@
 							res.data.title.rendered.replace(/&#8211;/g, '——');
 						}
 						
-						that.dialog = res.data;
+						that.article_detail = res.data;
 						
 						that.article_title = res.data.title.rendered;
-						that.article_content = res.data.content.rendered;
+						
+						
+						
+						//uparse使用
+						that.index_rich_html_content = res.data.content.rendered;
+						
+						
+						//v-html使用
+						that.article_content_html = res.data.content.rendered;
 						
 						
 // #ifdef MP-ALIPAY
 						
-						
 						const filter = that.$options.filters["formatRichText"];
-						that.article_content = filter(that.article_content);
+						that.article_content_array = filter(that.index_rich_html_content);
 						
-						//that.article_content = that.article_content.replace(/width="[^"]+"/gi, '').replace(/width='[^']+'/gi, '');
-						
-						console.log('that.article_content====>>>>', that.article_content);
+						console.log('that.article_content====>>>>', that.article_content_array);
 						
 						
-						let data001 = that.article_content;
+						let data001 = that.article_content_array;
 						let newArr = [];
 						let arr = parseHtml(data001);
 						arr.forEach((item, index)=>{
@@ -227,13 +246,9 @@
 						console.log('arr arr arr====>>>>', arr);
 						//console.log('newArr newArr newArr====>>>>', newArr);
 						
-						that.article_content = newArr;
+						that.article_content_array = newArr;
 
 // #endif
-						
-						
-						//console.log(res.data.title.rendered)
-						//console.log(res.data.content.rendered)
 						
 						
 				    },

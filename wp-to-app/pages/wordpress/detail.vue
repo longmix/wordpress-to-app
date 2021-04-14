@@ -1,49 +1,22 @@
 <template>
 	<view class="container">
-		<view class="content-article-detail">   <!-- :style="{display:display}" -->
-			<view class="entry-title">{{article_title}}</view>
-			<view class="entry-date">		
-	            <image src="../../static/img/index/calendar.png" style="height:24upx;width:24upx;"></image>
-				<text class="entry-date-text">{{detail.date_to_show}}</text>
-				<block ><!-- v-if="detail.category_name != null" -->
-					<image src="../../static/img/index/category.png" style="height:24upx;width:24upx;margin-left: 20upx;"></image>
-					<text class="entry-icon-text">{{detail.category_name}}</text>
-				</block>
-				<image src="../../static/img/index/comments.png" style="height:24upx;width:24upx;margin-left: 20upx;"></image>
-				<text class="entry-icon-text">{{detail.total_comments}}</text>
-				<image src="../../static/img/index/pageviews.png" style="height:24upx;width:24upx;margin-left: 20upx;"></image>
-				<text class="entry-icon-text">{{detail.pageviews}}</text>
-				<image src="../../static/img/index/home-like.png" style="height:24upx;width:24upx;margin-left: 20upx;"></image>
-				<text class="entry-icon-text">{{detail.like_count}}</text>
-	        </view>
-				
-			<view class="entry-summary">
-<!-- #ifdef MP-ALIPAY -->
-				<rich-text :nodes="article_content_array"></rich-text>
-<!-- #endif -->
-
-<!-- #ifdef H5 -->
-				<view v-html="article_content_html" ></view>
-<!-- #endif -->
-
-<!-- #ifndef MP-ALIPAY | H5 -->
-				<!-- 富媒体组件 2021.1.18. -->
-				<!-- rich-text  和 v-html 都有各自的优缺点 -->
-				<u-parse v-if="index_rich_html_content" 
-					:content="index_rich_html_content" 
-					@preview="index_rich_html_preview_image" 
-					@navigate="index_rich_html_click_link" />
-<!-- #endif -->
-			</view>
-		</view>
+		<contentList :article_title="article_title"					
+					:content_html="index_rich_html_content"
+					:content_v_html="article_content_html"
+					:content_array_html="article_content_array"
+					:attr_list="detail" />
+		</contentList>
+		
+		
+		
 		
 		<!--  上一篇，下一篇  -->
 		<view class="pagination" v-if="show_more_article == 1">
 			<view v-if="detail.previous_post_id" class="nav-previous">
-				<navigator :url="'../index/detail?id='+detail.previous_post_id" open-type="redirect" hover-class="relatedNavigator">←{{detail.previous_post_title}}</navigator>
+				<navigator :url="'../wordpress/detail?id='+detail.previous_post_id" open-type="redirect" hover-class="relatedNavigator">←{{detail.previous_post_title}}</navigator>
 			</view>
 			<view v-if="detail.next_post_id" class="nav-next">
-				<navigator :url="'../index/detail?id='+detail.next_post_id" open-type="redirect" hover-class="relatedNavigator">{{detail.next_post_title}}→</navigator>
+				<navigator :url="'../wordpress/detail?id='+detail.next_post_id" open-type="redirect" hover-class="relatedNavigator">{{detail.next_post_title}}→</navigator>
 			</view>
 		</view>
 		
@@ -60,7 +33,7 @@
 			<view class="relatedText">
 				<block v-if="related_post_list != null">
 					<block v-for="(postList1, index)  in related_post_list" :key="index">
-						<navigator :url="'../index/detail?id='+postList1.id" open-type="redirect" hover-class="relatedNavigator">{{index+1}} - {{postList1.title.rendered}}</navigator>
+						<navigator :url="'../wordpress/detail?id='+postList1.id" open-type="redirect" hover-class="relatedNavigator">{{index+1}} - {{postList1.title.rendered}}</navigator>
 					</block>
 				</block>
 				<block v-else>
@@ -84,7 +57,7 @@
 			</view>
 	
 			<view class="likeTitle-img">
-				<image src="../../static/img/index/home-like.png" class="img-like" id="liketop" @catchtap="clickLike"></image>
+				<image src="../../static/wp-article-img/home-like.png" class="img-like" id="liketop" @catchtap="clickLike"></image>
 			</view>
 			<view class="likeText">
 				<block v-for="(likeList1,index2) in likeList" :key="index2">
@@ -157,7 +130,7 @@
 									@focus="onRepleyFocus"
 									cursor-spacing="10" maxlength="100" name="inputComment" 
 									:value="input_comment_content" 
-									:placeholder="placeholder" 
+									:placeholder="placeholder"
 									:focus="focus" 
 									 />
 								<button class="comment-button touch-active" formType="submit">发送</button>
@@ -214,14 +187,14 @@
 												<view class="cu-dialog">
 													<view class="bg-img">
 														<view style="padding: 60upx;">
-															<view class="action" @tap="hideModal">
+															<view class="action" @tap="hideRichTextModal">
 																<!--<image :src="targetName=='6'? wp_zanshang_shoukuan_img_url:poster_url" mode="widthFix"></image>-->
 																<image :src="targetSrc" mode="widthFix"></image>
 															</view>
 														</view>
 													</view>
 													<view class="cu-bar bg-white">
-														<view class="action margin-0 flex-sub text-green solid-left" @tap="hideModal">取消</view>
+														<view class="action margin-0 flex-sub text-green solid-left" @tap="hideRichTextModal">取消</view>
 														<view class="action margin-0 flex-sub  solid-left" @tap="getPhoto">保存</view>
 													</view>
 												</view>
@@ -240,18 +213,21 @@
 </template>
 
 <script>
-	//import uParse from '../../components/gaoyia-parse/parse.vue';
-// #ifdef MP-ALIPAY 
-	import parseHtml from "../../common/html-parser.js"
-// #endif	
+	
+	// #ifdef MP-ALIPAY
+		import parseHtml from "../../common/html-parser.js"
+	// #endif	
 
-	import uParse from '@/components/gaoyia-parse/parse.vue'
+	import contentList from '../../components/wp-article-detail.vue'
 	
 	var current_post_id;
 	var userInfo;
+	
 	export default {
+		
 		components: {
-			uParse
+			contentList
+			
 		},
 		data() {
 			return {
@@ -420,7 +396,7 @@
 		        //title: '关于“' + config.getWebsiteName +'”官方小程序',
 		        title: this.detail.title.rendered,
 				imageUrl: this.detail.content_first_image,
-		        path: '/pages/index/detail?id=' + this.detail.id,
+		        path: '/pages/wordpress/detail?id=' + this.detail.id,
 		        success: function (res) {
 					// 转发成功
 					uni.showToast({
@@ -606,14 +582,14 @@
 // #endif							
 							
 							
+							//uparse使用
+							that.index_rich_html_content = res.data.content.rendered;
+							
 							
 							//v-html使用
 							that.article_content_html = res.data.content.rendered;
 							
-							//uparse使用
-							that.index_rich_html_content = res.data.content.rendered;
-							
-							console.log('that.article_content_html====>>>>', that.article_content_html);
+							//console.log('that.article_content_html====>>>>111', that.article_content_html);
 							
 							const filter = that.$options.filters["formatRichText"];
 							that.article_content_html = filter(that.article_content_html);
@@ -697,7 +673,7 @@
 						content: '请先登录',
 						showCancel:false,
 						success(res){
-							var last_url = '/pages/index/detail?id='+that.current_post_id;
+							var last_url = '/pages/wordpress/detail?id='+that.current_post_id;
 							that.abotapi.goto_user_login(last_url,'normal');
 							return;
 						}
@@ -779,7 +755,16 @@
 			//复制链接
 			copyLink: function (e) {
 				console.log("e==>>",e);
+				
+				
+				// #ifdef MP-BAIDU
+					return;
+				// #endif
+				
+				
 				this.ShowHideMenu();
+				
+				
 				uni.setClipboardData({
 					data: e.target.dataset.url,
 					success: function (res) {
@@ -794,6 +779,9 @@
 						})
 					}
 				})
+				
+				
+				
 			},
 			
 			
@@ -809,7 +797,7 @@
 						content: '请先登录',
 						showCancel:false,
 						success(res){
-							var last_url2 = '/pages/index/detail?id='+that.current_post_id;
+							var last_url2 = '/pages/wordpress/detail?id='+that.current_post_id;
 							
 							that.abotapi.goto_user_login(last_url2,'normal');
 							
@@ -1025,7 +1013,7 @@
 			},
 			
 			//取消模态弹框
-			hideModal:function(e) {
+			hideRichTextModal:function(e) {
 				this.modalName = null
 				this.targetName = null
 				this.targetSrc = '';
@@ -1102,15 +1090,20 @@
 			//2021.2.17. 富媒体 链接点击事件
 			//富媒体 图片被点击
 			index_rich_html_preview_image:function(img_src, e){
-				console.log('index_rich_html_preview_image====>>>>>', img_src);
-				console.log('index_rich_html_preview_image====>>>>>', e);
+				console.log('99999999999>>>>>', img_src);
+				console.log('88888888888>>>>>', e);
 			},
 			
 			//富媒体 链接点击事件
 			index_rich_html_click_link:function(new_url, e){
 				
-				console.log('index_rich_html_click_link====>>>>>', new_url);
-				console.log('index_rich_html_click_link====>>>>>', e);
+				console.log('99999999999>>>>>', new_url);
+				console.log('88888888888>>>>>', e);
+				
+				// #ifdef MP-BAIDU
+					console.log('index_rich_html_click_link====>>>>>百度小程序不做任何处理');
+					return;
+				// #endif
 				
 				this.abotapi.call_h5browser_or_other_goto_url(new_url);
 				
@@ -1168,10 +1161,7 @@
 
 <style>
 	
-	.content-article-detail {
-	  border-bottom: 5upx solid #eee;
-	  margin-bottom: 50upx;
-	}
+	
 	
 	.article_content_p_css{
 		margin:40rpx;
@@ -1201,15 +1191,7 @@
 	}
 	
 	
-	.entry-title {
-	  font-size: 36rpx;
-	  line-height: 60rpx;
-	  font-weight: bold;
-	  outline: none;
-	  color: #3a4040;
-	  margin-bottom: 24upx;
-	  padding:25rpx;
-	}
+	
 	
 	.entry-gap-like {
 	  width: 120upx;
@@ -1224,11 +1206,7 @@
 	  margin-bottom: 32upx;
 	}
 	
-	.entry-summary {
-	  font-size: 32upx;
-	  line-height: 64upx;
-	  letter-spacing: 2upx;
-	}
+	
 	
 	.entry-summary image {
 	  width: 100% !important;
@@ -1238,23 +1216,11 @@
 		line-height: 1.9;
 	}
 	
-	.entry-date {
-	  font-size: 24upx;
-	  line-height: 1.6;
-	  color: #959595;
-	  font-weight: normal;
-	  outline: none;
-	  margin-bottom: 30upx;
-	  border-bottom:5upx solid #eee;
-	}
 	
-	.entry-date-text {
-	  margin-left: 10upx;
-	}
 	
-	.entry-icon-text {
-	  margin-left: 10upx;
-	}
+	
+	
+
 
 	.commentheader {
 	  padding: 20upx 0;

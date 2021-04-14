@@ -12,26 +12,26 @@
 		"backgroundColor": "#ffffff",
 		"list": [{
 				"pagePath": "pages/index/index",
-				"iconPath": "static/img/index/tar-home.png",
-				"selectedIconPath": "static/img/index/tar-home-on.png",
+				"iconPath": "static/wp-article-img/tar-home.png",
+				"selectedIconPath": "static/wp-article-img/tar-home-on.png",
 				"text": "首页"
 			},
 			{
-				"pagePath": "pages/topic/topic",
-				"iconPath": "static/img/index/tar-topic.png",
-				"selectedIconPath": "static/img/index/tar-topic-on.png",
+				"pagePath": "pages/wordpress/topic",
+				"iconPath": "static/wp-article-img/tar-topic.png",
+				"selectedIconPath": "static/wp-article-img/tar-topic-on.png",
 				"text": "分类"
 			},
 			{
 				"pagePath": "pages/usercenter/usercenter",
-				"iconPath": "static/img/index/tar-person.png",
-				"selectedIconPath": "static/img/index/tar-person-on.png",
+				"iconPath": "static/wp-article-img/tar-person.png",
+				"selectedIconPath": "static/wp-article-img/tar-person-on.png",
 				"text": "我的"
 			},
 			{
 				"pagePath": "pages/about/about",
-				"iconPath": "static/img/index/tar-about.png",
-				"selectedIconPath": "static/img/index/tar-about-on.png",
+				"iconPath": "static/wp-article-img/tar-about.png",
+				"selectedIconPath": "static/wp-article-img/tar-about-on.png",
 				"text": "关于"
 			}
 		]
@@ -46,14 +46,14 @@
 			}
 		}
 	    ,{	//文章详情页
-            "path" : "pages/index/detail",
+            "path" : "pages/wordpress/detail",
             "style" : {
 				"backgroundTextStyle":"dark",
 				"enablePullDownRefresh": true
 			}
         },
 		{	//'关于'页面
-		    "path" : "pages/index/page",
+		    "path" : "pages/wordpress/page",
 		    "style" : {
 				"backgroundTextStyle":"dark",
 				"enablePullDownRefresh": true
@@ -119,7 +119,7 @@
 			}
 		}
 		,{	//'专题'页面
-		    "path" : "pages/topic/topic",
+		    "path" : "pages/wordpress/topic",
 		    "style" : {
 				"backgroundTextStyle":"dark",
 				"enablePullDownRefresh": true
@@ -159,7 +159,7 @@
 			}
 		},
 		{	//文章列表页
-		    "path" : "pages/list/list",
+		    "path" : "pages/wordpress/list",
 		    "style" : {
 				"backgroundTextStyle":"dark",
 				"enablePullDownRefresh": true

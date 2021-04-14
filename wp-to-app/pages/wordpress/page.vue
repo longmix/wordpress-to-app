@@ -114,7 +114,30 @@
 			}
 		},
 		
+		onShareTimeline: function () {
+			return this.share_return();
+		},
+		onAddToFavorites: function () {
+			return this.share_return();
+		},
+		
 		methods: {
+			share_return: function() {
+				
+				var share_title = this.detail.title.rendered;
+				
+				//var imageUrl = this.detail.content_first_image;				
+				var imageUrl = this.all_option_list.wxa_share_img;
+				
+				var share_path = 'id=' + this.detail.id;
+								
+				return {
+					title: share_title,
+					query: share_path,
+					imageUrl: imageUrl,
+				}
+			},
+			
 			//获取网站基础信息配置项
 			callback_function:function(that, cb_params){
 				

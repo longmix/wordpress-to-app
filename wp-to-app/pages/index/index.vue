@@ -95,12 +95,12 @@
 					
 					
 					<!-- <view class="icn-con">
-						<image class="img-h" src="../../static/img/index/calendar.png"></image>
+						<image class="img-h" src="../../static/wp-article-img/calendar.png"></image>
 						<view class="txt-h">h5商城</view>
 					</view>
 					
 					<view class="icn-con">
-						<image class="img-h" src="../../static/img/index/calendar.png"></image>
+						<image class="img-h" src="../../static/wp-article-img/calendar.png"></image>
 						<view class="txt-h">h5商城</view>
 					</view> -->
 					
@@ -110,31 +110,16 @@
 			
 			
 			<!-- 加载图文列表 -->
+			
 			<view class="container">
 				<view class="index-container">
-					<view class="common-list" v-if="fetch_list">
-						<block >
-							<view class="list-item has-img" :index="index" :key="index" v-for="(item3,index) in fetch_list" :id="item3.id" @tap="redictDetail">
-								<view class="content-title">
-									<text>{{item3.title.rendered}}</text>
-								</view>
-								<view class="content-date">
-									<image src="../../static/img/index/calendar.png"></image>
-									<text>{{item3.date_to_show}}</text>
-									<image src="../../static/img/index/comments.png"></image>
-									<text class="">{{item3.total_comments}}</text>
-									<image src="../../static/img/index/pageviews.png"></image>
-									<text class="">{{item3.pageviews}}</text>
-									<image src="../../static/img/index/home-like.png"></image>
-									<text class="">{{item3.like_count}}</text>        
-								</view>
-								<image :src="item3.post_thumbnail_image" mode="aspectFill" class="cover"></image>
-							</view>
-						</block>
-					</view>
+					<!-- 文章列表-->
+					<fetchList :articleList="fetch_list"
+								@redictDetail="redictDetail">
+					</fetchList>
 			
 			        <view class="loadingmore" v-if="is_OK">
-			            <view class="no-more">-暂无文章-</view>
+			            <view class="no-more">~ 你问我海底有多深 这里就是我的心 ~</view>
 			        </view>
 					
 					<view class="copyright" v-if="is_OK">
@@ -181,7 +166,14 @@
 </template>
 
 <script>
+	import fetchList from '../../components/wp-article-list.vue'
+	
+	
 	export default {
+		components:{
+			fetchList
+		},
+		
 		data() {
 			return {
 				roll_picture:'',
@@ -268,6 +260,7 @@
 			}, 2000);
 			
 			this.abotapi.set_option_list_str(this, this.callback_function);
+			
 		},
 		
 		
@@ -627,7 +620,7 @@
 			
 			//输入搜索值
 			formSubmit: function (e) {
-				var url = '/pages/list/list'
+				var url = '/pages/wordpress/list'
 				var key ='';
 				if (e.currentTarget.id =="search-input"){
 					key = e.detail.value;
@@ -691,7 +684,7 @@
 				}
 				
 				this.abotapi.abotRequest({
-				    url:this.abotapi.globalData.yanyubao_server_url+'Yanyubao/ShopApp/get_shop_ad_image_list',
+				    url:this.abotapi.globalData.yanyubao_server_url+'/Yanyubao/ShopApp/get_shop_ad_image_list',
 				    method: 'post',
 				    data:{
 						ad_type:pic_type_id,
@@ -807,11 +800,11 @@
 			
 			
 			// 跳转至查看文章详情
-			redictDetail: function (e) {
-				// console.log('查看文章');
-				var id = e.currentTarget.id;
+			redictDetail: function (item) {
+				 console.log('查看文章');
+				var id = item.id;
 				
-				var url = '/pages/index/detail?id=' + id;
+				var url = '/pages/wordpress/detail?id=' + id;
 				
 				uni.navigateTo({
 					url: url
@@ -834,7 +827,11 @@
 				
 				var module_icon_list = uni.getStorageSync('module_icon_list_cache');
 				
-				//console.log('module_icon_list===',module_icon_list)
+				console.log('module_icon_list===',module_icon_list)
+				
+				
+				
+				
 				
 				if(module_icon_list){
 					//console.log('module_icon_list===',module_icon_list)
@@ -856,12 +853,46 @@
 						console.log("jiangjun",res)
 						
 						if(res.data.code == 1){
-							var data = res.data.data;
+							var module_icon_list = res.data.data;
+														 
+							
+							// #ifdef MP-BAIDU
+							
+							//====== 过滤掉没有描述的模块 Begin ======
+							for(let i=0; i<module_icon_list.length; i++){
+								
+								console.log('aaaa===>>>>', module_icon_list[i]['subs']);
+								
+								for(let j=0; j<module_icon_list[i]['subs'].length; j++){
+									
+									//console.log('bbbb===>>>>', module_icon_list[i]['subs'][j]);
+									//console.log('cccc===>>>>', module_icon_list[i]['subs'][j]['plugin_flag']);
+								
+									if(module_icon_list[i]['subs'][j] && !module_icon_list[i]['subs'][j]['plugin_flag']){
+										
+										console.log('ddddd===>>>>', module_icon_list[i]['subs'][j]['plugin_flag']);
+										
+										module_icon_list[i]['subs'].splice(j, 1);	// 将使后面的元素依次前移，数组长度减1
+										
+										j = j-1;   //！！！！！！如果不减，将漏掉一个元素
+									}
+								}
+								
+								console.log('aaaa2222===>>>>', module_icon_list[i]['subs']);
+								
+							}
+							//================ End ============
+							
+							// #endif
+							
+							
+							
+							
+							that.module_icon_list = module_icon_list;
+							
 							//缓存数据
-							uni.setStorageSync('module_icon_list_cache', data);
-							 
-							 
-							that.module_icon_list = data
+							uni.setStorageSync('module_icon_list_cache', that.module_icon_list);
+							
 						}
 				
 					},

@@ -32,7 +32,7 @@
 
 		<view class="container">
 			<view class="showerror" v-if="!fetch_list">
-				<image src="../../static/img/index/smile.png" style="height:100upx;width:100upx"></image>
+				<image src="../../static/wp-article-img/smile.png" style="height:100upx;width:100upx"></image>
 
 				<view class="errortext">
 					列表数据加载中……
@@ -42,33 +42,11 @@
 				</view>
 			</view>
 			
-			<view v-if="fetch_list">
-				<view class="common-list">
-					<block v-for="(item,index) in fetch_list" :key="index">
-						<view class="list-item has-img" :index="index" :id="item.id" @click="redictDetail($event)">
-							<view class="content-title">
-								<text>{{item.title.rendered}}</text>
-							</view>
-							<view class="content-date">
-								<image src="../../static/img/index/calendar.png"></image>
-								<text>{{item.date_to_show}}</text>
-								<image src="../../static/img/index/comments.png"></image>
-								<text class="">{{item.total_comments}}</text>
-								<image src="../../static/img/index/pageviews.png"></image>
-								<text class="">{{item.pageviews}}</text>
-								<image src="../../static/img/index/home-like.png"></image>
-								<text class="">{{item.like_count}}</text>        
-							</view>
-							<image :src="item.post_thumbnail_image" mode="aspectFill" class="cover"></image>
-						</view>
-					</block>
-				</view>  
-
-				<view class="loadingmore" v-if="fetch_list.length == 0">
-					<view class="no-more">----------无更多文章...---------</view>
-				</view>
-
-			</view>
+			<!-- 文章列表-->
+			<fetchList :articleList="fetch_list"
+						@redictDetail="redictDetail">
+			</fetchList>
+					  
 
 			<view class="copyright" v-if="is_OK">
 				<view>{{copyright_text}}</view>
@@ -82,7 +60,14 @@
 	//var categoriesId;
 	//var categorySrc;
 	
+	import fetchList from '../../components/wp-article-list.vue'
+	
+	
 	export default {
+		components:{
+			fetchList
+		},
+		
 		data() {
 			return {
 				isCategoryPage:"none",
@@ -396,7 +381,7 @@
 			
 			
 			formSubmit: function (e) {
-			  var url = '/pages/list/list'
+			  var url = '/pages/wordpress/list'
 			  if (e.detail.value.input != '') {
 				url = url + '?search=' + e.detail.value.input;
 			  }
@@ -503,13 +488,12 @@
 			
 			 
 			// 跳转至查看文章详情
-			redictDetail: function (e) {
-			    // console.log('查看文章');
-				console.log("e",e);
-			    var id = e.currentTarget.id;
+			redictDetail: function (item) {
+			     console.log('查看文章');
+			    var id = item.id;
 				console.log("id",id);
 				uni.navigateTo({
-					url:'../index/detail?id='+id
+					url:'../wordpress/detail?id='+id
 				})
 			},
 			  

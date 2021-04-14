@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<view style="text-align: center;margin-top: 40%;">
-			<image style="width: 150upx;height: 100upx;" src="../../static/img/index/zanwushuju.png"></image>
+			<image style="width: 150upx;height: 100upx;" src="../../static/wp-article-img/zanwushuju.png"></image>
 			<text style="display: block;margin-top: 4%; color: #666;">{{shutdown_website_tips}}</text>
 		</view>
 	</view>
