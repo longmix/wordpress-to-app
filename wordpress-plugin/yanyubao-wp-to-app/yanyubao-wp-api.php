@@ -20,7 +20,25 @@ function abot_wp2app_get_post_content_first_image($post_content){
 	}
 }
 
-//获取文章图片的地址
+
+//获取文章所有的图片
+function abot_wp2app_get_post_content_all_image_list($post_content){
+	if(!$post_content){
+		$the_post		= get_post();
+		$post_content	= $the_post->post_content;
+	}
+
+	preg_match_all('|<img.*?src=[\'"](.*?)[\'"].*?>|i', do_shortcode($post_content), $matches);
+	if( $matches && isset($matches[1]) ){
+		return $matches[1];
+	}
+	
+	return false;
+}
+
+
+
+//获取文章图片的地址（将多媒体库中的ID，转为完整的图片网址）
 function abot_wp2app_get_post_image_url($image_id, $size='full'){
 	if($thumb = wp_get_attachment_image_src($image_id, $size)){
 		return $thumb[0];
@@ -28,12 +46,16 @@ function abot_wp2app_get_post_image_url($image_id, $size='full'){
 	return false;	
 }
 
+
+// http://www.tseo.cn/wp-json/wp/v2/posts/1001
+// https://www.abot.cn/wp-json/wp/v2/posts/2865
+
 function abot_wp2app_getPostImages($post_content,$post_id){
 	//首先获取原来的公司官网设定好的缩略图，如果有，则直接使用
 	$content_first_image = get_post_meta($post_id, 'icon_big640_image', true);
 	
 	if(strlen($content_first_image) == 0){
-		$content_first_image= abot_wp2app_get_post_content_first_image($post_content);
+		$content_first_image = abot_wp2app_get_post_content_first_image($post_content);
 	}
     
     if(empty($content_first_image))
@@ -133,6 +155,71 @@ function abot_wp2app_getPostImages($post_content,$post_id){
                 
     $_data['post_thumbnail_image'] = $post_thumbnail_image;
     $_data['content_first_image'] = $content_first_image;
+    
+    
+    
+    
+    //=============== 针对百度小程序的三张信息流推送的图片 Begin =============
+    //图片列表
+    $_data['mp_baidu_seo_image'] = get_post_meta($post_id, 'mp_baidu_seo_image', true);
+    
+    //如果没有设置百度SEO的图标，则先尝试从文章中自动提取三张
+    if(strlen($_data['mp_baidu_seo_image']) < 10){
+    	$content_all_image_list = abot_wp2app_get_post_content_all_image_list($post_content);
+    	
+    	//if($post_id == 1001){
+    	//	var_dump($content_all_image_list);exit;
+    	//}
+    	
+    	if(count($content_all_image_list) >= 3){
+    		$_data['mp_baidu_seo_image'] = '';
+    		
+    		$_data['mp_baidu_seo_image'] .= $content_all_image_list[0];
+    		$_data['mp_baidu_seo_image'] .= ' ';
+    		$_data['mp_baidu_seo_image'] .= $content_all_image_list[1];
+    		$_data['mp_baidu_seo_image'] .= ' ';
+    		$_data['mp_baidu_seo_image'] .= $content_all_image_list[2];
+    		
+    		add_post_meta($post_id, 'mp_baidu_seo_image', $_data['mp_baidu_seo_image'], true);
+    	}
+    	
+    }
+    
+    
+    if(strlen($_data['mp_baidu_seo_image']) < 10){
+    	//如果没有设置百度SEO的图标，则默认使用缩略图
+    	$_data['mp_baidu_seo_image'] = array($_data['post_thumbnail_image']);
+    	
+    	add_post_meta($post_id, 'mp_baidu_seo_image', $_data['mp_baidu_seo_image'], true);
+    }
+    else{
+    	//将空格分开的URL转为数组
+    	$temp_list = explode(' ', $_data['mp_baidu_seo_image']);
+    
+    	$_data['mp_baidu_seo_image'] = array();
+    
+    	foreach ($temp_list as $temp_item){
+    		$_data['mp_baidu_seo_image'][] = $temp_item;
+    	}
+    }
+    
+    $_data['mp_baidu_seo_video'] = get_post_meta($post_id, 'mp_baidu_seo_video', true);
+    if(strlen($_data['mp_baidu_seo_video']) < 10){
+    	$_data['mp_baidu_seo_video'] = array();
+    }
+    else{
+    	$_data['mp_baidu_seo_video'] = json_decode($_data['mp_baidu_seo_video'], true);
+    
+    	$_data['mp_baidu_seo_video'] = array();
+    }
+    //============== End =====================
+    
+    
+    
+    
+    
+    
+    
 
     foreach ($_data as $key=>$value){
     	if(substr($value, 0, 2) == '//'){

@@ -14,6 +14,9 @@ function register_wp_to_app_settings() {
     register_setting( 'wp-to-app-group', 'yanyubao_category_default_cover' );
     register_setting( 'wp-to-app-group', 'wf_poster_imageurl' );
     register_setting( 'wp-to-app-group', 'wf_enable_comment_option' );
+    register_setting( 'wp-to-app-group', 'yanyubao_to_app_wxa_show_qrcode' );
+    register_setting( 'wp-to-app-group', 'yanyubao_to_app_wxa_appid' );
+    register_setting( 'wp-to-app-group', 'yanyubao_to_app_wxa_page_path' );
        
     
     
@@ -28,10 +31,10 @@ function wp_to_app_settings_page() {
     <?php do_settings_sections( 'wp-to-app-group' ); ?>
     <table class="form-table">
         <tr valign="top">
-        <th scope="row">延誉宝商户编号</th>
-        <td><input type="text" name="yanyubao_sellersn" style="width:400px" value="<?php echo esc_attr( get_option('yanyubao_sellersn') ); ?>" />
-        	<br/>必须设置，评论、点赞以及用户中心和会员卡功能需要。<a href="https://yanyubao.tseo.cn/Supplier/Login/login.html" target="_blank"><span style="color: blue">点击登录或注册查看商户编号</span></a>
-        </td>
+        	<th scope="row">延誉宝商户编号</th>
+	        <td><input type="text" name="yanyubao_sellersn" style="width:200px" value="<?php echo esc_attr( get_option('yanyubao_sellersn') ); ?>" />
+	        	<br/>必须设置，评论、点赞以及用户中心和会员卡功能需要。<a href="https://yanyubao.tseo.cn/Supplier/Login/login.html" target="_blank"><span style="color: blue">点击登录或注册查看商户编号</span></a>
+	        </td>
         </tr>
          
          <!-- 
@@ -66,6 +69,38 @@ function wp_to_app_settings_page() {
         <td><input type="text" name="wf_poster_imageurl" style="width:600px" value="<?php echo esc_attr( get_option('wf_poster_imageurl') ); ?>" />
         <br/>(请输完整的图片地址,例如:<span style="color: blue">https://www.watch-life.net/images/2017/06/winxinapp-wordpress-watch-life-new-700.jpg</span>)</td>
         </tr> -->
+        
+        
+        <tr valign="top">
+        	<th scope="row">显示小程序码</th>
+	        <td>
+	
+	            <?php
+	
+	            $wf_enable_comment_option =get_option('yanyubao_to_app_wxa_show_qrcode');            
+	            $checkbox = empty($wf_enable_comment_option)?'':'checked';
+	            echo '<input name="yanyubao_to_app_wxa_show_qrcode"  type="checkbox"  value="1" '.$checkbox. ' />';
+	            
+	
+	                       ?>显示在文章详情页底部
+	                       <br/>并不是所有Wordpress模板都支持此选项。
+	        </td>
+        </tr> 
+        
+        <tr valign="top">
+        	<th scope="row">微信小程序Appid</th>
+	        <td><input type="text" name="yanyubao_to_app_wxa_appid" style="width:200px" value="<?php echo esc_attr( get_option('yanyubao_to_app_wxa_appid') ); ?>" />
+	        	<br/>小程序必须授权给延誉宝CMS生成小程序码。
+	        </td>
+        </tr>
+        <tr valign="top">
+        	<th scope="row">文章详情页路径</th>
+	        <td><input type="text" name="yanyubao_to_app_wxa_page_path" style="width:200px" value="<?php echo esc_attr( get_option('yanyubao_to_app_wxa_page_path') ); ?>" />
+	        	<br/>默认为 pages/wordpress/detail，如果不是使用Wordpress转小程序项目，或者在小程序源代码中自定义了，则按照实际情况填写。
+	        </td>
+        </tr>
+        
+        
         
         <tr valign="top">
         	<th scope="row">微信小程序SEO</th>
@@ -262,31 +297,7 @@ function abot_wp2app_custom_fields_rest_prepare_post( $data, $post, $request) {
 		$_data['mp_baidu_seo_releaseDate'] = $_data['seo_datetime'];
 	}
 	
-	//图片列表
-	$_data['mp_baidu_seo_image'] = get_post_meta($post_id, 'mp_baidu_seo_image', true);
-	if(strlen($_data['mp_baidu_seo_image']) < 10){
-		$_data['mp_baidu_seo_image'] = array($_data['post_thumbnail_image']);
-	}
-	else{
-		//将空格分开的URL转为数组
-		$temp_list = explode(' ', $_data['mp_baidu_seo_image']);
-		
-		$_data['mp_baidu_seo_image'] = array();
-		
-		foreach ($temp_list as $temp_item){
-			$_data['mp_baidu_seo_image'][] = $temp_item;
-		}
-	}
 	
-	$_data['mp_baidu_seo_video'] = get_post_meta($post_id, 'mp_baidu_seo_video', true);
-	if(strlen($_data['mp_baidu_seo_video']) < 10){
-		$_data['mp_baidu_seo_video'] = array();
-	}
-	else{		
-		$_data['mp_baidu_seo_video'] = json_decode($_data['mp_baidu_seo_video'], true);
-		
-		$_data['mp_baidu_seo_video'] = array();
-	}
 	//============= End ==============
 	
 	
