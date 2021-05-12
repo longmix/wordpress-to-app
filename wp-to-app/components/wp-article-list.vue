@@ -3,7 +3,7 @@
 		<view class="common-list">
 			<block v-for="(item,index) in articleList" :key="index">
 				<view class="list-item has-img" :index="index" :id="item.id" @click="redictDetail(item)">
-					<view class="content-title">
+					<view class="content-title" v-if="item && item.title">
 						<text>{{item.title.rendered}}</text>
 					</view>
 					<view class="content-date">

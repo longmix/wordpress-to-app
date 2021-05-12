@@ -34,6 +34,7 @@
 				"selectedIconPath": "static/wp-article-img/tar-about-on.png",
 				"text": "关于"
 			}
+			
 		]
 	},
 	
@@ -94,8 +95,16 @@
 				"enablePullDownRefresh": true
 				
 			}
-		}
-		,{	//个人信息页
+		},
+		{
+		    "path" : "pages/about/module_list",
+		    "style": {
+		    	"navigationBarTitleText": "延誉宝功能模块列表",
+		    	"softinputNavBar":"none",
+				"enablePullDownRefresh": true
+		    }
+		},
+		{	//个人信息页
 		    "path" : "pages/userinfo/userinfo",
 		    "style" : {
 				"navigationBarTitleText": "个人资料",

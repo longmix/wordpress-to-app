@@ -10,35 +10,40 @@
 		</view>
 	
 	
-		<contentList :article_title="article_title"
+		<WpArticleDetail :article_title="article_title"
 					:content_html="index_rich_html_content"
 					:content_v_html="article_content_html"
 					:content_array_html="article_content_array"
 					:attr_list="attr_list" />
-		</contentList>
+		</WpArticleDetail>
 			
 			
 			
 				
 			
+			<view style='text-align:center'>
+				<button class="gotowebpage-button" formType="submit" @tap="gotowebpage()">问题反馈收集表</button>
+			</view>
 			
 			<!-- #ifdef MP-WEIXIN -->	
 			
+			
 			<view style='text-align:center'>
-				<button class="gotowebpage-button" formType="submit" size="mini" @tap="gotowebpage()">问题反馈收集表</button>
-			</view>
-			<view style='text-align:center'>
-				<button class="praise-button" formType="submit" size="mini" @tap="praise">赞赏软件开发记</button>
+				<button class="praise-button" formType="submit" @tap="praise">赞赏软件开发记</button>
 			</view>
 			
 			
 			
 			<view class="praisePost">
 				<view style='text-align:center'>
-					<button class="payonline-button" formType="submit" size="mini" @tap="payonline">微信支付宝转账</button>
+					<button class="payonline-button" formType="submit" @tap="payonline">微信支付宝转账</button>
 				</view>
 			</view>
 			<!-- #endif --> 
+			
+			<view class="copyright" style="color: #666;">
+				版本号： {{current_version_str}}
+			</view>
 			
 
 		<view class="copyright">
@@ -53,12 +58,12 @@
 	import parseHtml from "../../common/html-parser.js"
 // #endif	
 	
-	import contentList from '../../components/wp-article-detail.vue'
+	import WpArticleDetail from '../../components/wp-article-detail.vue'
 	
 	export default {
 		components: {
 			//uParse
-			contentList
+			WpArticleDetail
 		},
 		data() {
 			return {
@@ -84,7 +89,10 @@
 				
 				
 				article_detail:'',
-				attr_list:''
+				attr_list:'',
+				
+				current_version_str:'',
+				
 			}
 		},
 		
@@ -107,6 +115,8 @@
 			//test001 = test001.replace(/height="[^"]+"/gi, '').replace(/height='[^']+'/gi, '');
 			//console.log('test001 test001====>>>>', test001);
 			//return;
+			
+			this.current_version_str = this.abotapi.globalData.version_str;
 			
 		    this.abotapi.set_option_list_str(this, this.callback_function);
 		},
@@ -227,16 +237,22 @@
 						//v-html使用
 						that.article_content_html = res.data.content.rendered;
 						
+						const filter = that.$options.filters["formatRichText"];
+						that.article_content_html = filter(that.article_content_html);
+						
+						
+						//const filter = that.$options.filters["formatRichText"];
+						//that.article_content_array = filter(that.index_rich_html_content);
+						
+						//console.log('that.article_content====>>>>', that.article_content_array);
+						
 						
 // #ifdef MP-ALIPAY
 						
-						const filter = that.$options.filters["formatRichText"];
-						that.article_content_array = filter(that.index_rich_html_content);
-						
-						console.log('that.article_content====>>>>', that.article_content_array);
 						
 						
-						let data001 = that.article_content_array;
+						
+						let data001 = that.article_content_html;
 						let newArr = [];
 						let arr = parseHtml(data001);
 						arr.forEach((item, index)=>{
@@ -316,27 +332,22 @@
 					return match;
 				});
 				
-				
-				
 				newContent = newContent.replace(/style="[^"]+"/gi,function(match,capture){
-					match = match.replace(/width:[^;]+;/gi, 'max-width:100% important;').replace(/width:[^;]+;/gi, 'max-width:100% important; ');
+					match = match.replace(/width:[^;]+;/gi, 'max-width:100%;').replace(/width:[^;]+;/gi, 'max-width:100%;');
 					return match;
 				});
 				//newContent = newContent.replace(/<br[^>]*\/>/gi, '');
 				
-				newContent = newContent.replace(/<p[^>]*>/gi, '<p style="margin:20px;">');
+				newContent = newContent.replace(/<p[^>]*>/gi, '<p class="article_content_p_css">');
 				
-				//newContent = newContent.replace(/\<img/gi, '<img style="max-width:100%;height:auto;display:inline-block;margin:10rpx auto;vertical-align: middle;"');
+				newContent = newContent.replace(/\<img/gi, '<img style="max-width:100%;height:auto;display:inline-block;margin:10rpx auto;vertical-align: middle;"');
+				//newContent = newContent.replace(/\<img/gi, '<img width="5rem"');
 				
-				//newContent = newContent.replace(/width="[^"]+"/gi, 'width="5rem"').replace(/width='[^']+'/gi, '');
-					
-					//console.log('newContent newContent newContent ===>>>', newContent);
+				newContent = newContent.replace(/<h2[^>]*>/gi, '<h2 class="content-article-detail_h2">');
 				
-				//如果是在支付宝中，直接去掉图片
-				//newContent = newContent.replace(/<img[^>]*>/gi, '');	
-					
-					
-					  
+				newContent = newContent.replace(/<blockquote[^>]*>/gi, '<blockquote class="article_blockquote_css">');
+				newContent = newContent.replace(/<pre[^>]*>/gi, '<pre class="article_pre_css">');
+				
 				return newContent;
 			}	
 		},

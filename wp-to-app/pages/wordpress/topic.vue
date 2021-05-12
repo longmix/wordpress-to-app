@@ -21,7 +21,12 @@
 				</block>
 				<block v-else>
 					<block :key="index" v-for="(item,index) in categoriesList" >
-						<view class="list-item" @tap="redictIndex($event)" :data-id="item.id" :data-name="item.name" :data-description="item.description" :data-src="item.category_thumbnail_image">
+						<view class="list-item" 
+							@tap="redictIndex($event)" 
+							:data-id="item.id" 
+							:data-name="item.name" 
+							:data-description="item.description" 
+							:data-src="item.category_thumbnail_image">
 							<view>
 								<image class="cover" mode="widthFix"
 									:src="item.category_thumbnail_image" 
@@ -60,7 +65,7 @@
 			return {
 				categoriesList:null,
 				floatDisplay:'none',
-				per_page:6,
+				per_page:50,
 				page:0,
 				is_OK:false,
 				wxa_shop_new_name:'',

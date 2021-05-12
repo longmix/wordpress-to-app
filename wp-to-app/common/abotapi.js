@@ -568,19 +568,6 @@ module.exports = {
 		//console.log('111111111111111111');
 		//console.log(uni.getStorageSync("wxa_user_info"));
 	},
-	 
-	set_user_account_info: function (user_account_info) {
-		console.log("准备保存用户账号数据：");
-		console.log(user_account_info);
-				   
-		var user_account_info_str = JSON.stringify(user_account_info);
-				   
-		//缓存返回数据
-		uni.setStorageSync("user_account_info", user_account_info_str);
-				   
-	}, 
-	 
-	 
 	
 	get_user_info: function () {
 		//缓存返回数据
@@ -599,6 +586,38 @@ module.exports = {
 		uni.removeStorageSync("wxa_user_info");
 				   
 	},
+	
+	
+	/**
+	 * @param {Object} user_account_info
+	 * 
+	 * {"userid":"106","usersn":"pySyyykae","role_flag":"1","account":"test001","status":"1","mobile":"13112341234","email":"13112341234@163.com","headimgurl":"http:\/\/thirdwx.qlogo.cn\/mmopen\/lBUgNe3635GjPicZOETHbKibq5sMdE1CibT6ltMlY53vzId42hQGodlfdQSRXhvOfJNnub0ujNJSH7kGdNM57Fx5khUItayibWtN\/132","nickname":"\u5c06\u519b","fenxiao_info":{"fenxiaoid":"142","userid":"106","password002":null,"sellerid":"104","parentid":"0","nickname":"\u5c06\u519b","headimgurl":"http:\/\/thirdwx.qlogo.cn\/mmopen\/lBUgNe3635GjPicZOETHbKibq5sMdE1CibT6ltMlY53vzId42hQGodlfdQSRXhvOfJNnub0ujNJSH7kGdNM57Fx5khUItayibWtN\/132","shopname":null,"shopicon":null,"balance":"401525","balance2":"1335722","balance_zengsong":"1600","balance_zengsong2":"55000","balance_hongbao":"0","score":"521","score_sum":"0","status":"1","supplier_sequence":"10","is_delete":"0","is_invite_agree":"1","birthday":"1995-03-06","member_level":"0","member_no":"1041234106131","idcardno":"","sex":"1","email":"","alipay_account":"","alipay_name":"","bank_account":"","bank_name":"","bank_branch":"","bank_company":"","province":"-1","city":"-1","district":"-1","address":"","createtime":"1466583551","createip":"220.248.77.138","updatetime":"1610693768","updateip":"220.248.77.138","shengshiqu":" -  - ","balance_yuan":"4015.25","balance_zengsong_yuan":"16.00","level_id":"10","level_name":"SaaS\u4e91\u4ee3\u7406\u5546","level_memo":"SaaS\u4e91\u4ee3\u7406\u5546"},"extend_info":{"VIPhuiyuan":"","beizhulianxifangshi":""},"extend_info_display":{"VIP\u4f1a\u5458\u7b49\u7ea7":"","\u5907\u6ce8\u8054\u7cfb\u65b9\u5f0f":""},"extend_info_time":"1603249180","balance":"4015.25","balance_zengsong":"16.00","status_count1":"153","status_count2":"68","status_count3":"0","status_count4":"23","status_count_hahading":"4"}
+	 * 
+	 */
+	set_user_account_info: function (user_account_info) {
+		console.log("准备保存用户账号数据：");
+		console.log(user_account_info);
+				   
+		var user_account_info_str = JSON.stringify(user_account_info);
+				   
+		//缓存返回数据
+		uni.setStorageSync("user_account_info", user_account_info_str);
+				   
+	}, 
+	
+	
+	get_user_account_info: function () {
+	   //缓存返回数据
+	   var user_account_info_str = uni.getStorageSync("user_account_info");
+				   
+	   //console.log("获取用户账号数据：" + user_account_info_str + '333333333');
+				   
+	   if (!user_account_info_str) {
+	     return null;
+	   }
+				   
+	   return JSON.parse(user_account_info_str);
+	 },
 	 
 	   /**
 	    * page_type normal/switchTab

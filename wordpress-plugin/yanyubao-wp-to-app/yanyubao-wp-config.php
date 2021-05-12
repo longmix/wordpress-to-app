@@ -167,6 +167,7 @@ add_filter('rest_allow_anonymous_comments','abot_wp2app_set_rest_allow_anonymous
 add_filter('rest_prepare_post', 'abot_wp2app_custom_fields_rest_prepare_post', 10, 3 );
 
 //在rest api 增加显示字段
+// 2021.4.30.  https://www.abot.cn/wp-json/wp/v2/posts/2660   这篇文章中含有视频
 function abot_wp2app_custom_fields_rest_prepare_post( $data, $post, $request) {
 
 	global $wpdb;
@@ -175,7 +176,8 @@ function abot_wp2app_custom_fields_rest_prepare_post( $data, $post, $request) {
 	//$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
 	$post_id =$post->ID;
 
-	$content = get_the_content();
+	//$content = get_the_content();
+	$content = $_data['content']['rendered'];
 	 
 	$siteurl = get_option('siteurl');
 	$upload_dir = wp_upload_dir();
@@ -184,6 +186,52 @@ function abot_wp2app_custom_fields_rest_prepare_post( $data, $post, $request) {
 	//$content = str_replace( 'http:'.strstr($upload_dir['baseurl'], '//'), 'https:'.strstr($upload_dir['baseurl'], '//'), $content);
 
 	//$_data['siteurl']=$content;
+	
+	
+	
+	//=== 2021.4.30. 如果内容中包含视频，则去掉视频==
+	if(preg_match_all('/<video .*?>.*?<a .*?href="(.*?)".*?>.*?<\/a><\/video>/is', $content, $video_list)){ 
+	/* if(preg_match_all('/<video[^<>]*src=[\"]([^\"]+)[\"][^<>]*>/im', $content, $video_list)){ */
+	/* if(preg_match_all('/<a .*?href="(.*?)".*?>/is', $content, $video_list)){ */
+		
+		//$_data['video_list'] = $video_list;
+		//将视频播放组件替换成链接
+		$str_old = array();
+		$str_new = array();
+		foreach ($video_list[0] as $tt01){
+			$str_old[] = $tt01;
+		}
+		foreach ($video_list[1] as $tt01){
+			$str_new[] = '复制视频网址在浏览器中观看：<a href="'.$tt01.'">'.$tt01.'</a>';
+		}
+		
+		//$content = str_replace($str_old, $str_new, $content);
+		$_data['content']['rendered'] = str_replace($str_old, $str_new, $_data['content']['rendered']);
+		
+	}
+	
+	//$_data['video_list000'] = 'aaaaa';
+	//$_data['content001'] = $content;
+	//====  如果包含音频  ======
+	if(preg_match_all('/<audio .*?>.*?<a .*?href="(.*?)".*?>.*?<\/a><\/audio>/is', $content, $video_list)){		
+		$str_old = array();
+		$str_new = array();
+		foreach ($video_list[0] as $tt01){
+			$str_old[] = $tt01;
+		}
+		foreach ($video_list[1] as $tt01){
+			$str_new[] = '复制音频网址在浏览器中收听：<a href="'.$tt01.'">'.$tt01.'</a>';
+		}
+	
+		//$content = str_replace($str_old, $str_new, $content);
+		$_data['content']['rendered'] = str_replace($str_old, $str_new, $_data['content']['rendered']);
+	
+	}
+	
+	//============= End ===============
+	
+	
+	
 
 	$images = abot_wp2app_getPostImages($content, $post_id);
 	

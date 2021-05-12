@@ -396,7 +396,7 @@
 							that.abotapi.set_user_info(that.abotapi.globalData.userInfo);
 							  
 				 
-							that.getUserInfo();
+							that.getUserInfoFromYanyubao();
 							
 							uni.showModal({
 								title: '提示',
@@ -516,7 +516,7 @@
 					  
 									that.abotapi.set_user_info(that.abotapi.globalData.userInfo);
 									
-									that.getUserInfo();
+									that.getUserInfoFromYanyubao();
 									
 									uni.showToast({
 										title: res.data.msg,
@@ -670,10 +670,13 @@
 			
 			
 			//获取用户信息
-			getUserInfo: function () {
+			getUserInfoFromYanyubao: function () {
 				var userInfo = this.abotapi.get_user_info();
+				
 				var that = this;
+				
 				if(userInfo && userInfo.userid){
+					
 					this.abotapi.abotRequest({
 						url: this.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=ShopAppWxa&a=get_user_info',
 						data: {
@@ -686,7 +689,13 @@
 						method: "POST",
 						success: function (res) {
 							console.log('get_user_info====', res);
-							uni.setStorageSync('userDelite',res.data.data)
+							
+							if(res.data.code == 1){
+								that.abotapi.set_user_account_info(res.data.data)
+							}
+							
+							
+							//uni.setStorageSync('userDetail',res.data.data)
 					    }
 					})
 						

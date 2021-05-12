@@ -2,6 +2,8 @@ const globalData = {
 		xiaochengxu_appid: 'wx00d1e2843c3b3f77',
 		default_sellerid : 'fJxSPaVgj',
 		wxa_website_name : 'Wordpress转APP专用号',
+		version_str : 'Ver 1.4.1 Build 136',
+		version_code : 136,
 		
 		//平台相关的配置
 		//  current_platform 定义当前的平台，用于服务器端识别
@@ -30,16 +32,9 @@ const globalData = {
 		openid:'',
 		
 		weiduke_server_url: 'https://cms.weiduke.com',
-		yanyubao_server_url: 'https://yanyubao.tseo.cn',
-		
-		//网站的网址，或者经过延誉宝转换后的网址（小程序平台安全业务域名需要）
-		//#ifdef MP-WEIXIN
+		yanyubao_server_url: 'https://yanyubao.tseo.cn',		
 		wordpress_rest_api_url: 'https://cms.weiduke.com/openapi/Wordpress/restapi',
-		//#endif
 		
-		//#ifndef MP-WEIXIN
-		wordpress_rest_api_url: 'http://www.tseo.cn',
-		//#endif
 		
 		show_yanyubao_module_list:0
 };

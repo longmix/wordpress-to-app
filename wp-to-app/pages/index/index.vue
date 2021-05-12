@@ -47,12 +47,7 @@
 				
 				
 				
-				<!-- 广告图 -->
-				<view v-for="(tab,index) in pingpu_picture_list" :key="index" @click="onNavRedirect(tab.url)">
-					<view class="banner" >
-						<image :src="tab.image" style="width: 100%;vertical-align: middle;" mode="widthFix"></image>
-					</view>
-				</view>
+				
 				
 				
 				
@@ -66,6 +61,14 @@
 		                </button>
 		            </view>
 		        </form>
+				
+				
+				<!-- 广告图 -->
+				<view v-for="(tab,index) in pingpu_picture_list" :key="index" @click="onNavRedirect(tab.url)">
+					<view class="banner" >
+						<image :src="tab.image" style="width: 100%;vertical-align: middle;" mode="widthFix"></image>
+					</view>
+				</view>
 		
 		
 		       <!--  <view v-for="item in module_icon_list" class="mid-img">
@@ -78,34 +81,13 @@
 			
 			
 			<!-- 显示功能模块列表 -->
-			<view class="container">
-				<view class="mid-img" v-for="(item, index) in module_icon_list" :key="item.index">
-				  <view class="head1" :style="{'border-left-color':item.left_color}">{{item.name}}</view>
-					<view class="icn-con" v-for="item2 in item.subs" :key="item2.index" 
-						:data-plugin_flag="item2.plugin_flag"
-						:data-plugin_name="item2.plugin_name"
-						:data-plugin_desc_basic="item2.plugin_desc_basic" 
-						@tap="block_tanchuang">
-						<image v-if="item2.plugin_flag" class="tips" src="https://yanyubao.tseo.cn/Tpl/static/images/bbq.png"></image>
-						
-						<image class="img-h" :src="item2.icon" :style="{'background-color':item2.background_color}"></image>
-						
-						<view class="txt-h">{{item2.name}}</view>
-					</view>
-					
-					
-					<!-- <view class="icn-con">
-						<image class="img-h" src="../../static/wp-article-img/calendar.png"></image>
-						<view class="txt-h">h5商城</view>
-					</view>
-					
-					<view class="icn-con">
-						<image class="img-h" src="../../static/wp-article-img/calendar.png"></image>
-						<view class="txt-h">h5商城</view>
-					</view> -->
-					
-				</view>
-				
+			<view class="container" v-if="show_yanyubao_module_list == 1">
+				<view class="banner" >
+					<image :src="yanyubao_module_list_image" 
+						style="width: 100%;vertical-align: middle;" 
+						mode="widthFix"
+						@click="goto_yanyubao_module_list"></image>
+				</view>				
 			</view>
 			
 			
@@ -212,11 +194,19 @@
 				wp_enable_comment_option:'',
 				copyright_text:'',
 				all_option_list:null,
-				module_icon_list:null,
+				
+				
+				
+				
 				plugin_flag:'',
 				
 				hidden_article_list_in_front_page:0,
 				hidden_search_box_in_front_page:0,
+				
+				//显示延誉宝的功能模块
+				//module_icon_list:null,
+				show_yanyubao_module_list:0,
+				yanyubao_module_list_image: 'http://www.abot.cn/wp-content/themes/abotcn/uploads/2019/09/6163a391dbf598b587d0f8aa92c1941d.png',
 			}
 		},
 		
@@ -241,19 +231,19 @@
 			    }
 			});
 			
+			//获取功能图标
+			if(this.abotapi.globalData.show_yanyubao_module_list == 1){
+				this.show_yanyubao_module_list = 1;
+			}
+			
 			uni.showLoading({
 				title:'正在加载...',
-				mask:true,
 				fail: function (e) {
-					uni.showToast({
-						title: '网络异常！',
-						duration: 2000
-					});
+					
 				},
 			})
 			
-			//获取功能图标
-			this.get_yanyubao_module_list_for_tseo_cn()
+			
 			
 			setTimeout(function () {
 			    uni.hideLoading();
@@ -283,8 +273,7 @@
 			this.abotapi.set_option_list_str(this, this.callback_function);
 			
 			uni.removeStorageSync('module_icon_list_cache');
-			//获取功能图标
-			this.get_yanyubao_module_list_for_tseo_cn()
+			
 			
 			setTimeout(function () {
 				uni.stopPullDownRefresh();  //停止下拉刷新动画
@@ -565,6 +554,12 @@
 				}
 				
 				
+				//定制开发的选项
+				if(cb_params.yanyubao_module_list_image){
+					that.yanyubao_module_list_image = cb_params.yanyubao_module_list_image;
+				}
+				
+				
 				//设置百度小程序中的页面SEO信息
 				// #ifdef MP-BAIDU
 					swan.setPageInfo({
@@ -588,7 +583,10 @@
 							console.log('setPageInfo fail', err);
 						}
 					});
-				// #endif				
+				// #endif	
+							
+				
+				
 				
 				
 				
@@ -694,7 +692,7 @@
 				    success(res) {
 				    	var data = res.data;
 				    	if(data.code == 1){
-							if(pic_type == 'pingpu'){
+							if(pic_type == 'roll'){
 								that.roll_picture_list = data.data;
 							}
 							else if(pic_type == 'pingpu'){
@@ -813,97 +811,7 @@
 				
 			},
 			
-			//调用接口
-			get_yanyubao_module_list_for_tseo_cn:function(){
-				console.log('jun')
-				
-				
-				
-				if(this.abotapi.globalData.show_yanyubao_module_list != 1){
-					return;
-				}
-				
-				var that = this;
-				
-				var module_icon_list = uni.getStorageSync('module_icon_list_cache');
-				
-				console.log('module_icon_list===',module_icon_list)
-				
-				
-				
-				
-				
-				if(module_icon_list){
-					//console.log('module_icon_list===',module_icon_list)
-					
-					that.module_icon_list = module_icon_list;
-					return;
-				}
-				
-				
-				
-				this.abotapi.abotRequest({
-					url:that.abotapi.globalData.yanyubao_server_url + '/Supplier/Login/show_yanyubao_module_list_for_tseo_cn',
-					method: 'get',
-					data:{
-				
-					},
-					
-					success(res) {
-						console.log("jiangjun",res)
-						
-						if(res.data.code == 1){
-							var module_icon_list = res.data.data;
-														 
-							
-							// #ifdef MP-BAIDU
-							
-							//====== 过滤掉没有描述的模块 Begin ======
-							for(let i=0; i<module_icon_list.length; i++){
-								
-								console.log('aaaa===>>>>', module_icon_list[i]['subs']);
-								
-								for(let j=0; j<module_icon_list[i]['subs'].length; j++){
-									
-									//console.log('bbbb===>>>>', module_icon_list[i]['subs'][j]);
-									//console.log('cccc===>>>>', module_icon_list[i]['subs'][j]['plugin_flag']);
-								
-									if(module_icon_list[i]['subs'][j] && !module_icon_list[i]['subs'][j]['plugin_flag']){
-										
-										console.log('ddddd===>>>>', module_icon_list[i]['subs'][j]['plugin_flag']);
-										
-										module_icon_list[i]['subs'].splice(j, 1);	// 将使后面的元素依次前移，数组长度减1
-										
-										j = j-1;   //！！！！！！如果不减，将漏掉一个元素
-									}
-								}
-								
-								console.log('aaaa2222===>>>>', module_icon_list[i]['subs']);
-								
-							}
-							//================ End ============
-							
-							// #endif
-							
-							
-							
-							
-							that.module_icon_list = module_icon_list;
-							
-							//缓存数据
-							uni.setStorageSync('module_icon_list_cache', that.module_icon_list);
-							
-						}
-				
-					},
-					fail: function (e) {
-						uni.showToast({
-							title: '网络异常！',
-							duration: 2000
-						});
-					},
-				});
-			},
+			
 			//模态弹窗事件
 			block_tanchuang:function(e){
 			
@@ -925,6 +833,16 @@
 					});
 				}
 				
+			},
+			goto_yanyubao_module_list:function(res){
+				console.log('11111111111');
+				
+				uni.navigateTo({
+					url: '../about/module_list',
+					fail:function(res){
+						console.log(res);
+					}
+				})
 			}
 		},
 	}

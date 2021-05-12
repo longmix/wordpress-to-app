@@ -49,8 +49,14 @@ function abot_wp2app_get_post_image_url($image_id, $size='full'){
 
 // http://www.tseo.cn/wp-json/wp/v2/posts/1001
 // https://www.abot.cn/wp-json/wp/v2/posts/2865
+// http://www.tseo.cn/wp-json/wp/v2/posts?per_page=10&orderby=date&order=desc&page=1
+// https://www.abot.cn/wp-json/wp/v2/posts?per_page=10&orderby=date&order=desc&page=1&categories=129
 
 function abot_wp2app_getPostImages($post_content,$post_id){
+	
+	$_data = array();  
+	
+	
 	//首先获取原来的公司官网设定好的缩略图，如果有，则直接使用
 	$content_first_image = get_post_meta($post_id, 'icon_big640_image', true);
 	
@@ -70,7 +76,7 @@ function abot_wp2app_getPostImages($post_content,$post_id){
     $post_thumbnail_image_624=''; 
     $post_thumbnail_image='';
           
-    $_data =array();
+    
     
     $thumbnail_id = get_post_thumbnail_id($post_id);
     

@@ -1,11 +1,11 @@
 <template>
 	<view class="container">
-		<contentList :article_title="article_title"					
+		<WpArticleDetail :article_title="article_title"					
 					:content_html="index_rich_html_content"
 					:content_v_html="article_content_html"
 					:content_array_html="article_content_array"
 					:attr_list="detail" />
-		</contentList>
+		</WpArticleDetail>
 		
 		
 		
@@ -67,7 +67,7 @@
 		</view>
 		
 		<!-- 评论 -->		
-		<view style="margin-bottom: 50upx;" v-if="wp_enable_comment_option == 1">
+		<view style="margin-bottom: 50rpx;" v-if="wp_enable_comment_option == 1">
             <view class="relatedTitle">评论交流</view>
             <view class="entry-gap-like"></view>
             <view class="commentheader" v-if="detail && detail.total_comments">有{{detail.total_comments}}条评论</view>
@@ -77,7 +77,7 @@
 					<view v-if="item.parent == 0">
 						<view class="comment">
 							<view class="comment-user">
-								<image :src="item.author_url" class="gravatarImg"></image>
+								<image :src="item.author_url" class="gravatarImg" mode="widthFix"></image>
 								<view style='display:flex;flex-direction: row; justify-content: space-between;width: 100%'>
 									<view style='font-weight:bold;'>{{item.author_name}}</view>
 									<view>{{item.date}}</view>
@@ -85,7 +85,19 @@
 							</view>
 							<view class="comment-summary" 
 								 v-if="item.content"
-								v-html="item.content.rendered"></view>
+								v-html="item.content.rendered">
+							</view>
+							<!-- 二级评论 -->
+							<block  v-for="(item02, index02) in commentsList" :key="index02">
+								<view v-if="item02.parent == item.id"  class="comment-summary-02">								
+									{{item02.author_name}}回复{{item.author_name}}：
+									<view class="comment-summary" style="margin-left: 0;font-size: 26rpx;"
+										 v-if="item02.content"
+										v-html="item02.content.rendered">
+									</view>
+								</view>
+							</block>
+							
 						</view>
 					</view>
 				</block>
@@ -116,15 +128,16 @@
 		<!-- 评论底部功能块 -->
 		<view :style="wp_enable_comment_option == 1?'display:block':'display:none'">
 			<view class="menuBackground" @catchtap="hiddenMenubox" :style="menuBackgroup ? 'display:block' : 'display:none'"></view>
+			
 			<view><!-- :style="{display:display}" -->
 				<view class="comment-fixed">
 					<form @submit="formSubmit" report-submit="true">
 						<view class="comment-respond">
-							<input class="comment-input" maxlength="200" name="inputPostID" :value="detail.id" style="display:none" />
+							<input maxlength="200" name="inputPostID" :value="detail.id" style="display:none" />
 							<view class="comment-box">
 								<image src="../../static/img/detail/entry-home.png" 
 									class="img-plus" 
-									style="margin-left:20upx;margin-right:20upx" 
+									style="margin-left:20rpx;margin-right:20rpx" 
 									@tap="goHome"></image>
 								<input class="comment-input" type='text' confirm-type="send" 
 									@focus="onRepleyFocus"
@@ -138,7 +151,9 @@
 							</view>
 							
 							<!--功能图标-->
-							<view class="menu-box" :class="isShow ? 'emoji-move-in' : 'emoji-move-out'+isLoad ? 'no-emoji-move' : ''">
+							<view class="menu-box" 
+								:class="isShow ? 'emoji-move-in' : 'emoji-move-out' + isLoad ? 'no-emoji-move' : ''"
+								:style="menuBackgroup ? 'display:block' : 'display:none'">
 								<view class="iconList">
 									<view class="iconLine">
 										<view style="width:20%; position: relative; float:left; text-align:center">
@@ -186,7 +201,7 @@
 											<view class="cu-modal" :class="modalName=='Image'?'show':''">
 												<view class="cu-dialog">
 													<view class="bg-img">
-														<view style="padding: 60upx;">
+														<view style="padding: 60rpx;">
 															<view class="action" @tap="hideRichTextModal">
 																<!--<image :src="targetName=='6'? wp_zanshang_shoukuan_img_url:poster_url" mode="widthFix"></image>-->
 																<image :src="targetSrc" mode="widthFix"></image>
@@ -205,6 +220,8 @@
 							</view>
 						</view>
 					</form>
+					
+					
 				</view>
 			</view>
 		</view>
@@ -218,7 +235,7 @@
 		import parseHtml from "../../common/html-parser.js"
 	// #endif	
 
-	import contentList from '../../components/wp-article-detail.vue'
+	import WpArticleDetail from '../../components/wp-article-detail.vue'
 	
 	var current_post_id;
 	var userInfo;
@@ -226,7 +243,7 @@
 	export default {
 		
 		components: {
-			contentList
+			WpArticleDetail
 			
 		},
 		data() {
@@ -246,7 +263,10 @@
 				
 				commentsList: null,
 				commentsList_display: 'none',
-				commentsList_is_loading_OK:false,
+				commentsList_is_load_all_ok:false,
+				commentsList_is_loading:false,
+				comment_current_page:1,
+				comment_per_page:10,
 				
 				result:'',
 				
@@ -264,8 +284,9 @@
 				menuBackgroup: false,
 				isShow: false,//控制menubox是否显示
 				isLoad: true,//解决menubox执行一次
-				page:1,
-				per_page:5,
+				
+				
+				
 				current_post_id:'',
 				detail:[],
 				
@@ -330,64 +351,7 @@
 		
 		//触底方法
 		onReachBottom: function () {  
-			var that = this;
-			// var that = this;
-			if(this.commentsList_is_loading_OK){
-				//that.page = page;
-				uni.showToast({
-					title: '到底啦~',
-					duration: 2000
-				});
-				return;
-			}
-			
-			that.page++;
-			console.log('page',that.page);
-			
-			that.abotapi.abotRequest({
-				url: that.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/comments',
-				method: "get",
-				data: {
-					per_page: that.per_page,
-					orderby: 'date',
-					order: 'asc',
-					post: that.current_post_id,
-					page:that.page,
-					sellerid:that.abotapi.globalData.default_sellerid,
-				},
-				success(res){
-					
-					console.log("获取评论====>>>>", res);
-					
-					if(res.statusCode == 200 && res.data.length > 0){
-						that.commentsList_is_loading_OK = false;
-						that.commentsList = that.commentsList.concat(res.data);
-						
-						console.log('超过一页',that.commentsList);
-						
-						that.display = 'none';
-						
-						var str = that.commentsList;
-						
-						for(var i=0; i<str.length; i++){
-						   str[i].date = str[i].date.replace('T',' ');
-						}
-						
-						that.commentsList = str;
-						
-						console.log("commentsList",that.commentsList);
-
-					}
-					else{
-						that.commentsList_display = 'block';
-						that.commentsList_is_loading_OK = true;
-
-						
-					}
-					
-					console.log("当前评论====>>>>", that.commentsList);
-				}
-			});
+			this.fetchCommentData();
 		},
 
 		//分享文章
@@ -736,7 +700,7 @@
 			ShowHideMenu: function () {
 				this.isShow = !this.isShow;
 				this.isLoad = false;
-				this.menuBackgroup = !this.false
+				this.menuBackgroup = !this.menuBackgroup;
 			},
 			//点击非评论区隐藏功能菜单
 			hiddenMenubox: function () {
@@ -805,15 +769,17 @@
 						}
 					})
 				}else{
-					var userdelite = uni.getStorageSync('userDelite');
-					console.log('user???????????',userdelite);
+					
+					var userDetail = that.abotapi.get_user_account_info();
+					
+					console.log('user???????????',userDetail);
 					
 					this.abotapi.abotRequest({
 					    url:that.abotapi.globalData.wordpress_rest_api_url + '/wp-json/yanyubao-wp-api/v1/post/like',
 					    method: 'post',
 					    data:{
 							// openid:that.abotapi.get_current_openid(),
-							userid:userdelite.userid,
+							userid:userDetail.userid,
 							postid:that.current_post_id,
 					    	sellerid:that.abotapi.globalData.default_sellerid,
 					    },
@@ -844,14 +810,16 @@
 			//是否点赞
 			Islike:function(){
 				var that = this;
-				var userdelite = uni.getStorageSync('userDelite');
-				console.log('user???????????',userdelite);
+				
+				var userDetail = that.abotapi.get_user_account_info();
+				
+				console.log('user???????????',userDetail);
 				
 				this.abotapi.abotRequest({
 				    url:that.abotapi.globalData.wordpress_rest_api_url + '/wp-json/yanyubao-wp-api/v1/post/islike',
 				    method: 'post',
 				    data:{
-						userid:userdelite.userid,
+						userid:userDetail.userid,
 						postid:that.current_post_id,
 				    	sellerid:that.abotapi.globalData.default_sellerid,
 				    },
@@ -894,7 +862,20 @@
 			//提交评论
 			formSubmit: function (e) {
 				var that = this;
+				
 				console.log("e22",e);
+				
+				//that.input_comment_content = 'sss';				
+				//return;
+				
+				/*that.input_comment_content = ' dd';				
+				that.commentsList_is_load_all_ok = false;
+				that.commentsList_is_loading = false;
+				that.comment_current_page = 1;
+				that.fetchCommentData();
+				return;
+				*/
+				
 				that.postID = e.detail.value.inputPostID;
 				// var userid = self.userid;
 				var comment_content = e.detail.value.inputComment;
@@ -910,10 +891,12 @@
 				}
 				
 				console.log("userInfo",that.abotapi.get_user_info());
-				var userdelite = uni.getStorageSync('userDelite');
-				console.log('user???????????',userdelite);
 				
-				if(!userdelite){
+				var userDetail = that.abotapi.get_user_account_info();
+				
+				console.log('user???????????',userDetail);
+				
+				if(!userDetail){
 					return;
 				}
 				
@@ -921,28 +904,44 @@
 					url: that.abotapi.globalData.wordpress_rest_api_url + '/wp-json/yanyubao-wp-api/v1/comment/add',
 					method: "POST",
 					data: {
-						author_email: userdelite.email,
-						author_name: userdelite.nickname,
-						author_url: userdelite.headimgurl,
+						author_email: userDetail.email,
+						author_name: userDetail.nickname,
+						author_url: userDetail.headimgurl,
+						
 						company: '来自小程序的评论',
+						
 						content: comment_content,
 						formId:that.formId,
-						mobile:userdelite.mobile,
-						// openid:userdelite.openid,
+						mobile:userDetail.mobile,
+						// openid:userDetail.openid,
 						parent:that.parentID,
 						post:that.current_post_id,
-						userid:userdelite.userid,
+						userid:userDetail.userid,
 						sellerid:that.abotapi.globalData.default_sellerid,
 					},
 					success(res){
-						console.log("delite_res",res);
+						console.log("delite_res==>>>", res);
+						
 						if(res.data.code == 'success'){
-							comment_content = '';
+							
+							//如果设置 ''，前端没有变化，所以只能设置为 ' '，加了一个空格。
+							
+							that.input_comment_content = ' ';		
+
+							//刷新评论列表
+							that.commentsList_is_load_all_ok = false;							
+							that.commentsList_is_loading = false;
+							that.comment_current_page = 1;
+							that.commentsList = null;
+							that.fetchCommentData();
+							
 							uni.showToast({
 								title: '评论成功',
 								icon: 'success',
 								duration: 2000
 							});
+							
+							
 						}else{
 							uni.showToast({
 								title: '评论失败',
@@ -961,44 +960,84 @@
 
 			//获取评论
 			fetchCommentData: function () {
+				
 				var that = this;
-				if(that.commentsList_is_loading_OK){
-
+				
+				if(that.commentsList_is_load_all_ok){
+					//that.page = page;
+					
+					/*
+					uni.showToast({
+						title: '到底啦~',
+						duration: 2000
+					});*/
 					return;
 				}
+				
+				if(that.commentsList_is_loading){
+					return;
+				}
+				
+				//判断ajax是否正在请求过程中的开关
+				that.commentsList_is_loading = true;
+				
+				console.log('comment_current_page===>>>当前请求的页码：', that.comment_current_page);
+				
 				that.abotapi.abotRequest({
 					url: that.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/comments',
 					method: "get",
 					data: {
-						per_page: that.per_page,
+						per_page: that.comment_per_page,
 						orderby: 'date',
-						order: 'asc',
+						order: 'desc',
 						post: that.current_post_id,
-						page:1,
+						page:that.comment_current_page,
 						sellerid:that.abotapi.globalData.default_sellerid,
 					},
 					success(res){
-						console.log("获取评论====>>>>", res);
+						
+						console.log("获取评论数据 ====>>>> ", res);
 						
 						if(res.statusCode == 200 && res.data.length > 0){
-							that.commentsList_is_loading_OK = false;
-							if(that.page == 1){
-								that.commentsList = res.data;
-								that.commentsList_display = 'none';
-								var str = that.commentsList;
-								
-								for(var i=0; i<str.length; i++){
-								   str[i].date = str[i].date.replace('T',' ');
-								}
-								
-								that.commentsList = str;
+							
+							that.commentsList_is_loading = false;
+							
+							if(that.commentsList){
+								that.commentsList = that.commentsList.concat(res.data);
 							}
+							else{
+								that.commentsList = res.data;
+							}
+							
+							
+							that.comment_current_page ++;
+							
+							console.log('comment_current_page===>>>下一次请求的页码：', that.comment_current_page);
+							
+							
+							for(var i=0; i<that.commentsList.length; i++){
+							   that.commentsList[i].date = that.commentsList[i].date.replace('T',' ');
+							}
+							
+							console.log("commentsList ===>>> ", that.commentsList);
+							
+							that.commentsList_is_load_all_ok = false;
+							that.commentsList_display = 'none';
+				
+						}
+						else{
+							that.commentsList_display = 'block';
+							that.commentsList_is_load_all_ok = true;
+				
 							
 						}
 						
 						console.log("当前评论====>>>>", that.commentsList);
 					}
 				});
+				
+				
+				
 			},
 
 
@@ -1194,16 +1233,16 @@
 	
 	
 	.entry-gap-like {
-	  width: 120upx;
+	  width: 120rpx;
 	  height: 2px;
 	  background-color: #4c4c4c;
-	  margin-bottom: 32upx;
+	  margin-bottom: 32rpx;
 	}
 	.entry-gap-zan {
-	  width: 70upx;
+	  width: 70rpx;
 	  height: 2px;
 	  background-color: #4c4c4c;
-	  margin-bottom: 32upx;
+	  margin-bottom: 32rpx;
 	}
 	
 	
@@ -1223,46 +1262,52 @@
 
 
 	.commentheader {
-	  padding: 20upx 0;
+	  padding: 20rpx 0;
 	  text-align: left;
 	  font-weight: normal;
-	  font-size: 28upx;
-	  line-height: 40upx;
+	  font-size: 28rpx;
+	  line-height: 40rpx;
 	  color: #959595;
 	}
 	
 	.comment {
 	  background-color: #f5f7f7;
-	  padding: 0 24upx;
-	  border-radius: 12upx;
-	  margin: 12upx 0;
+	  padding: 20rpx 24rpx;
+	  border-radius: 12rpx;
+	  margin: 12rpx 0;
 	}
 
 	.comment-user {
 	  display: flex;
 	  align-items: center;
-	  font-size: 28upx;
+	  font-size: 28rpx;
 	  font-weight: normal;
 	  outline: none;
 	  color: #959595;
-	  margin: 10upx 0;
+	  margin: 10rpx 0;
 	}
 	
 
 	.comment-user image {
-	  margin-right: 16upx;
+	  margin-right: 16rpx;
 	}
 
 	.comment-summary {
 	  color: #4c4c4c;
-	  font-size: 28upx;
+	  font-size: 28rpx;
 	  line-height: 1.5;
-	  margin-bottom: 10upx;
-	  margin-left: 60upx;
+	  margin-bottom: 10rpx;
+	  margin-left: 60rpx;
+	}
+	
+	.comment-summary-02{
+		margin: 20rpx;
+		font-size: 26rpx;
+		color: #666;
 	}
 	
 	.comment-respond {
-	  margin-top: 10upx;
+	  margin-top: 10rpx;
 	}
 	
 	.comment-fixed {
@@ -1271,31 +1316,31 @@
 	  left: 0;
 	  right: 0;
 	  background-color: #fff;
-	  box-shadow: 0 0 10upx rgba(30, 20, 20, 0.1);
+	  box-shadow: 0 0 10rpx rgba(30, 20, 20, 0.1);
 	  z-index: 100;
 	}
 	
 	.comment-box {
-	  padding: 16upx 4upx;
+	  padding: 16rpx 4rpx;
 	  display: flex;
 	  justify-content: center;
-	  height:90upx;
+	  height:90rpx;
 	}
 
 	.comment-button {
-	  width: 160upx;
-	  height:60upx;
+	  width: 160rpx;
+	  height:60rpx;
 	  display: flex !important;
 	  flex-direction: column;
 	  justify-content: center;
-	  margin-right: 22upx;
+	  margin-right: 22rpx;
 	  border-bottom-left-radius: 0;
 	  border-top-left-radius: 0;
-	  border-top-right-radius: 10upx !important;
-	  border-bottom-right-radius: 10upx !important;
+	  border-top-right-radius: 10rpx !important;
+	  border-bottom-right-radius: 10rpx !important;
 	  text-align: center;
-	  padding: 0 10upx !important;
-	  font-size: 32upx;
+	  padding: 0 10rpx !important;
+	  font-size: 32rpx;
 	  background-color: #eee;
 	  color: #959595;
 	}
@@ -1306,31 +1351,31 @@
 
 	.comment-input {
 	  background-color: #f5f7f7;
-	  padding: 4upx 6upx 4upx 20upx;
-	  font-size: 28upx;
-	  height: 50upx;
-	  max-height: 50upx;
+	  padding: 4rpx 6rpx 4rpx 20rpx;
+	  font-size: 28rpx;
+	  height: 50rpx;
+	  max-height: 50rpx;
 	  min-height: 30px;
 	  width: 51%;
 	  text-align: left;
-	  border-bottom-left-radius: 10upx;
-	  border-top-left-radius: 10upx;
+	  border-bottom-left-radius: 10rpx;
+	  border-top-left-radius: 10rpx;
 	  border-top-right-radius: 0;
 	  border-bottom-right-radius: 0;
 	}
 
 	.gravatarImg {
 	  border-radius: 50%;
-	  height: 48upx;
-	  width: 48upx;
+	  height: 48rpx;
+	  width: 48rpx;
 	}
 	
 	.img-plus {
-	  width: 48upx !important;
-	  height: 48upx !important;
-	  margin-right: 20upx;
-	  margin-top: 10upx;
-	  background-size: 48upx;
+	  width: 48rpx !important;
+	  height: 48rpx !important;
+	  margin-right: 20rpx;
+	  margin-top: 10rpx;
+	  background-size: 48rpx;
 	}
 		
 	.relatedPost {
@@ -1342,12 +1387,12 @@
 	.relatedTitle {
 	  text-align: left;
 	  font-weight: normal;
-	  line-height: 40upx;
+	  line-height: 40rpx;
 	  
-	  margin-top: 100upx;
-	  margin-bottom: 20upx;
+	  margin-top: 100rpx;
+	  margin-bottom: 20rpx;
 	  
-	  font-size: 32upx;
+	  font-size: 32rpx;
 	  
 	  color: #4c4c4c !important;
 	}
@@ -1355,61 +1400,61 @@
 	.relatedText {
 	  text-align: left;
 	  font-weight: normal;
-	  font-size: 28upx;
-	  line-height: 60upx;
+	  font-size: 28rpx;
+	  line-height: 60rpx;
 	  color: #4c4c4c !important;
 	}
 	
 	.likePost {
 	  position: relative;
 	  text-align: left;
-	  margin-top: 30upx;
-	  margin-bottom: 60upx;
+	  margin-top: 30rpx;
+	  margin-bottom: 60rpx;
 	}
 	
 	.likeTitle {
 	  text-align: left;
 	  font-weight: normal;
-	  margin-top: 20upx;
-	  margin-bottom: 20upx;
-	  font-size: 28upx;
+	  margin-top: 20rpx;
+	  margin-bottom: 20rpx;
+	  font-size: 28rpx;
 	  color: #959595 !important;
 	  vertical-align: middle;
 	  position: absolute;
-	  top: 120upx;
+	  top: 120rpx;
 	  left: 0;
 	}
 	
 	.likeTitle-img {
 	  position: absolute;
-	  top: 120upx;
-	  left: 160upx;
+	  top: 120rpx;
+	  left: 160rpx;
 	}
 	
 	.likeText {
 	  text-align: left;
 	  font-weight: normal;
-	  font-size: 26upx;
-	  line-height: 30upx;
+	  font-size: 26rpx;
+	  line-height: 30rpx;
 	  color: #0000fe !important;
-	  margin: 140upx 0 20upx;
+	  margin: 140rpx 0 20rpx;
 	}
 	
 	.img-like {
-	  width: 50upx;
-	  height: 50upx;
+	  width: 50rpx;
+	  height: 50rpx;
 	  display: inline-block;
 	  text-align: center;
-	  margin-right: 20upx;
-	  margin-top: 8upx;
+	  margin-right: 20rpx;
+	  margin-top: 8rpx;
 	}
 	
 	.gravatarLikeImg {
-	  margin-top: 8upx;
+	  margin-top: 8rpx;
 	  border-radius: 50%;
-	  height: 60upx;
-	  width: 60upx;
-	  margin-right: 20upx;
+	  height: 60rpx;
+	  width: 60rpx;
+	  margin-right: 20rpx;
 	}
 	
 	.relatedNavigator {
@@ -1429,21 +1474,22 @@
 	}
 
 	.ditail-copyright {
-	  font-size: 26upx;
+	  font-size: 26rpx;
 	  line-height: 1.2;
 	  font-weight: normal;
 	  text-align: center;
 	  color: #999;
-	  margin-top: 20upx;
-	  padding-bottom: 120upx;
+	  margin-top: 20rpx;
+	  padding-bottom: 120rpx;
 	}
 
 	.menu-box {
 	  position: relative;
-	  height: 160upx;
-	  padding: 10upx 0;
+	  height: 160rpx;
+	  padding: 10rpx 0;
 	  box-sizing: border-box;
-	  margin-bottom: -160upx;
+	  margin-bottom: -160rpx;
+	  display:none;
 	}
 	
 	.menuBackground {
@@ -1458,15 +1504,15 @@
 	
 	.iconList {
 	  text-align: center;
-	  border-top: 2upx solid #eee;
+	  border-top: 2rpx solid #eee;
 	}
 	
 	.iconLine {
-	  margin-top: 20upx;
+	  margin-top: 20rpx;
 	}
 	
 	.iconLine text {
-	  font-size: 24upx;
+	  font-size: 24rpx;
 	  text-align: center;
 	  color: #959595;
 	}
@@ -1476,8 +1522,8 @@
 	}
 
 	.img-menu {
-	  width: 50upx;
-	  height: 50upx;
+	  width: 50rpx;
+	  height: 50rpx;
 	  display: inline-block;
 	  text-align: center;
 	}
@@ -1499,7 +1545,7 @@
 	
 	@-webkit-keyframes emoji-move-in {
 	  0% {
-	    margin-bottom: -160upx;
+	    margin-bottom: -160rpx;
 	  }
 	
 	  100% {
@@ -1509,7 +1555,7 @@
 	
 	@keyframes emoji-move-in {
 	  0% {
-	    margin-bottom: -160upx;
+	    margin-bottom: -160rpx;
 	  }
 	
 	  100% {
@@ -1523,7 +1569,7 @@
 	  }
 	
 	  100% {
-	    margin-bottom: -160upx;
+	    margin-bottom: -160rpx;
 	  }
 	}
 	
@@ -1533,16 +1579,16 @@
 	  }
 	
 	  100% {
-	    margin-bottom: -160upx;
+	    margin-bottom: -160rpx;
 	  }
 	}
 	
 	.pagination{
 		font-weight: normal;
-		font-size: 28upx;
-		line-height: 60upx;
+		font-size: 28rpx;
+		line-height: 60rpx;
 		color: #4c4c4c !important;
-		border-bottom: 2upx solid #eee;
+		border-bottom: 2rpx solid #eee;
 	
 	}
 	.nav-previous {
@@ -1565,7 +1611,7 @@
 	
 	.canvas-box {
 	  position: fixed;
-	  top: 999999upx;
+	  top: 999999rpx;
 	  left: 0;
 	}
 	

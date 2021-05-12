@@ -231,7 +231,7 @@ function abot_wp2app_get_comment_json($userid){
     {
 
         $sql ="SELECT * from ".$wpdb->posts."  where ID in  
-(SELECT comment_post_ID from ".$wpdb->comments." where user_id=".$user_id."   GROUP BY comment_post_ID order by comment_date ) LIMIT 20";        
+(SELECT comment_post_ID from ".$wpdb->comments." where user_id=".$user_id."   GROUP BY comment_post_ID order by comment_date desc ) LIMIT 20";        
         $_posts = $wpdb->get_results($sql);
         $posts =array();
         foreach ($_posts as $post) {

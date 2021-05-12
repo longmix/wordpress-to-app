@@ -1,6 +1,6 @@
 <template>
 	<view class="content-article-detail">   <!-- :style="{display:display}" -->
-		<view class="entry-title">{{article_title}}</view>
+		<view class="entry-title"><text selectable="true" user-select="true">{{article_title}}</text></view>
 		<view class="entry-date" v-if="attr_list != ''">		
 			<image src="../static/wp-article-img/calendar.png" style="height:24upx;width:24upx;"></image>
 			<text class="entry-date-text">{{attr_list.date_to_show}}</text>
