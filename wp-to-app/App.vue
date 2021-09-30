@@ -9,23 +9,6 @@
 			
 			this.abotapi.globalData = abot_data.globalData;
 			
-			
-			//判断是否是关闭状态，如果是，跳转到指定page，并显示关站提示。
-			this.abotapi.set_option_list_str(null, function(that, res){
-				console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', res);
-				
-				if(res.shutdown_website_status == 1){
-					//跳转到网站关闭的提示页面
-					console.log("???????????");
-					uni.reLaunch({
-						url:'/pages/shutdown_website/shutdown_website'
-					})
-					return;
-				}
-				
-			});
-			
-			
 		},
 		onShow: function() {
 			console.log('App Show')
@@ -46,4 +29,23 @@
 	@import "./components/gaoyia-parse/parse.css";
 	/*覆盖文本编辑器里面的图片的大小*/
 	uni-rich-text img{ max-width: 100% !important;}
+</style>
+<style>
+	
+	* {
+		font-size: 30rpx;
+	}
+
+	page {
+		background: #FFFFFF;
+		font-family: '微软雅黑';
+	}
+
+	.copyright_info {
+		text-align: center;
+		font-size: 25rpx;
+		color: #666;
+		padding-bottom: 80rpx;
+	}
+
 </style>

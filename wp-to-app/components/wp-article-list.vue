@@ -58,29 +58,29 @@
 	/*common list  for  index  list page */
 	
 	.common-list {
-	  margin-bottom: 24upx;
+	  margin-bottom: 24rpx;
 	}
 	
 	.common-list .list-item {
 	  position: relative;
 	  border-bottom: 1px solid #eee;
-	  padding: 24upx;
-	  min-height: 150upx;
+	  padding: 24rpx;
+	  min-height: 150rpx;
 	  overflow: hidden;
 	}
 	
 	.common-list .list-item.has-img image.cover {
 	  position: absolute;
-	  left: 0upx;
-	  top: 24upx;
-	  width: 150upx;
-	  height: 150upx;
+	  left: 0rpx;
+	  top: 24rpx;
+	  width: 150rpx;
+	  height: 150rpx;
 	}
 	
 	.common-list .list-item.has-img .content-title {
-	  margin-left: 160upx;
-	  height: 80upx;
-	  margin-bottom: 20upx;
+	  margin-left: 160rpx;
+	  height: 80rpx;
+	  margin-bottom: 20rpx;
 	}
 	
 	.common-list .list-item.has-img .content-title text {
@@ -90,27 +90,27 @@
 	  display: -webkit-box;
 	  -webkit-line-clamp: 2;
 	  -webkit-box-orient: vertical;
-	  font-size: 30upx;
+	  font-size: 30rpx;
 	  line-height: 1.4;
 	  font-weight: 400;
 	  color: #3a4040;
 	}
 	
 	.common-list .list-item.has-img .content-date {
-	  margin-left: 160upx;
+	  margin-left: 160rpx;
 	}
 	
 	.common-list .list-item.has-img .content-date image {
-	  width: 24upx;
-	  height: 24upx;
-	  margin-right: 6upx;
+	  width: 24rpx;
+	  height: 24rpx;
+	  margin-right: 6rpx;
 	  vertical-align: middle;
 	}
 	
 	.common-list .list-item .content-date text {
 	  color: #959595;
-	  margin-right: 32upx;
-	  font-size: 20upx;
+	  margin-right: 20rpx;
+	  font-size: 20rpx;
 	  line-height: 1.2;
 	  font-weight: normal;
 	}

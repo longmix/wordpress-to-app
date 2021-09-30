@@ -57,7 +57,7 @@
 			</view>
 	
 			<view class="likeTitle-img">
-				<image src="../../static/wp-article-img/home-like.png" class="img-like" id="liketop" @catchtap="clickLike"></image>
+				<image src="static/wp-article-img/home-like.png" class="img-like" id="liketop" @catchtap="clickLike"></image>
 			</view>
 			<view class="likeText">
 				<block v-for="(likeList1,index2) in likeList" :key="index2">
@@ -135,7 +135,7 @@
 						<view class="comment-respond">
 							<input maxlength="200" name="inputPostID" :value="detail.id" style="display:none" />
 							<view class="comment-box">
-								<image src="../../static/img/detail/entry-home.png" 
+								<image src="static/post_detail/entry-home.png" 
 									class="img-plus" 
 									style="margin-left:20rpx;margin-right:20rpx" 
 									@tap="goHome"></image>
@@ -147,7 +147,7 @@
 									:focus="focus" 
 									 />
 								<button class="comment-button touch-active" formType="submit">发送</button>
-								<image src="../../static/img/detail/plus.png" class="img-plus" @tap="ShowHideMenu" mode=""></image>
+								<image src="static/post_detail/plus.png" class="img-plus" @tap="ShowHideMenu" mode=""></image>
 							</view>
 							
 							<!--功能图标-->
@@ -158,7 +158,7 @@
 									<view class="iconLine">
 										<view style="width:20%; position: relative; float:left; text-align:center">
 											<view>
-												<image src="../../static/img/detail/forwarding.png" class="img-menu"></image>
+												<image src="static/post_detail/forwarding.png" class="img-menu"></image>
 											</view>
 											<view>
 												<text>转发</text>
@@ -167,7 +167,7 @@
 										</view>
 										<view style="width:20%; float:left; text-align:center">
 											<view>
-												<image src="../../static/img/detail/poster.png" :data-src001="poster_url" @tap="showPhoto" data-name='5' data-target="Image" class="img-menu"></image>
+												<image src="static/post_detail/poster.png" :data-src001="poster_url" @tap="showPhoto" data-name='5' data-target="Image" class="img-menu"></image>
 											</view>
 											<view>
 												<text>海报</text>
@@ -175,7 +175,7 @@
 										</view>
 										<view style="width:20%; float:left; text-align:center">
 											<view>
-												<image src="../../static/img/detail/copy.png" class="img-menu" :data-url="detail.link" @tap="copyLink"></image>
+												<image src="static/post_detail/copy.png" class="img-menu" :data-url="detail.link" @tap="copyLink"></image>
 											</view>
 											<view>
 												<text>复制链接</text>
@@ -183,7 +183,7 @@
 										</view>
 										<view style="width:20%; float:left; text-align:center">
 											<view>
-												<image :src="'../../static/img/detail/'+likeImag" @tap="Islike" id="likebottom" class="img-menu"></image>
+												<image :src="'static/post_detail/'+likeImag" @tap="Islike" id="likebottom" class="img-menu"></image>
 											</view>
 											<view>
 												<text>点赞</text>
@@ -192,7 +192,7 @@
 										<view style="width:20%; float:left; ">
 											
 											<view>
-												<image src="../../static/img/detail/appreciation.png" :data-src001="wp_zanshang_shoukuan_img_url" @tap="showPhoto" data-name='6' data-target="Image" class="img-menu"></image>
+												<image src="static/post_detail/appreciation.png" :data-src001="wp_zanshang_shoukuan_img_url" @tap="showPhoto" data-name='6' data-target="Image" class="img-menu"></image>
 											</view>
 											<view>
 												<text>转载</text>
@@ -511,8 +511,14 @@
 							
 							that.article_title = res.data.title.rendered;
 							
-							//设置页面的标题一遍更好的SEO
+							//设置页面的标题以便更好的SEO
 							var new_title = that.article_title;
+							
+							//标题只保留9个字符
+							if(new_title && (new_title.length > 9)){
+								//new_title = new_title.substring(0, 9);
+								new_title = that.abotapi.globalData.wxa_website_name;
+							}
 							
 							uni.setNavigationBarTitle({
 								title: new_title
@@ -520,6 +526,24 @@
 							
 							
 							
+						
+							
+							
+							//uparse使用
+							that.index_rich_html_content = res.data.content.rendered;
+							
+							
+							//v-html使用
+							that.article_content_html = res.data.content.rendered;
+							
+							//console.log('that.article_content_html====>>>>111', that.article_content_html);
+							
+							const filter = that.$options.filters["formatRichText"];
+							that.article_content_html = filter(that.article_content_html);
+							
+							//console.log('that.article_content_html====>>>>', that.article_content_html);
+
+
 							//设置百度小程序中的页面SEO信息
 // #ifdef MP-BAIDU
 							swan.setPageInfo({
@@ -543,22 +567,12 @@
 									console.log('setPageInfo fail', err);
 								}
 							});
-// #endif							
 							
+							//2021.7.22. 删除所有的超链接和对应的超链文本
+							that.index_rich_html_content = that.index_rich_html_content.replace(/(<\/?a.*?>)[^>]*<\/a>/g, '');
 							
-							//uparse使用
-							that.index_rich_html_content = res.data.content.rendered;
-							
-							
-							//v-html使用
-							that.article_content_html = res.data.content.rendered;
-							
-							//console.log('that.article_content_html====>>>>111', that.article_content_html);
-							
-							const filter = that.$options.filters["formatRichText"];
-							that.article_content_html = filter(that.article_content_html);
-							
-							//console.log('that.article_content_html====>>>>', that.article_content_html);
+// #endif	
+
 							
 // #ifdef MP-ALIPAY 
 							
@@ -736,7 +750,7 @@
 							success: function (res) {
 								uni.showToast({
 									title: '链接已复制',
-									image: '../../static/img/detail/link.png',
+									image: 'static/post_detail/link.png',
 									duration: 2000
 								})
 							}
@@ -755,6 +769,8 @@
 				var userInfo = this.abotapi.get_user_info();
 				// var getUserid = userInfo.userid;
 				
+				console.log('click like ===>>>', userInfo);
+				
 				if (!userInfo || userInfo.userid == null) {
 					uni.showModal({
 						title:'提示',
@@ -768,41 +784,43 @@
 							return;
 						}
 					})
-				}else{
 					
-					var userDetail = that.abotapi.get_user_account_info();
-					
-					console.log('user???????????',userDetail);
-					
-					this.abotapi.abotRequest({
-					    url:that.abotapi.globalData.wordpress_rest_api_url + '/wp-json/yanyubao-wp-api/v1/post/like',
-					    method: 'post',
-					    data:{
-							// openid:that.abotapi.get_current_openid(),
-							userid:userDetail.userid,
-							postid:that.current_post_id,
-					    	sellerid:that.abotapi.globalData.default_sellerid,
-					    },
-						
-					    success(res) {
-					    	console.log("dianzan_res",res);
-							if(res.data.code == 'success'){
-								uni.showToast({
-									title:'点赞成功',
-									icon:'success',
-									duration:2000
-								})
-								that.displayLike = 'block';
-							}
-					    },
-					    fail: function (e) {
-							uni.showToast({
-								title: '网络异常！',
-								duration: 2000
-							});
-					    },
-					});
+					return;
 				}
+				
+				//开始点赞
+				var userDetail = that.abotapi.get_user_account_info();
+				
+				console.log('user???????????',userDetail);
+				
+				this.abotapi.abotRequest({
+				    url:that.abotapi.globalData.wordpress_rest_api_url + '/wp-json/yanyubao-wp-api/v1/post/like',
+				    method: 'post',
+				    data:{
+						// openid:that.abotapi.get_current_openid(),
+						userid:userDetail.userid,
+						postid:that.current_post_id,
+				    	sellerid:that.abotapi.globalData.default_sellerid,
+				    },
+					
+				    success(res) {
+				    	console.log("dianzan_res",res);
+						if(res.data.code == 'success'){
+							uni.showToast({
+								title:'点赞成功',
+								icon:'success',
+								duration:2000
+							})
+							that.displayLike = 'block';
+						}
+				    },
+				    fail: function (e) {
+						uni.showToast({
+							title: '网络异常！',
+							duration: 2000
+						});
+				    },
+				});
 				
 			},
 			
@@ -811,9 +829,31 @@
 			Islike:function(){
 				var that = this;
 				
+				var userInfo = this.abotapi.get_user_info();
+				// var getUserid = userInfo.userid;
+				
+				console.log('click like ===>>>', userInfo);
+				
+				if (!userInfo || userInfo.userid == null) {
+					uni.showModal({
+						title:'提示',
+						content: '请先登录',
+						showCancel:false,
+						success(res){
+							var last_url2 = '/pages/wordpress/detail?id='+that.current_post_id;
+							
+							that.abotapi.goto_user_login(last_url2,'normal');
+							
+							return;
+						}
+					})
+					
+					return;
+				}
+				
 				var userDetail = that.abotapi.get_user_account_info();
 				
-				console.log('user???????????',userDetail);
+				console.log('user???????????', userDetail);
 				
 				this.abotapi.abotRequest({
 				    url:that.abotapi.globalData.wordpress_rest_api_url + '/wp-json/yanyubao-wp-api/v1/post/islike',
@@ -825,7 +865,7 @@
 				    },
 					
 				    success(res) {
-				    	console.log("isdianzan_res",res);
+				    	console.log("isdianzan_res", res);
 						if(res.data.status == 200){
 							uni.showToast({
 								title:'已经点过了',
@@ -1190,6 +1230,10 @@
 				
 				newContent = newContent.replace(/<blockquote[^>]*>/gi, '<blockquote class="article_blockquote_css">');
 				newContent = newContent.replace(/<pre[^>]*>/gi, '<pre class="article_pre_css">');
+				
+				//newContent = newContent.replace(/(<\/?a.*?>)|(<\/?span.*?>)/g, '');
+				//2021.7.22. 删除所有的超链接和对应的超链文本
+				newContent = newContent.replace(/(<\/?a.*?>)[^>]*<\/a>/g, '');
 				
 				return newContent;
 			}	

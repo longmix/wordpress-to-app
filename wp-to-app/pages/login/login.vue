@@ -104,9 +104,25 @@
 			</div>
 			<div class="flex flex-center">
 				<!-- <button open-type="getUserInfo" @getuserinfo="wxLogin" class="btn-round bg-success icon-weixin"></button> -->
-				<button open-type="getPhoneNumber" plain="true"  class="btn-round bg-success icon-weixin" @getphonenumber="btn_wxa_one_click_login"></button>
+				<button open-type="getPhoneNumber" plain="true"  
+					class="btn-round bg-success icon-weixin" @getphonenumber="btn_wxa_one_click_login"></button>
 			</div>
 			<!-- #endif -->
+			
+			<!-- #ifdef MP-BAIDU -->
+			<div class="otherBox">
+				<div class="otherBox-line"></div>
+				<div class="otherBox-text">一键登录</div>
+			</div>
+			<div class="flex flex-center" style="margin-bottom: 200rpx;">				
+				<button open-type="getPhoneNumber"
+					@getphonenumber="btn_baidu_one_click_login"
+					type="primary"
+					class="btn-row-submit"
+					style="width: 92%;background: #2E85D8;">百度手机号快速登录</button>
+			</div>
+			<!-- #endif -->
+			
 			
 		</form>
 	     <!--站位-->
@@ -640,6 +656,140 @@
 					}
 				});
 			},
+			//2021.7.22. 百度一键登录
+			/*
+			detail
+			:
+			encryptedData
+			:
+			"rkbCbHbCwRGZvJhtmUcPtlQNyq4X8X0l/+oTKUa8BHVcc5lmXGbdK1nnssfSLoT26JWh7T5GRcOuFPKYY7rd3WR9WYT4lQrl1FjziibJ+Mk="
+			errMsg
+			:
+			"getPhoneNumber:ok"
+			iv
+			:
+			"07bcfd5f66103efba3790Q=="*/
+			btn_baidu_one_click_login:function(e){
+				var that = this;
+				
+				console.log('uni.login <<<==== btn_baidu_one_click_login', e);
+				
+				console.log(e.detail.errMsg)
+				console.log(e.detail.iv)
+				console.log(e.detail.encryptedData)
+				
+				if(e.detail.errMsg != 'getPhoneNumber:ok'){
+					uni.showModal({
+						title:'失败',
+						content:'获取手机号码失败',
+						showCancel:false
+					});
+					
+					return;
+				}
+					  
+				uni.login({
+					success: function (res) {
+						console.log("btn_baidu_one_click_login 获取到的jscode是:" + res.code);
+					  
+						//如果拒绝授权， e.detail.errMsg
+						//console.log(e.detail.errMsg);return;
+					  
+						that.abotapi.abotRequest({
+							url: that.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=ShopAppBaiduSmartApp&a=wxa_one_click_login',
+							method: "POST",
+							dataType: 'json',
+							data: {
+								js_code: res.code,
+								baidu_smartapp_appid: that.abotapi.globalData.baidu_smartapp_appid,
+								iv: e.detail.iv,
+								encryptedData: e.detail.encryptedData,
+								sellerid: that.abotapi.globalData.default_sellerid,
+								parentid: 0,
+							},
+							success: function (res) {
+								console.log(res);
+			  
+								if (res.data && (res.data.code == 1)) {
+									//更新checkstr和uwid，
+									that.abotapi.globalData.userInfo.userid = res.data.userid;
+									//this.abotapi.globalData.userInfo.checkstr = res.data.checkstr;
+				  
+									console.log('一键登录成功，userid:' + res.data.userid);
+									console.log('一键登录成功，userid:' + res.data.openid);
+				  
+									that.abotapi.globalData.userInfo.user_openid = res.data.openid;
+									that.abotapi.globalData.userInfo.userid = res.data.userid;
+									that.abotapi.globalData.userInfo.checkstr = res.data.checkstr;
+									that.abotapi.globalData.userInfo.is_get_userinfo = res.data.is_get_userinfo;
+				  
+									//保存openid
+									that.abotapi.set_current_openid(res.data.openid);
+					  
+									console.log(that.abotapi.globalData.userInfo);
+					  
+									that.abotapi.set_user_info(that.abotapi.globalData.userInfo);
+									
+									that.getUserInfoFromYanyubao();
+									
+									uni.showToast({
+										title: res.data.msg,
+										icon: 'success',
+										duration: 2000
+									})
+				  
+									//=======检查登录成功之后的跳转=======
+									var last_url = uni.getStorageSync('last_url');
+				 
+									console.log('last_url-----', last_url)
+				 
+									var page_type = uni.getStorageSync('page_type');
+									if (last_url) {
+										if (page_type && (page_type == 'switchTab')) {
+				 
+											uni.switchTab({
+												url: last_url,
+											})
+										} else {
+											uni.redirectTo({
+												url: last_url,
+											})
+										}
+				 
+										uni.removeStorageSync('last_url');
+										uni.removeStorageSync('page_type');
+				 
+										return;
+									}
+									//===========End================
+			
+									uni.redirectTo({
+										url: '/pages/index/index'
+									})
+			
+								}else {
+									//一键登录返回错误代码
+									uni.showModal({
+										title: '提示',
+										content: res.data.msg,
+										showCancel:false,
+										success(res) {
+											if (res.confirm) {
+												console.log('用户点击确定')
+											}
+										}
+									})		  
+								}
+							}
+						});
+					  
+					},
+					fail: function (login_res) {
+						console.log('login.js  uni.login失败。');
+					}
+				});
+			},
+			
 			
 			tel:function(){
 				if(this.notephone=='请输入手机号码'){

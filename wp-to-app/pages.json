@@ -12,26 +12,26 @@
 		"backgroundColor": "#ffffff",
 		"list": [{
 				"pagePath": "pages/index/index",
-				"iconPath": "static/wp-article-img/tar-home.png",
-				"selectedIconPath": "static/wp-article-img/tar-home-on.png",
+				"iconPath": "static/wp-tabbar-img/tar-home.png",
+				"selectedIconPath": "static/wp-tabbar-img/tar-home-on.png",
 				"text": "首页"
 			},
 			{
 				"pagePath": "pages/wordpress/topic",
-				"iconPath": "static/wp-article-img/tar-topic.png",
-				"selectedIconPath": "static/wp-article-img/tar-topic-on.png",
+				"iconPath": "static/wp-tabbar-img/tar-topic.png",
+				"selectedIconPath": "static/wp-tabbar-img/tar-topic-on.png",
 				"text": "分类"
 			},
 			{
 				"pagePath": "pages/usercenter/usercenter",
-				"iconPath": "static/wp-article-img/tar-person.png",
-				"selectedIconPath": "static/wp-article-img/tar-person-on.png",
+				"iconPath": "static/wp-tabbar-img/tar-person.png",
+				"selectedIconPath": "static/wp-tabbar-img/tar-person-on.png",
 				"text": "我的"
 			},
 			{
 				"pagePath": "pages/about/about",
-				"iconPath": "static/wp-article-img/tar-about.png",
-				"selectedIconPath": "static/wp-article-img/tar-about-on.png",
+				"iconPath": "static/wp-tabbar-img/tar-about.png",
+				"selectedIconPath": "static/wp-tabbar-img/tar-about-on.png",
 				"text": "关于"
 			}
 			

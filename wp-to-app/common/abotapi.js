@@ -433,6 +433,18 @@ module.exports = {
 			if(wordpress_data_list.code == 1){
 				that002.globalData.option_list = wordpress_data_list.data;
 				
+				//wordpress_data_list.data.shutdown_website_status = 1;
+				
+				//判断是否是关闭状态，如果是，跳转到指定page，并显示关站提示。
+				if(wordpress_data_list.data.shutdown_website_status == 1){
+					//跳转到网站关闭的提示页面
+					uni.reLaunch({
+						url:'/pages/shutdown_website/shutdown_website'
+					})
+					return;
+				}
+				
+				
 				typeof callback_function == "function" && callback_function(that, wordpress_data_list.data);
 			}
 			

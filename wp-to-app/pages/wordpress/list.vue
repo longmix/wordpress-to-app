@@ -1,16 +1,16 @@
 <template>
 	<view>
 		<view class="topic-common-list" :style="{display:isCategoryPage}">
-			<view class="topic-list-item">
+			<view class="topic-list-item" :style="{backgroundColor:wxa_shop_nav_bg_color}">
 				<image :src="categoriesImage" class="cover"></image>
 				<view class="topic-content-title">
-					<label v-if="categoriesList.categoryName">{{categoriesList.categoryName}}</label>
-					<label v-else></label>
+					<text v-if="post_list_option.categoryName">{{post_list_option.categoryName}}</text>
+					<text v-else></text>
 				</view>
-				<view class="topic-content-title-line"></view>
+				<view class="topic-content-title-line" :style="{borderBottom:'solid 1rpx ' + wxa_shop_nav_bg_color}"></view>
 				<view class="topic-content-brief">
-					<label v-if="categoriesList.categoryDescription">{{categoriesList.categoryDescription}}</label>
-					<label v-else></label>
+					<view class="topic-content-brief_text" v-if="post_list_option.categoryDescription">{{post_list_option.categoryDescription}}</view>
+					<text v-else></text>
 				</view>
 			</view>
 		</view>
@@ -18,26 +18,40 @@
 
 		<view class="topic-common-list" :style="{display:isSearchPage}">
 			<view class="topic-list-item">
-				<view><image src="../../static/img/list/website-search.png" class="cover"></image></view>
+				<view><image :src="header_bg_img_of_search_list" class="cover"></image></view>
 				<view class="topic-content-title">
 					<text>搜索关键字：</text>
-					<text class="searchKey">{{searchKey}}</text>
+					<text class="searchValue">{{searchValue}}</text>
 				</view>
-				<view class="topic-content-title-line"></view>
+				<view class="topic-content-title-line" :style="{borderBottom:'solid 1rpx ' + wxa_shop_nav_bg_color}"></view>
 				<view class="topic-content-brief">
 					<text>本搜索是全文搜索</text>
+				</view>
+			</view>
+		</view>
+		
+		<view class="topic-common-list" :style="{display:isTagPage}">
+			<view class="topic-list-item">
+				<view><image :src="header_bg_img_of_tag_list" class="cover"></image></view>
+				<view class="topic-content-title">
+					<text>标签：</text>
+					<text class="searchValue">{{post_list_option.tags}}</text>
+				</view>
+				<view class="topic-content-title-line" :style="{borderBottom:'solid 1rpx ' + wxa_shop_nav_bg_color}"></view>
+				<view class="topic-content-brief">
+					<text>以下是标签{{post_list_option.tags}}相关的内容</text>
 				</view>
 			</view>
 		</view>
 
 		<view class="container">
 			<view class="showerror" v-if="!fetch_list">
-				<image src="../../static/wp-article-img/smile.png" style="height:100upx;width:100upx"></image>
+				<image src="static/wp-article-img/smile.png" style="height:100rpx;width:100rpx"></image>
 
 				<view class="errortext">
 					列表数据加载中……
 					<view class="">
-						<button class="more-button" size="mini" @tap="reload">重新加载</button>
+						<button class="more-button" size="mini" @tap="reload_all_list">重新加载</button>
 					</view>
 				</view>
 			</view>
@@ -56,9 +70,11 @@
 </template>
 
 <script>
+	//参数
 	//var search;
-	//var categoriesId;
+	//var categoryID;
 	//var categorySrc;
+	//var tag
 	
 	import fetchList from '../../components/wp-article-list.vue'
 	
@@ -70,67 +86,95 @@
 		
 		data() {
 			return {
+				post_list_option:null,
+				
 				isCategoryPage:"none",
 				isSearchPage:'none',
+				isTagPage:'none',
+				
 				page: 1,
 				per_page:10,
 				is_OK:false,
+				
 				fetch_list:'',
-				search:'',
-				searchKey:"",
+				
+				is_http_working:false,
+
+				searchValue:"",
 				categoriesId:'',
+				
 				categoriesImage:'',
-				categorySrc:'',
-				copyright_text:''
+
+				copyright_text:'',
+				
+				header_bg_img_of_search_list: 'https://yanyubao.tseo.cn/Tpl/static/wordpress/website-search.png',
+				header_bg_img_of_tag_list: 'https://yanyubao.tseo.cn/Tpl/static/wordpress/website-search.png',
+				
+				wxa_shop_nav_bg_color: '',
+				wxa_shop_nav_font_color: '',
+				
+				
 			}
 		},
 		onLoad: function (options) {
 			console.log("options",options);
 			
 			var that = this;
-			that.categoriesList = options;
+			
+			this.abotapi.set_option_list_str(this, this.callback_function);
+			
+			
+			that.post_list_option = options;
+			
+			
 			
 			//设置标题
-			if(that.categoriesList.categoryName){
+			if(that.post_list_option.categoryName){
 				uni.setNavigationBarTitle({
-					title:that.categoriesList.categoryName,
+					title:that.post_list_option.categoryName,
 				});
 			}
 			
-			if (that.categoriesList.categoryID && that.categoriesList.categoryID != 0) {
-				that.categoriesId = that.categoriesList.categoryID;
-				
-				that.categorySrc = that.categoriesList.categorySrc;
+			//如果指定了分类的图片
+			if(that.post_list_option.categorySrc){
+				that.categoriesImage = that.post_list_option.categorySrc;
+			}
+			
+			
+			
+			
+			if (that.post_list_option.categoryID && that.post_list_option.categoryID != 0) {
+				that.categoriesId = that.post_list_option.categoryID;
 				
 				that.isCategoryPage = "block"
 				
-				that.fetchCategoriesData();
-				
-				
-				
+				//that.fetchCategoriesData();
 		    }
-			else if (that.categoriesList.search && that.categoriesList.search != '') {
+			else if (that.post_list_option.search && that.post_list_option.search != '') {
 				console.log(1111111);
-				that.search = that.categoriesList.search;
-				that.isSearchPage = "block";
-				that.searchKey = that.categoriesList.search;
 				
-				that.fetchPostsData();
+				that.isSearchPage = "block";
+				that.searchValue = that.post_list_option.search;
 				
 				uni.setNavigationBarTitle({
-					title: "搜索关键字："+that.categoriesList.search,
+					title: "搜索关键字："+that.post_list_option.search,
 				});
 		    }
-			else if(that.categoriesList.categorySlug){
+			else if(that.post_list_option.categorySlug){
+				that.isCategoryPage = "block";
+				
+				that.categorySlug = that.post_list_option.categorySlug;
+				
+				
 				//根据分类的别名，获取分类的ID，然后再请求
 				this.abotapi.abotRequest({
-				    url:that.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/categories',
-				    method: 'get',
-				    data:{
-						slug:that.categoriesList.categorySlug,						
-				    	sellerid:that.abotapi.globalData.default_sellerid,
-				    },
-				    success(res) {
+					 url:that.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/categories',
+					 method: 'get',
+					 data:{
+						slug:that.post_list_option.categorySlug,						
+					 	sellerid:that.abotapi.globalData.default_sellerid,
+					 },
+					 success(res) {
 						console.log('categories slug ====>>>>', res.data);
 						
 						if(res.data){
@@ -138,31 +182,32 @@
 							
 							console.log('categories slug ====>>>>', cataItem);
 							
-							that.categoriesList.categoryID = cataItem['id'];
-							that.categoriesList.categoryName = cataItem['name'];
-							that.categoriesList.categorySrc = cataItem['category_thumbnail_image'];
-							that.categoriesList.categoryDescription = cataItem['description'];
+							that.post_list_option.categoryID = cataItem['id'];
+							that.post_list_option.categoryName = cataItem['name'];
+							
+							that.post_list_option.categoriesImage = cataItem['category_thumbnail_image'];
+							
+							that.post_list_option.categoryDescription = cataItem['description'];
 							
 							uni.setNavigationBarTitle({
-								title: that.categoriesList.categoryName,
+								title: that.post_list_option.categoryName,
 							});
 							
 							
-							that.categoriesId = that.categoriesList.categoryID;							
-							that.categorySrc = that.categoriesList.categorySrc;							
-							that.isCategoryPage = "block";
+							that.categoriesId = that.post_list_option.categoryID;							
+							that.categoriesImage = that.post_list_option.categoriesImage;							
+							//that.isCategoryPage = "block";
 							
-							that.fetchCategoriesData();
 							
 							//设置百度小程序中的页面SEO信息
 							// #ifdef MP-BAIDU
 								swan.setPageInfo({
-									title: that.categoriesList.categoryName,
-									keywords: that.categoriesList.categoryName,
-									description: that.categoriesList.categoryDescription,
-									articleTitle: that.categoriesList.categoryName,
+									title: that.post_list_option.categoryName,
+									keywords: that.post_list_option.categoryName,
+									description: that.post_list_option.categoryDescription,
+									articleTitle: that.post_list_option.categoryName,
 									releaseDate: res.data.mp_baidu_seo_releaseDate,
-									image: [that.categoriesList.categorySrc],
+									image: [that.post_list_option.categoriesImage],
 									video: [],
 									visit: {},
 									likes: '75',
@@ -183,49 +228,50 @@
 						}
 						
 					},
-				    fail: function (e) {
+					 fail: function (e) {
 						uni.showToast({
 							title: '网络异常！',
 							duration: 2000
 						});
-				    },
+					 },
 				});
 			}
-			
-			if(!this.categorySrc){
-				this.categorySrc = '../../static/img/usercenter/vip.jpg';
+			else if(that.post_list_option.tags){
+				that.isTagPage = 'block';
 			}
 			
-			this.abotapi.set_option_list_str(this, this.callback_function);
+			if(!that.categoriesImage){
+				that.categoriesImage = 'https://yanyubao.tseo.cn/Tpl/static/wordpress/vip.jpg';
+			}
+			
+			
+			
+			that.fetchCategoriesData();
+			
+			
 			
 		},
 
-		reload:function(e){
+		reload_all_list:function(e){
 			var that = this;
-			that.page=0;
 			
-			uni.removeStorageSync('option_list_str');
-			this.abotapi.set_option_list_str(this, this.callback_function);
 			
-			if(that.search){
-				that.fetchPostsData();
-			}else if(that.categoriesId){
-				that.fetchCategoriesData();
-			}
-		
+			
+			that.page = 1;
+			that.fetch_list = [];
+			
+			that.fetchCategoriesData();
+			
+			
 		},
 		
 		
 		//下拉刷新
 		onPullDownRefresh: function () {
 			var that = this;
-			that.page=0;
-
-			if(that.search){
-				that.fetchPostsData();
-			}else if(that.categoriesId){
-				that.fetchCategoriesData();
-			}
+			
+			that.reload_all_list();
+			
 			setTimeout(function () {
 				uni.stopPullDownRefresh();  //停止下拉刷新动画
 			}, 1500);
@@ -236,10 +282,7 @@
 		//触底方法
 		onReachBottom: function () {
 			var that = this;
-			var page = that.page;
-			that.page++;
-			console.log('page',that.page);
-			// var that = this;
+			
 			if(this.is_OK){
 				that.page = page;
 				uni.showToast({
@@ -248,126 +291,41 @@
 				});
 				return;
 			}
-			if(that.search){
-				that.isSearchPage = 'block';
-				this.abotapi.abotRequest({
-				    url:this.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/posts',
-				    method: 'get',
-				    data:{
-						search:that.search,
-						per_page:that.per_page,
-						page:that.page,
-						orderby:'date',
-						order:'desc',
-				    	sellerid:this.abotapi.globalData.default_sellerid,
-				    },
-					
-				    success(res) {
-				    	
-						if(!res.data.code){
-							
-							that.is_OK = false;
-							that.fetch_list = that.fetch_list.concat(res.data);
-							console.log('超过一页',that.fetch_list)
-							
-							//得到数据后停止下拉刷新
-							uni.stopPullDownRefresh();
-							if(res.data.length < that.per_page){
-								that.is_OK = true;
-							}
-						} else {
-							that.is_OK = true;
-							uni.showToast({
-								title: '暂无数据',
-								duration: 2000
-							});
-							return;
-							
-						}
-				    },
-				    fail: function (e) {
-						uni.showToast({
-							title: '网络异常！',
-							duration: 2000
-						});
-				    },
-				});
-			}else if(that.categoriesId){
-				that.isSearchPage = 'none';
-				this.abotapi.abotRequest({
-				    url:this.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/posts',
-				    method: 'get',
-				    data:{
-						categories:that.categoriesId,
-						per_page:that.per_page,
-						page:that.page,
-						orderby:'date',
-						order:'desc',
-				    	sellerid:this.abotapi.globalData.default_sellerid,
-				    },
-					
-				    success(res) {
-				    	
-						if(!res.data.code){
-							
-							that.is_OK = false;
-							that.fetch_list = that.fetch_list.concat(res.data);
-							console.log('超过一页',that.fetch_list)
-							
-							//得到数据后停止下拉刷新
-							uni.stopPullDownRefresh();
-							if(res.data.length < that.per_page){
-								that.is_OK = true;
-							}
-						} else {
-							that.is_OK = true;
-							uni.showToast({
-								title: '暂无数据',
-								duration: 2000
-							});
-							return;
-							
-						}
-				    },
-				    fail: function (e) {
-						uni.showToast({
-							title: '网络异常！',
-							duration: 2000
-						});
-				    },
-				});
-			}
-			
+
+			that.fetchCategoriesData();
 		},	  
 		methods:{
 			//获取网站基础信息配置项
-			callback_function:function(that, cb_params){
+			callback_function:function(that, option_list){
 				
-				if(!cb_params){
+				if(!option_list){
 					return;
 				}
 				
-				console.log('cb_params====', cb_params);
+				console.log('option_list====', option_list);
 				
 				
 				//====1、更新界面的颜色
 				this.abotapi.getColor();
 				
+				that.wxa_shop_nav_bg_color  = option_list.wxa_shop_nav_bg_color;
+				that.wxa_shop_nav_font_color  = option_list.wxa_shop_nav_font_color;
+				
 				//====2、其他的设置选项：商品列表风格、头条图标等等
 				
 				
 				//网站名称
-				if (cb_params.wxa_shop_new_name) {
+				if (option_list.wxa_shop_new_name) {
 				  
-				    this.wxa_shop_new_name = cb_params.wxa_shop_new_name
+					 this.wxa_shop_new_name = option_list.wxa_shop_new_name
 				  
 				}
 				
 				
 				//网站版权
-				if (cb_params.copyright_text) {
+				if (option_list.copyright_text) {
 					
-					this.copyright_text = cb_params.copyright_text
+					this.copyright_text = option_list.copyright_text
 					
 				}
 				
@@ -375,6 +333,17 @@
 				uni.setNavigationBarTitle({
 					title:this.wxa_shop_new_name
 				})
+				
+				//搜索后的文章列表页面头部地图
+				if(option_list.header_bg_img_of_search_list){
+					that.header_bg_img_of_search_list = option_list.header_bg_img_of_search_list;
+				}
+				
+				//点击标签后的文章列表页面头部地图
+				if(option_list.header_bg_img_of_tag_list){
+					that.header_bg_img_of_tag_list = option_list.header_bg_img_of_tag_list;
+				}
+				
 				
 			},
 			
@@ -391,91 +360,74 @@
 			},
 			
 			
-			//获取  搜索的  文章列表数据
-			fetchPostsData: function () {
+			//获取 分类下的 文章 列表
+			fetchCategoriesData: function (id) {
 				var that = this;
-				console.log(2222222);
-				console.log(that.search);
+				
+				var post_data = {
+						per_page: that.per_page,
+						page: that.page,
+						orderby: 'date',
+						order: 'desc',
+						sellerid: that.abotapi.globalData.default_sellerid,
+					};
+				
+				if(that.categoriesId){
+					post_data.categories = that.categoriesId;
+				}
+				else if(that.categorySlug){
+					post_data.category_name = that.categorySlug;
+				}
+				
+				if(that.searchValue){
+					post_data.search = that.searchValue;
+				}
+				
+				if(that.tags){
+					post_data.tags = that.tags;
+				}
+				
+				console.log('fetchCategoriesData post_data ===>>>', post_data);
+				
+				if(!that.is_http_working){
+					that.is_http_working = true;
+				}
+				
 				this.abotapi.abotRequest({
 					url:this.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/posts',
 					method: 'get',
-					data:{
-						search:that.search,
-						per_page:this.per_page,
-						page:1,
-						orderby:'date',
-						order:'desc',
-						sellerid:this.abotapi.globalData.default_sellerid,
-					},
-					
+					data: post_data,					
 					success(res) {
+						
+						that.is_http_working = false;
 					
-						if(!res.data.code){
-						
-							that.is_OK = false;
-						
-							if(that.page == 1){
-								console.log('第一页')
-								that.fetch_list = res.data;
-								console.log('第一页index',that.fetch_list)
-							}
-							
-							that.categoriesImage = that.categorySrc;
-							console.log('that.categoriesImage1',that.categoriesImage);
-							
-							if(res.data.length < that.per_page){
-								that.is_OK = true;
-							}
+						if(res.data.code){
+							uni.showToast({
+								title:'加载失败！'
+							})
+							return;
 						}
-					},
-					fail: function (e) {
-						uni.showToast({
-							title: '网络异常！',
-							duration: 2000
-						});
-					},
-				});
-			},
-			  
-			
-			
-			//获取 分类下的 文章 列表
-			fetchCategoriesData: function (id) {
-			   var that = this;
-			   
-			   console.log('2222222====>>>fetchCategoriesData===>>');
-			   console.log(that.categorySrc);
-			   
-			   this.abotapi.abotRequest({
-					url:this.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/posts',
-					method: 'get',
-					data:{
-						categories:that.categoriesId,
-						per_page:this.per_page,
-						page:1,
-						orderby:'date',
-						order:'desc',
-						sellerid:this.abotapi.globalData.default_sellerid,
-					},
-					
-					success(res) {
-					
-						if(!res.data.code){
 						
-							that.is_OK = false;
-							if(that.page == 1){
-								console.log('第一页')
-								that.fetch_list = res.data;
-								console.log('第一页index',that.fetch_list)
-							}
-							
-							that.categoriesImage = that.categorySrc;
-							console.log('that.categoriesImage2',that.categoriesImage);
-							
-							if(res.data.length < that.per_page){
-								that.is_OK = true;
-							}
+						
+						that.is_OK = false;
+						
+						console.log('当前页码===>>>' + that.page)
+						
+						if(!that.fetch_list){
+							that.fetch_list = [];
 						}
+						
+						that.page ++;
+						
+						that.fetch_list = that.fetch_list.concat(res.data);
+						
+						console.log('that.fetch_list  ===>>>', that.fetch_list);
+						
+						if(res.data.length < that.per_page){
+							that.is_OK = true;
+						}
+						
+						
 					},
 					fail: function (e) {
 						uni.showToast({
@@ -489,8 +441,8 @@
 			 
 			// 跳转至查看文章详情
 			redictDetail: function (item) {
-			     console.log('查看文章');
-			    var id = item.id;
+				  console.log('查看文章');
+				 var id = item.id;
 				console.log("id",id);
 				uni.navigateTo({
 					url:'../wordpress/detail?id='+id
@@ -503,51 +455,54 @@
 
 <style>
 	.topic-common-list {
-	  /* padding:30upx 30upx; */
+	  /* padding:30rpx 30rpx; */
 	}
 	
 	.topic-list-item {
 		position: relative;
 		overflow: hidden;
 		clear: both;
-		margin-bottom: 30upx;
+		margin-bottom: 30rpx;
 		background: #fff;
 	}
 	
 	.topic-list-item  image.cover {
 		width: 100%;
-		height: 375upx;
-		filter: blur(4px);
+		height: 375rpx;
+		/*filter: blur(2rpx)  opacity(0.4);*/
+		filter: blur(2rpx);
 	}
 	
 	.topic-content-title {
-		padding: 16upx 0upx;
+		padding: 16rpx 0rpx;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		position: absolute;
 		z-index: 2;
-		left: 60upx;
-		top: 120upx;
+		left: 60rpx;
+		top: 120rpx;
+		font-size:48rpx;
+		font-weight: bold;
 	}
 	
 	.topic-content-title text {
-	  font-size: 48upx;
-	  line-height: 48upx;
+	  font-size: 48rpx;
+	  line-height: 48rpx;
 	  color: #fff;
 	}
 	
 	.topic-content-title-line{
 	  width: 48px;
-	  padding: 16upx 0upx;
+	  padding: 16rpx 0rpx;
 	  overflow: hidden;
 	  text-overflow: ellipsis;
 	  white-space: nowrap;
 	  position: absolute;
 	  border-bottom: 1px solid #fff; 
 	  z-index: 2;
-	  left: 64upx;
-	  top: 180upx;
+	  left: 64rpx;
+	  top: 180rpx;
 	}
 	
 	
@@ -557,17 +512,33 @@
 		white-space: nowrap;
 		position: absolute;
 		z-index: 2;
-		left: 60upx;
-		top: 240upx;
+		left: 60rpx;
+		top: 240rpx;
 	}
 	
 	.topic-content-brief text {
-		font-size: 32upx;
-		line-height: 32upx;
+		font-size: 32rpx;
+		line-height: 32rpx;
 		color: #fff;
+		
+		white-space: nowrap; 
+		overflow: hidden; 
+		text-overflow: ellipsis;
 	}
 	
-	.searchKey {
+	.topic-content-brief_text {
+		font-size: 32rpx;
+		line-height: 32rpx;
+		color: #fff;
+		
+		white-space: nowrap; 
+		overflow: hidden; 
+		text-overflow: ellipsis;
+		
+		width: 80%;
+	}
+	
+	.searchValue {
 		color: #121b23;
 	}
 </style>
