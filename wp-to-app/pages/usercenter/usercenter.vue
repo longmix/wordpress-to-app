@@ -436,7 +436,7 @@
 		width: 80%;
 		height: 100%;		
 		border-radius: 20upx;
-		background-image: url(../../static/img/usercenter/vip.jpg);
+		background-image: url('https://yanyubao.tseo.cn/Tpl/static/wordpress/vip.jpg');
 		background-size: 100%;
 		background-repeat: no-repeat;
 	}

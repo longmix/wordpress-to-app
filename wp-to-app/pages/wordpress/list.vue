@@ -7,8 +7,8 @@
 					<text v-if="post_list_option.categoryName">{{post_list_option.categoryName}}</text>
 					<text v-else></text>
 				</view>
-				<view class="topic-content-title-line" :style="{borderBottom:'solid 1rpx ' + wxa_shop_nav_bg_color}"></view>
-				<view class="topic-content-brief">
+				<view class="topic-content-title-line" :style="{borderBottom:'solid 1rpx ' + wxa_shop_nav_font_color}"></view>
+				<view class="topic-content-brief" style="width:80%;">
 					<view class="topic-content-brief_text" v-if="post_list_option.categoryDescription">{{post_list_option.categoryDescription}}</view>
 					<text v-else></text>
 				</view>
@@ -23,7 +23,7 @@
 					<text>搜索关键字：</text>
 					<text class="searchValue">{{searchValue}}</text>
 				</view>
-				<view class="topic-content-title-line" :style="{borderBottom:'solid 1rpx ' + wxa_shop_nav_bg_color}"></view>
+				<view class="topic-content-title-line" :style="{borderBottom:'solid 1rpx ' + wxa_shop_nav_font_color}"></view>
 				<view class="topic-content-brief">
 					<text>本搜索是全文搜索</text>
 				</view>
@@ -37,7 +37,7 @@
 					<text>标签：</text>
 					<text class="searchValue">{{post_list_option.tags}}</text>
 				</view>
-				<view class="topic-content-title-line" :style="{borderBottom:'solid 1rpx ' + wxa_shop_nav_bg_color}"></view>
+				<view class="topic-content-title-line" :style="{borderBottom:'solid 1rpx ' + wxa_shop_nav_font_color}"></view>
 				<view class="topic-content-brief">
 					<text>以下是标签{{post_list_option.tags}}相关的内容</text>
 				</view>
@@ -103,7 +103,7 @@
 				searchValue:"",
 				categoriesId:'',
 				
-				categoriesImage:'',
+				categoriesImage:null,
 
 				copyright_text:'',
 				
@@ -121,10 +121,13 @@
 			
 			var that = this;
 			
+			that.post_list_option = options;
+			
+			
 			this.abotapi.set_option_list_str(this, this.callback_function);
 			
 			
-			that.post_list_option = options;
+			
 			
 			
 			
@@ -335,12 +338,12 @@
 				})
 				
 				//搜索后的文章列表页面头部地图
-				if(option_list.header_bg_img_of_search_list){
+				if(option_list.header_bg_img_of_search_list && !that.post_list_option.categorySrc){
 					that.header_bg_img_of_search_list = option_list.header_bg_img_of_search_list;
 				}
 				
 				//点击标签后的文章列表页面头部地图
-				if(option_list.header_bg_img_of_tag_list){
+				if(option_list.header_bg_img_of_tag_list && !that.post_list_option.categorySrc){
 					that.header_bg_img_of_tag_list = option_list.header_bg_img_of_tag_list;
 				}
 				

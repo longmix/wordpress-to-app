@@ -45,7 +45,7 @@
 							</view>
 						</view>
 						<view class="content-brief">
-							<text>{{item.description}}</text>
+							{{item.description}}
 						</view>
 					</view>
 						
@@ -149,7 +149,7 @@
 			that.page = 1;
 			
 			that.getTopicList();
-			
+			that.getTagList();
 		},
 		
 		
@@ -466,10 +466,13 @@
 		line-height: 40rpx;
 		height: 40rpx;
 		font-weight: 400;
+		
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+		
 		color: #959595;
+		
 	}
 	.topic-name {
 		float: left; 
