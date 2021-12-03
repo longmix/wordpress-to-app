@@ -94,6 +94,8 @@
 
 <style>
 	
+	@import url("@/components/gaoyia-parse/parse.css");
+	
 	.content-article-detail {
 	  border-bottom: 5upx solid #eee;
 	  margin-bottom: 50upx;

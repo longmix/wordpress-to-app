@@ -94,17 +94,7 @@
 				current_version_str:'',
 				
 			}
-		},
-		
-		onPullDownRefresh: function () {
-			var that = this;
-			uni.removeStorageSync('wordpress_data_list_str');
-			this.abotapi.set_option_list_str(this, this.callback_function);
-			setTimeout(function () {
-				uni.stopPullDownRefresh();  //停止下拉刷新动画
-			}, 1500);
-		},
-		
+		},		
 		onLoad: function (options) {
 			if(options.pageid){
 				this.current_pageid = options.pageid;
@@ -120,7 +110,32 @@
 			
 		    this.abotapi.set_option_list_str(this, this.callback_function);
 		},
-		
+		onPullDownRefresh: function () {
+			var that = this;
+			
+			//uni.removeStorageSync('wordpress_data_list_str');
+			
+			
+			
+			setTimeout(function () {
+				
+			}, 1500);
+			
+			
+			uni.removeStorage({
+				key: 'wordpress_page_data_' + that.current_pageid,
+				success: (res) => {
+					console.log('删除文章缓存成功：'+ that.current_pageid);
+					
+					uni.stopPullDownRefresh();  //停止下拉刷新动画
+					
+					//因为 关于页面  需要 读取 一个pageid，所以从 set_option_list_str 这里调用
+					that.abotapi.set_option_list_str(this, this.callback_function);
+				}
+			});
+			
+			
+		},
 		onShareAppMessage: function () {
 			return {
 		        //title: '关于“' + config.getWebsiteName +'”官方小程序',
@@ -168,6 +183,10 @@
 				  
 				}
 				
+				if(!that.current_pageid){
+					that.current_pageid = that.aboutus_pageid;
+				}
+				
 				//网站名称
 				if (cb_params.wxa_shop_new_name) {
 				  
@@ -194,17 +213,83 @@
 					title:that.wxa_shop_new_name
 				})
 				
-				that.fetchData();
+				console.log('渲染数据完毕，准备更新文章详情');
 				
+				that.fetchPageData();
+				
+			},
+			
+			__handle_page_data:function(page_data){
+				var that = this;
+				
+				if(page_data.title.rendered){
+					page_data.title.rendered.replace(/&#8211;/g, '——');
+				}
+				
+				that.article_detail = page_data;
+				
+				that.article_title = page_data.title.rendered;
+				
+				
+				
+				//uparse使用
+				that.index_rich_html_content = page_data.content.rendered;
+				
+				
+				//v-html使用
+				that.article_content_html = page_data.content.rendered;
+				
+				const filter = that.$options.filters["formatRichText"];
+				that.article_content_html = filter(that.article_content_html);
+				
+				
+				//const filter = that.$options.filters["formatRichText"];
+				//that.article_content_array = filter(that.index_rich_html_content);
+				
+				//console.log('that.article_content====>>>>', that.article_content_array);
+				
+				
+// #ifdef MP-ALIPAY
+				
+				
+				
+				
+				let data001 = that.article_content_html;
+				let newArr = [];
+				let arr = parseHtml(data001);
+				arr.forEach((item, index)=>{
+					newArr.push(item);
+				});
+				
+				console.log('arr arr arr====>>>>', arr);
+				//console.log('newArr newArr newArr====>>>>', newArr);
+				
+				that.article_content_array = newArr;
+
+// #endif
+
+
 			},
 
 			//获取页面数据
-			fetchData:function(){
+			fetchPageData:function(){
 				var that = this;
 				
-				if(!that.current_pageid){
-					that.current_pageid = that.aboutus_pageid;
+				
+				
+				console.log('准备更新文章ID：' + that.current_pageid);
+				
+				var detail_data = uni.getStorageSync('wordpress_page_data_' + that.current_pageid)
+				
+				if(detail_data){
+					console.log('文章ID：' + that.current_pageid + ' 有缓存，直接使用') ;
+					
+					that.__handle_page_data(detail_data);
+					
+					return;
 				}
+				
+				
 				
 				this.abotapi.abotRequest({
 				    url:this.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/pages/'+that.current_pageid,
@@ -214,57 +299,18 @@
 				    },
 					
 				    success:function(res) {
-						console.log('res====>>>', res);
+						console.log('网络请求获取文章详情：res====>>>', res);
 						
 						if(!res.data.title){
 							return;
 						}
 						
-						if(res.data.title.rendered){
-							res.data.title.rendered.replace(/&#8211;/g, '——');
-						}
+						uni.setStorage({
+							key: 'wordpress_page_data_' + that.current_pageid,
+							data: res.data
+						})
 						
-						that.article_detail = res.data;
-						
-						that.article_title = res.data.title.rendered;
-						
-						
-						
-						//uparse使用
-						that.index_rich_html_content = res.data.content.rendered;
-						
-						
-						//v-html使用
-						that.article_content_html = res.data.content.rendered;
-						
-						const filter = that.$options.filters["formatRichText"];
-						that.article_content_html = filter(that.article_content_html);
-						
-						
-						//const filter = that.$options.filters["formatRichText"];
-						//that.article_content_array = filter(that.index_rich_html_content);
-						
-						//console.log('that.article_content====>>>>', that.article_content_array);
-						
-						
-// #ifdef MP-ALIPAY
-						
-						
-						
-						
-						let data001 = that.article_content_html;
-						let newArr = [];
-						let arr = parseHtml(data001);
-						arr.forEach((item, index)=>{
-							newArr.push(item);
-						});
-						
-						console.log('arr arr arr====>>>>', arr);
-						//console.log('newArr newArr newArr====>>>>', newArr);
-						
-						that.article_content_array = newArr;
-
-// #endif
+						that.__handle_page_data(res.data);
 						
 						
 				    },

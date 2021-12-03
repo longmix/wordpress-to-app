@@ -1,7 +1,7 @@
 <template>
 	<view class="usercenter-container">
 		<!-- 电子会员卡 -->
-		<view style="width:100%;height:350upx;margin-top: 15upx;">
+		<view style="width:100%;height:350rpx;margin-top: 15rpx;">
 			<view  class="cardNo" :style="[{'background-image':'url('+ vip_detail.card_bg_img +')' }]">
 				<view class="cardtop" @tap="toUserInfo">
 					<image class="cardNoIMG" :src="data2 && data2.fenxiao_info.headimgurl?data2.fenxiao_info.headimgurl:vip_detail.card_logo"></image>
@@ -100,7 +100,23 @@
 				
 			}
 		},
-		
+		onLoad: function (options) {  
+		    var that = this;
+			
+			this.abotapi.set_option_list_str(this, function(that, cb_params){
+				//====1、更新界面的颜色
+				that.abotapi.getColor();
+			});
+			
+			
+		},
+		onShow:function() {
+			this.abotapi.set_option_list_str(this, this.callback_function);
+			
+			this.getPage();
+			
+			this.getVIP();
+		},
 		//下拉刷新
 		onPullDownRefresh: function () {
 			var that = this;
@@ -115,29 +131,6 @@
 			setTimeout(function () {
 				uni.stopPullDownRefresh();  //停止下拉刷新动画
 			}, 1500);
-		},
-		
-		onShow:function() {
-			this.abotapi.set_option_list_str(this, this.callback_function);
-			
-			this.getPage();
-			
-			this.getVIP();
-			
-			
-			
-
-		},
-		
-		onLoad: function (options) {  
-		    var that = this;
-			
-			this.abotapi.set_option_list_str(this, function(that, cb_params){
-				//====1、更新界面的颜色
-				that.abotapi.getColor();
-			});
-			
-			
 		},
 
 		methods: {
@@ -219,7 +212,7 @@
 							console.log('get_user_info====', res);
 				
 							if (res.data.code == "-1") {
-								var last_url = '/pages/usercenter/usercenter';
+								var last_url = '/pages/index/usercenter';
 								this.abotapi.goto_user_login(last_url, 'switchTab');
 							} else {
 								var data = res.data;
@@ -250,12 +243,12 @@
 				var userInfo = this.abotapi.get_user_info();
 				if(!userInfo || userInfo == null){
 					
-					var last_url = '/pages/usercenter/usercenter';
+					var last_url = '/pages/index/usercenter';
 					this.abotapi.goto_user_login(last_url,'switchTab');
 					return;
 				}
 				uni.navigateTo({
-					url:'/pages/userinfo/userinfo'
+					url:'/pages/user/userinfo'
 				})
 			},
 			
@@ -277,7 +270,7 @@
 				var userInfo = this.abotapi.get_user_info();
 				if(!userInfo || userInfo == null){
 					
-					var last_url = '/pages/usercenter/usercenter';
+					var last_url = '/pages/index/usercenter';
 					this.abotapi.goto_user_login(last_url,'switchTab');
 					return;
 				}
@@ -349,31 +342,31 @@
 
 	.toolbar{
 		width: 100%;
-		/* margin: 15upx 4% 0 4%; */
-		padding: 0 0 20upx 0;
+		/* margin: 15rpx 4% 0 4%; */
+		padding: 0 0 20rpx 0;
 		background-color: #fff;
-		box-shadow: 0upx 0upx 25upx rgba(0,0,0,0.1);
-		border-radius: 15upx;
-		margin-top: 15upx;
+		box-shadow: 0rpx 0rpx 25rpx rgba(0,0,0,0.1);
+		border-radius: 15rpx;
+		margin-top: 15rpx;
 	}
 	
 	
 	.box{
 		width: 25%;
-		margin-bottom: 30upx;
+		margin-bottom: 30rpx;
 	}
 	
 	
 	.img{
 		width: 100%;
-		height: 80upx;
+		height: 80rpx;
 		display: flex;
 		justify-content: center;
 	}
 	
 	.img image{
-		width: 80upx;
-		height: 80upx;
+		width: 80rpx;
+		height: 80rpx;
 	}
 	
 	
@@ -381,32 +374,32 @@
 		width: 100%;
 		display: flex;
 		justify-content: center;
-		font-size: 26upx;
+		font-size: 26rpx;
 		color: #3d3d3d;
-		margin-top:20upx;
+		margin-top:20rpx;
 	}
 	
 	.list{
 		display: flex;
 		flex-wrap: wrap;
-		padding:10upx;
+		padding:10rpx;
 	}
 	
 	.title{
-		padding-top: 10upx;
-		margin: 0 0 10upx 3%;
-		font-size: 30upx;
-		height: 80upx;
+		padding-top: 10rpx;
+		margin: 0 0 10rpx 3%;
+		font-size: 30rpx;
+		height: 80rpx;
 		display: flex;
 		align-items: center;
 	}
 	
 	.daohang_box{
 		width: 100%;
-		font-size: 24upx;
+		font-size: 24rpx;
 		color: #333333;
-		margin-top: 15upx;
-		border-radius: 15upx;
+		margin-top: 15rpx;
+		border-radius: 15rpx;
 		background: #ffffff;
 		overflow: auto;	
 	}
@@ -414,20 +407,20 @@
 	.biaoti_box{
 		width: 33%;
 		text-align: center;
-		padding: 10upx;
+		padding: 10rpx;
 		float: left;
-		margin-top: 16upx;
-		font-size: 30upx;
+		margin-top: 16rpx;
+		font-size: 30rpx;
 	}
 	.text2{
 		width: 100%;
 		display: flex;
 		justify-content: center;
-		font-size: 31upx;
+		font-size: 31rpx;
 		color: #3d3d3d;
 	}
 	.num{
-		font-size: 32upx;
+		font-size: 32rpx;
 	}
 	
 	
@@ -435,16 +428,16 @@
 		margin:0 10%;
 		width: 80%;
 		height: 100%;		
-		border-radius: 20upx;
+		border-radius: 20rpx;
 		background-image: url('https://yanyubao.tseo.cn/Tpl/static/wordpress/vip.jpg');
 		background-size: 100%;
 		background-repeat: no-repeat;
 	}
 	
 	.cardNoIMG{
-		width: 140upx;
-		height: 140upx;
-		margin: 30upx 20upx 0 30upx;
+		width: 140rpx;
+		height: 140rpx;
+		margin: 30rpx 20rpx 0 30rpx;
 		border-radius: 50%;
 		background-color: #FFFFFF;
 		display:block;
@@ -453,9 +446,9 @@
 	}
 	
 	.cardNoIMG2{
-		width: 140upx;
-		height: 140upx;
-		margin: 30upx 20upx 0 30upx;
+		width: 140rpx;
+		height: 140rpx;
+		margin: 30rpx 20rpx 0 30rpx;
 		border-radius: 50%;
 	}
 	
@@ -473,48 +466,49 @@
 	}
 	
 	.card_top_text{
-		font-size: 36upx;
+		font-size: 36rpx;
 		position: relative;
-		top: -80upx;
-		left: 207upx;
+		top: -80rpx;
+		left: 207rpx;
 		color: #2F80FF;
 	}
 	
 	.card_detail{
-		font-size: 32upx;
+		font-size: 32rpx;
 		position: relative;
-		top: -60upx;
-		left: 192upx;
+		top: -60rpx;
+		left: 192rpx;
 		color: #EA842F;
 	}
 	
 	.card{
-		font-size: 34upx;
+		font-size: 34rpx;
 		color: #2F80FF;
 		position: relative;
-		top: 40upx;
-		left: 225upx;
+		top: 40rpx;
+		left: 225rpx;
 
 	}
 	
 	.card_num{
-		font-size: 40upx;
+		font-size: 30rpx;
 		color: #2F80FF;
+		margin-left: 170rpx;
 	}
 	.input4{
-		font-size: 30upx;
+		font-size: 30rpx;
 		    float: left;
 		    display: block;
-		    margin-top: 50upx;
+		    margin-top: 50rpx;
 			    width: 50%;
 
 	}
 	
 	.input3{
-		font-size: 20upx;
+		font-size: 20rpx;
 		    float: left;
 		    display: block;
-		    margin-top: 8upx;
+		    margin-top: 8rpx;
 	}
 	.jifeng_box{
 		width: 100%;

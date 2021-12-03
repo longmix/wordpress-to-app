@@ -1,28 +1,12 @@
 <template>
 	<view class="content">
 		<view class="index-header">
-		    
-			
-			<swiper circular="true" autoplay="true" 
-				@change="swiperChange"
-				class="index-swiper"
-				:style="{height:swiper_box_height + 'px'} "
-				indicator-dots="true"
-				interval="2000"
-				indicator-color="rgba(255, 255, 255, .2)" 
-				indicator-active-color="rgba(255, 255, 255, .7)">
-				<swiper-item v-for="(swiper, index) in roll_picture_list" :key="swiper.id" @click="onNavRedirect(roll_picture_list[index].url)">
-					<image class="img_swiper" @load="imageLoad($event)" 
-						 :style="{height:swiper_img_heights[currentSwiper] + 'px'} "
-						:data-id='index' :src="swiper.image" mode="widthFix"></image>
-					<view class="swiper-mask"></view>
-					<view class="swiper-desc">
-						<text>{{swiper.name}}</text>
-					</view>
-				</swiper-item>
-			</swiper>
-			
-			
+		    <swiperBanner v-if="roll_picture_list"
+		    	:imgUrls="roll_picture_list" 
+		    	:border_radius="0"
+		    	:swiper_width_percent_value="100"
+		    	:show_bottom_shadow="0"
+		    	@goto_url="onNavRedirect"></swiperBanner>
 			
 		</view>
 
@@ -43,13 +27,6 @@
 		            
 		        </view>
 		        <!-- 图标导航end -->
-				
-				
-				
-				
-				
-				
-				
 				
 				
 		
@@ -149,11 +126,12 @@
 
 <script>
 	import fetchList from '../../components/wp-article-list.vue'
-	
+	import swiperBanner from '../../components/swiper-banner.vue';
 	
 	export default {
 		components:{
-			fetchList
+			fetchList,
+			swiperBanner
 		},
 		
 		data() {
@@ -164,18 +142,13 @@
 				roll_picture_list:'',
 				pingpu_picture_list:'',
 				
-				// 轮播图片
-				currentSwiper: 0,
-				swiper_img_heights: [],
-				swiper_box_height:100,
-				
-				
-				
 				per_page:10,
-				page:1,
+				current_page:1,
 				
 				fetch_list:'',
 				is_OK:false,
+				
+				is_http_working:false,
 				
 				wxa_shop_new_name:'',
 				aboutus_pageid:'',
@@ -251,6 +224,12 @@
 			
 			this.abotapi.set_option_list_str(this, this.callback_function);
 			
+			//#ifdef MP-BAIDU
+			swan.showFavoriteGuide({
+			    type: 'tip'
+			})
+			//#endif
+			
 		},
 		
 		
@@ -267,16 +246,24 @@
 		//下拉刷新
 		onPullDownRefresh: function () {
 			var that = this;
-			that.page=0;
+			
+			that.current_page = 1;
+			
+			that.fetch_list = null;
 			
 			uni.removeStorageSync('wordpress_data_list_str');
+			
+			
 			this.abotapi.set_option_list_str(this, this.callback_function);
+			
 			
 			uni.removeStorageSync('module_icon_list_cache');
 			
+			uni.stopPullDownRefresh();  //停止下拉刷新动画
+			
 			
 			setTimeout(function () {
-				uni.stopPullDownRefresh();  //停止下拉刷新动画
+				
 			}, 1500);
 		},
 		  
@@ -287,55 +274,12 @@
 				return;
 			}
 			
+			console.log('页面触底，自动加载文章列表');
 			
-			var that = this;
-
-			// var that = this;
-			if(this.is_OK){
-				that.page = page;
-				return;
-			}
+			this.__load_post_list();
 			
-			that.page++;
-			console.log('page',that.page);
-			
-			this.abotapi.abotRequest({
-			    url:this.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/posts',
-			    method: 'get',
-			    data:{
-					per_page:that.per_page,
-					page:that.page,
-					orderby:'date',
-					order:'desc',
-			    	sellerid:this.abotapi.globalData.default_sellerid,
-			    },
-				
-			    success(res) {
-			    	
-					if(!res.data.code){
-						
-						that.is_OK = false;
-						that.fetch_list = that.fetch_list.concat(res.data);
-						console.log('超过一页',that.fetch_list)
-						
-						//得到数据后停止下拉刷新
-						uni.stopPullDownRefresh();
-						
-					} else {
-						
-						that.is_OK = true;
-						return;
-						
-					}
-			    },
-			    fail: function (e) {
-					uni.showToast({
-						title: '网络异常！',
-						duration: 2000
-					});
-			    },
-			});
 		},
+		
 		
 		
 		
@@ -378,6 +322,74 @@
 		},
 		
 		methods: {
+			__load_post_list:function(){
+				
+				var that = this;
+				
+				// var that = this;
+				if(this.is_OK){
+					that.current_page = -1;
+					return;
+				}
+				
+				console.log('加载文章内容，当前页码page：'+ that.current_page);
+				
+				if(!that.is_http_working){
+					that.is_http_working = true;
+				}
+				
+				that.abotapi.abotRequest({
+				    url:that.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/posts',
+				    method: 'get',
+				    data:{
+						per_page: that.per_page,
+						page: that.current_page,
+						orderby: 'date',
+						order: 'desc',
+				    	sellerid: that.abotapi.get_sellerid(),
+				    },
+				    success(res) {
+						
+						that.is_http_working = false;
+				    	
+						if(res.data.code){
+							that.is_OK = true;
+							return;
+							
+							
+							
+							
+						} 
+						
+						that.is_OK = false;
+						
+						console.log('加载到的文章数据：', res.data)
+						
+						if(!that.fetch_list){
+							that.fetch_list = [];
+						}
+						
+						
+						that.fetch_list = that.fetch_list.concat(res.data);
+						
+						that.current_page ++;
+						
+						//得到数据后停止下拉刷新
+						//uni.stopPullDownRefresh();
+						
+						
+				    },
+				    fail: function (e) {
+						uni.showToast({
+							title: '网络异常！',
+							duration: 2000
+						});
+				    },
+				});
+				
+				
+				
+			},
 			share_return: function() {
 				
 				var share_title = '';
@@ -594,7 +606,10 @@
 				
 				
 				
-				that.fetchPostsData();
+				//that.fetchPostsData();
+				that.__load_post_list();
+				
+				
 			},
 			
 			
@@ -713,90 +728,6 @@
 			},
 			
 			
-			//轮播图指示器
-			swiperChange:function(event) {
-				this.currentSwiper = event.detail.current;
-			},
-			
-			
-			//获取图片真实宽度  
-			imageLoad: function(e) {
-				var imgwidth = e.detail.width;
-				var imgheight = e.detail.height;
-				  //宽高比  
-				var ratio = imgwidth / imgheight;
-				
-				console.log('imageLoad id===>>> '+e.target.dataset.id +'实际大小：');
-				console.log(imgwidth, imgheight)
-				
-				//计算的高度值  
-				var imgheight = (this.windowWidth * 0.92)/ ratio;
-				
-				console.log('imageLoad id===>>> '+e.target.dataset.id +'显示大小：');
-				console.log(this.windowWidth * 0.92, imgheight)
-				
-				var imgheights = this.swiper_img_heights;
-				
-				console.log('sdhsdshjdsk',imgheights);
-				
-				//把每一张图片的对应的高度记录到数组里  
-				//imgheights[e.target.dataset.id] = uni.upx2px(imgheight);
-				imgheights[e.target.dataset.id] = imgheight;
-				
-				this.swiper_box_height = imgheight;
-					
-				console.log('imageLoad id===>>> '+e.target.dataset.id +", imgheights====>>>", imgheights);		
-					
-				this.swiper_img_heights = imgheights
-				
-				
-			},
-			
-			//获取文章列表
-			fetchPostsData:function(){
-				if(this.hidden_article_list_in_front_page == 1){
-					return;
-				}
-				
-				var that = this;
-				
-				if(that.is_OK){
-					return;
-				}
-				
-				this.abotapi.abotRequest({
-				    url:this.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/posts',
-				    method: 'get',
-				    data:{
-						per_page:this.per_page,
-						page:1,
-						orderby:'date',
-						order:'desc',
-				    	sellerid:this.abotapi.globalData.default_sellerid,
-				    },
-					
-				    success(res) {
-						
-						if(!res.data.code){
-							
-							that.is_OK = false;
-							if(that.page == 1){
-								console.log('第一页')
-								that.fetch_list = res.data;
-								console.log('第一页index',that.fetch_list)
-							}
-						}
-				    },
-				    fail: function (e) {
-						uni.showToast({
-							title: '网络异常！',
-							duration: 2000
-						});
-				    },
-				});
-			},
-			
-			
 			// 跳转至查看文章详情
 			redictDetail: function (item) {
 				 console.log('查看文章');
@@ -874,41 +805,6 @@
 		width:100%;
 	}
 	
-	swiper.index-swiper {
-	  position: relative;
-	  height: 420upx;
-	}
-	
-	swiper .swiper-mask {
-	  position: absolute;
-	  top: 0;
-	  left: 0;
-	  bottom: 0;
-	  width: 100%;
-	}
-	
-	swiper image {
-	  display: block;
-	  width: 100%;
-	}
-	
-	swiper .swiper-desc {
-	  position: absolute;
-	  bottom: 0;
-	  left: 0;
-	  right: 0;
-	  width: 100%;
-	  background: linear-gradient(to bottom, rgba(0, 0, 0, 0)0%, rgba(63, 76, 88, 0.3)100%);
-	  color: #fff;
-	  line-height: 150upx;
-	  margin: 0 auto;
-	  font-weight: 700;
-	  overflow: hidden;
-	  white-space: nowrap;
-	  text-overflow: ellipsis;
-	  font-size: 30upx;
-	  text-shadow: 0px 0px 16px #646d75;
-	}
 	
 	.banner {
 		width: 100%;
@@ -944,7 +840,7 @@
 	
 	.search-input {
 	  background-color: #fff;
-	  padding: 16upx 0 16upx 32upx;
+	  padding-left: 16upx;
 	  min-height: 1rem;
 	  font-size: 30upx;
 	  border-bottom-left-radius: 4px;
@@ -963,7 +859,7 @@
 	  flex-direction: row;
 	  background-color: #f5f7f7;
 	  padding: 24upx 24upx;
-	  height: 130upx;
+	  height: 100upx;
 	}
 	
 	.search-pancel image {

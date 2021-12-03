@@ -1001,7 +1001,8 @@ module.exports = {
 			var userInfo = this.get_user_info();
 			if(!userInfo){
 				
-				this.goto_user_login('/pages/index/index', 'switchTab');
+				// this.goto_user_login('/pages/index/index', 'switchTab');
+				this.goto_user_login('/pages/index/index');
 				
 				return;
 			}
@@ -1060,39 +1061,14 @@ module.exports = {
 				})
 			}
 		}
-		else if (url == '/pages/index/index' || url == '/pages/category/index' || url == '/pages/cart/cart' || url == '/pages/user/user') {
+		else if (url == '/pages/index/index' 
+			|| url == '/pages/category/index' 
+			|| url == '/pages/cart/cart' 
+			|| url == '/pages/user/user') {
 			uni.switchTab({
 				url: url,
 			})
-		} else if (url == '/pages/help_detail/help_detail') {
-			var browser_cache_id = uni.getStorageSync('browser_cache_id');
-			if (browser_cache_id) {
-				uni.navigateTo({
-					url: url + '?id=' + browser_cache_id,
-				})
-			} else {
-				uni.showToast({
-					title: '无浏览记录',
-				})
-			}
 		}
-		else if (url == 'duorenpintuan') {
-			var url1 = 'https://yanyubao.tseo.cn/Home/DuorenPintuan/pintuan_list/ensellerid/' + this.get_sellerid() + '.html?click_type=Wxa';
-			uni.navigateTo({
-				url: '/pages/h5browser/h5browser?url=' + encodeURIComponent(url1) + '&ret_page=' + ret_page,
-			})
-		} else if (url == 'fenxiangkanjia') {
-			var productid = 0;
-			if (var_list && var_list.productid) {
-   
-				var url1 = 'https://yanyubao.tseo.cn/Home/ShareKanjia/share_list/productid/' + var_list.productid + '.html?click_type=Wxa';
-				uni.navigateTo({
-					url: '/pages/h5browser/h5browser?url=' + encodeURIComponent(url1) + '&ret_page=' + ret_page,
-				})
-   
-			}
-   
-		} 
 		else if ((url.indexOf('http://') == 0)
 			||(url.indexOf('https://') == 0)
 			||(url.indexOf('/hybrid/html/') == 0)) {
@@ -1198,6 +1174,13 @@ module.exports = {
 					}
 				})
 			}
+		}
+		else if (url.indexOf('tel:') == 0) {
+		  url = url.replace(/tel:/, '');
+			
+		  uni.makePhoneCall({
+			phoneNumber: url,
+		  })
 		}
 		else {
 			uni.navigateTo({
