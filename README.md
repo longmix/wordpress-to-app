@@ -33,7 +33,7 @@
 
 使用上的问题和疑问，请用微信扫码查看其他开发者的提问和回复记录，也可以在文章末尾写留言。
 
-<img src="http://www.tseo.cn/wp-content/uploads/2020/04/9be115d08294dd9f1eb588d52d662dde.png" width="150px">
+<img src="https://gitee.com/longmix/wordpress-to-app/blob/master/docs/0-%E4%B8%87%E8%83%BD%E7%9A%84CTO%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BA%A4%E6%B5%81.png" width="150px">
 
 
 ### 主要升级记录
