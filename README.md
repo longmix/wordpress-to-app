@@ -33,7 +33,7 @@
 
 使用上的问题和疑问，请用微信扫码查看其他开发者的提问和回复记录，也可以在文章末尾写留言。
 
-<img src="http://www.tseo.cn/wp-content/uploads/2020/04/9be115d08294dd9f1eb588d52d662dde.png" width="150px">
+<img src="https://gitee.com/longmix/wordpress-to-app/raw/master/docs/0-%E4%B8%87%E8%83%BD%E7%9A%84CTO%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BA%A4%E6%B5%81.png" width="150px">
 
 
 ### 主要升级记录
@@ -83,7 +83,7 @@
 1、**下载Wordpress插件**，包括“WP转APP和小程序”和“WP-PostViews”两个插件，并在后台启用，
 
 如下图所示：
-[![WP后台插件列表截图](http://www.tseo.cn/wp-content/uploads/2020/03/Wordpress_Zhuan_APP_Xiao_Cheng_Xu_-01_Fu_Ben.jpg)](http://www.tseo.cn/wp-content/uploads/2020/03/Wordpress_Zhuan_APP_Xiao_Cheng_Xu_-01_Fu_Ben.jpg)
+[![WP后台插件列表截图](https://gitee.com/longmix/wordpress-to-app/raw/master/docs/1-%E4%B8%8B%E8%BD%BDWordPress%E6%8F%92%E4%BB%B6.jfif)](https://gitee.com/longmix/wordpress-to-app/raw/master/docs/1-%E4%B8%8B%E8%BD%BDWordPress%E6%8F%92%E4%BB%B6.jfif)
 
 
 下载插件“WP转APP和小程序”： [https://github.com/longmix/wordpress-to-app/blob/master/wordpress-plugin/yanyubao-wp-to-app.zip](https://github.com/longmix/wordpress-to-app/blob/master/wordpress-plugin/yanyubao-wp-to-app.zip)
@@ -97,9 +97,9 @@
 
 （2）设置默认的文章分类的封面，如上图。
 
-3、**在Wordpress后台的路径“文章>>分类目录”中，**增加或编辑某个目录的时候，设置目录封面，也可以自定义封面，如下图。
+3、 ** 在Wordpress后台的路径“文章>>分类目录”中， ** 增加或编辑某个目录的时候，设置目录封面，也可以自定义封面，如下图。
 
-[![WP后台插件列表截图](http://www.tseo.cn/wp-content/uploads/2020/03/Wordpress_Zhuan_APP_Xiao_Cheng_Xu_-03_Fu_Ben.jpg)](http://www.tseo.cn/wp-content/uploads/2020/03/Wordpress_Zhuan_APP_Xiao_Cheng_Xu_-03_Fu_Ben.jpg)
+[![WP后台插件列表截图](https://gitee.com/longmix/wordpress-to-app/raw/master/docs/3-%E8%AE%BE%E7%BD%AEAPP%E5%B0%81%E9%9D%A2.jpg)](https://gitee.com/longmix/wordpress-to-app/raw/master/docs/3-%E8%AE%BE%E7%BD%AEAPP%E5%B0%81%E9%9D%A2.jpg)
 
 4、**设置电子会员卡，路径为：“信息中心>>电子会员卡”。**
 
@@ -126,7 +126,7 @@
 修改current_platform为当前要发布的平台名称，可以设置的值有： app， h5， mp-weixin，  mp-alipay，   mp-baidu。
 
 
-![源代码修改](http://www.abot.cn/wp-content/themes/abotcn/uploads/2021/04/202104140916377859.png)
+![源代码修改](https://gitee.com/longmix/wordpress-to-app/raw/master/docs/5-%E8%AE%BE%E7%BD%AEabot_data.png)
 
 （2）【选改】在项目根目录下，打开pages.json，
 
@@ -140,26 +140,26 @@ _备注：微信小程序、百度智能小程序、支付宝小程序对应的a
 
 ### 小程序内链接设置
 
-跳转文章列表  /pages/list/list?categoryID=1234，categoryID为分类ID，可以在Wordpress网站后台找到。
+> 跳转文章列表  /pages/list/list?categoryID=1234，categoryID为分类ID，可以在Wordpress网站后台找到。
 
-跳转文章详情  /pages/tabBar/index/detail?id=1234，id为文章ID，可以在Wordpress网站后台找到。
+> 跳转文章详情  /pages/tabBar/index/detail?id=1234，id为文章ID，可以在Wordpress网站后台找到。
 
-按关键词搜索文章  /pages/list/list?search=abcd，abcd为搜索的关键词，需要做URL编码。
+> 按关键词搜索文章  /pages/list/list?search=abcd，abcd为搜索的关键词，需要做URL编码。
 
-个人资料页面（有退出登录的按钮）  /pages/userinfo/userinfo ，可以修改个人资料，也可以退出登录
+> 个人资料页面（有退出登录的按钮）  /pages/userinfo/userinfo ，可以修改个人资料，也可以退出登录
 
-修改账号和密码  /pages/usersetting/usersetting?account=1  可以从个人资料页面跳转过来，也可以直接挂接。
+> 修改账号和密码  /pages/usersetting/usersetting?account=1  可以从个人资料页面跳转过来，也可以直接挂接。
 
-修改昵称  /pages/usersetting/usersetting?nickname=1  可以从个人资料页面跳转过来，也可以直接挂接。
+> 修改昵称  /pages/usersetting/usersetting?nickname=1  可以从个人资料页面跳转过来，也可以直接挂接。
 
-修改手机号  /pages/usersetting/usersetting?mobile=1  可以从个人资料页面跳转过来，也可以直接挂接。
+> 修改手机号  /pages/usersetting/usersetting?mobile=1  可以从个人资料页面跳转过来，也可以直接挂接。
 
-“关于”页面  switchTab pages/tabBar/about/about，需要增加 switchTab，没有其他特殊要求。
+> “关于”页面  switchTab pages/tabBar/about/about，需要增加 switchTab，没有其他特殊要求。
 
 
 ### Tab页面和非Tab页面跳转
 
-如果页面被tabBar包含，那么跳转的时候，需要指定，具体格式为：
+> 如果页面被tabBar包含，那么跳转的时候，需要指定，具体格式为：
 
 _switchTab [pagepath]_
 
@@ -170,39 +170,43 @@ _switchTab [pagepath]_
 例如：跳转到关于页面的链接，可以设置为  &nbsp;&nbsp; switchTab pages/tabBar/about/about
 
 
-如果页面没有被tabBar包含，那么跳转的时候，需要指定，具体格式为：
+> 如果页面没有被tabBar包含，那么跳转的时候，需要指定，具体格式为：
 
 _navigateTo [pagepath]_
 
 用空格分开，navigateTo跳转的页面，可以带参数，参数放在“?”后面。
 
 
+
+
 ### 跳转到H5页面链接设置
 
-跳转到H5页面，直接填写https://开头的网址，需要说明的是，对应的域名必须是在小程序登记的业务域名中，否则无法显示页面。
+> 跳转到H5页面，直接填写https://开头的网址，需要说明的是，对应的域名必须是在小程序登记的业务域名中，否则无法显示页面。
 
 http链接中支持的变量有：%oneclicklogin%， %ensellerid%，  %wxa_appid%， %wxa_openid%。
 
 %oneclicklogin%一键登录获取用户信息参数， %ensellerid%商户编码，  %wxa_appid%小程序appid， %wxa_openid%微信公众号粉丝openid。
 
 
-跳转到“我的余额”  https://yanyubao.tseo.cn/User/agent_income.html?oneclicklogin=%oneclicklogin%
+> 跳转到“我的余额”  https://yanyubao.tseo.cn/User/agent_income.html?oneclicklogin=%oneclicklogin%
 
-跳转到“我的赠款”  https://yanyubao.tseo.cn/User/my_balance_zengsong.html?oneclicklogin=%oneclicklogin%
+> 跳转到“我的赠款”  https://yanyubao.tseo.cn/User/my_balance_zengsong.html?oneclicklogin=%oneclicklogin%
 
-跳转到“我的积分”  https://yanyubao.tseo.cn/User/score.html?oneclicklogin=%oneclicklogin%
+> 跳转到“我的积分”  https://yanyubao.tseo.cn/User/score.html?oneclicklogin=%oneclicklogin%
 
 
-嵌入H5网页的时候，如果页面内设置了头部导航栏，会与小程序默认的导航栏重复，影响页面美观；在延誉宝系统的H5页面中，我们都做了自动判断，如果被小程序中引用，会自动隐藏H5的导航栏；
+>> 嵌入H5网页的时候，如果页面内设置了头部导航栏，会与小程序默认的导航栏重复，影响页面美观；在延誉宝系统的H5页面中，我们都做了自动判断，如果被小程序中引用，会自动隐藏H5的导航栏；
 
-如果是在APP中引用延誉宝的H5，请在页面网址中增加参数“hidden_nav_header_h5=1”以达到隐藏的目的。
+>> 如果是在APP中引用延誉宝的H5，请在页面网址中增加参数“hidden_nav_header_h5=1”以达到隐藏的目的。
 
 
 ### 跳转到其他小程序链接设置
 
-跳转到其他小程序，使用填写以下格式：
+> 跳转到其他小程序，使用填写以下格式：
 
+```
 _ miniprogram [url] [appid] [pagepath] [extraData]_
+```
 
 用空格分开，
 
@@ -213,20 +217,20 @@ _ miniprogram [url] [appid] [pagepath] [extraData]_
 [extraData]为模板小程序应用级别的参数（App.onLaunch，App.onShow中获取），如 {"sellerid":"abcdef","userid":"1234"}，内容中不能留空格，变量名称和变量值必须用双引号。
 
 
-小程序官方平台最新的升级，要求跳转其他小程序需要先申明要跳转的小程序ID，所以这里的appid，
+>> 小程序官方平台最新的升级，要求跳转其他小程序需要先申明要跳转的小程序ID，所以这里的appid，
 
 需要在发布小程序新版本的时候添加，登录延誉宝CMS后的设置路径为：
-
+```
 项目设置 &gt;&gt;小程序版本控制。[如果已经登录，点击这里设置](http://cms.weiduke.com/User/WechatThirdMiniProgram/wxa_version_ctrl.shtml)。
-
+```
 
 ## 在线预览
 
-![在线预览](http://saas.tseo.cn/staticsvc/uploads/2020/03/26/21945247ab3e1e5df10c8daaec620f993352.jpg)
+![在线预览](https://gitee.com/longmix/wordpress-to-app/raw/master/docs/7-%E5%9C%A8%E7%BA%BF%E9%A2%84%E8%A7%88.jpg)
 
 ### 更多关于此项目的案例请参考下图
 
-![在线预览](http://www.abot.cn/wp-content/themes/abotcn/uploads/2020/08/202008280733442920.png)
+![在线预览](https://gitee.com/longmix/wordpress-to-app/raw/master/docs/9-%E6%9B%B4%E5%A4%9A%E6%A1%88%E4%BE%8B.png)
 
 
 # 常见问题（FAQ）
