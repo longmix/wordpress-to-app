@@ -6,16 +6,16 @@
 
 
 
-## 在线预览
+## 1 在线预览
 
 ![在线预览](https://gitee.com/longmix/wordpress-to-app/raw/master/docs/7-%E5%9C%A8%E7%BA%BF%E9%A2%84%E8%A7%88.jpg)
 
 
 
-## 项目概况
+## 2 项目概况
 
 
-### 项目主页
+### 2.1 项目主页
 
 * 项目的设置和使用说明发布在这里：_需要注册才能查看，使用手机号码登录即可_。
 
@@ -28,7 +28,7 @@
   [http://www.abot.cn/2616.html]: http://www.abot.cn/2616.html "WordPress转小程序 WordPress转APP"
 
 
-### 源代码下载
+### 2.2 源代码下载
 
 * 最新的代码发布在Github上，喜欢记得点个小星星！
 
@@ -36,6 +36,7 @@
 
 
 * 考虑到Github在国内访问速度较慢，也可以通过国内的Gitee查看。
+
   [https://gitee.com/longmix/wordpress-to-app](https://gitee.com/longmix/wordpress-to-app)
 
 
@@ -43,7 +44,7 @@
 
   [https://ext.dcloud.net.cn/plugin?id=1542](https://ext.dcloud.net.cn/plugin?id=1542)
 
-### 功能扩展：Wordpress企业211主题
+### 2.3 功能扩展：Wordpress企业211主题
 
 * 产品介绍和客户案例
   
@@ -54,7 +55,7 @@
   [http://www.abot.cn/qiye211themehelp](http://www.abot.cn/qiye211themehelp)
 
 
-### 问题与交流
+### 2.4 问题与交流
 
 **使用上的问题和疑问，请用微信扫码查看其他开发者的提问和回复记录，也可以在文章末尾写留言。**
 
@@ -63,11 +64,11 @@
 
 ---
 
-## 常用路径设置说明
+## 3 常用路径设置说明
 
 如果你不会代码开发，那么在后台设置和挂接这些路径链接，即可以将你的WordPress网站组织成个性化的，功能丰富的小程序或者手机APP，APP完全符合苹果应用商店（App Store）的上架要求。
 
-### 小程序内链接设置
+### 3.1 小程序内链接设置
 
 * **主要跳转链接**：可直接挂在底部导航栏：
   - 首页 /pages/index/index
@@ -129,7 +130,7 @@
 
 
 
-### Tab页面和非Tab页面跳转
+### 3.2 Tab页面和非Tab页面跳转
 
 * 如果页面被tabBar包含，那么跳转的时候，需要指定，具体格式为：
 
@@ -149,7 +150,7 @@
 
 
 
-### 跳转到H5页面链接设置
+### 3.3 跳转到H5页面链接设置
 
 * 跳转到H5页面，直接填写https://开头的网址，需要说明的是，对应的域名必须是在小程序登记的业务域名中，否则无法显示页面。
 
@@ -178,7 +179,7 @@
     > https://app.tseo.cn/o2owaimai/Merchant/MerchantWap/index/ensellerid/pQNNmSkaq?refresh_token_value=%refresh_token%&synchronize_userid=1#redirectTo
 
 
-### 跳转到其他小程序链接设置
+### 3.4 跳转到其他小程序链接设置
 
 * 跳转到其他小程序，使用填写以下格式：
   ```
@@ -191,19 +192,19 @@
 
 * 小程序官方平台最新的升级，要求跳转其他小程序需要先申明要跳转的小程序ID，所以这里的appid，需要在发布小程序新版本的时候添加，登录延誉宝CMS后的设置路径为：
     ```
-    项目设置 &gt;&gt;小程序版本控制
+    项目设置 >>小程序版本控制
     ```
 
     [如果已经登录，点击这里设置](http://cms.weiduke.com/User/WechatThirdMiniProgram/wxa_version_ctrl.shtml)。
     
 ---
 
-## 二次开发文档
+## 4 二次开发文档
 
 如果你会简单的代码开发，最好了解一点微信小程序的开发工具，那么，接下来的文档完全可以简单读懂。
 
 
-### 源代码：自定义开发和重新编译
+### 4.1 源代码：自定义开发和重新编译
 
 源代码的编译和二次开发，在uniapp环境操作，具体的步骤如下：
 
@@ -233,7 +234,7 @@
 
 
 
-### WordPress网站中如何设置？
+### 4.2 WordPress网站中如何设置？
 
 建议在Wordpress网站中安装我们的插件，可以提供以下丰富的功能扩展：
   - 自定义内容分类的图标、简介。
@@ -287,12 +288,12 @@
 
 
 
-## 更多关于此项目的案例请参考下图
+## 5 更多关于此项目的案例请参考下图
 
 ![在线预览](https://gitee.com/longmix/wordpress-to-app/raw/master/docs/9-%E6%9B%B4%E5%A4%9A%E6%A1%88%E4%BE%8B.png)
 
 
-## 常见问题（FAQ）
+## 6 常见问题（FAQ）
 
 **网站转APP和小程序这个项目是免费的吗？**
  是的，网站转APP和小程序这个项目免费且开源（开放源代码）。
@@ -316,7 +317,7 @@
 
  个人中心集成会员卡功能，是延誉宝“网站转APP和小程序”解决方案的亮点，提现了APP和小程序为访问者提供新功能的目的，所以推荐保留会员卡功能。
 
-## 主要升级记录
+## 7 主要升级记录
 
 **2020.3.6.**
 
