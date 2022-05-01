@@ -32,9 +32,19 @@ const globalData = {
 		openid:'',
 		
 		weiduke_server_url: 'https://cms.weiduke.com',
-		yanyubao_server_url: 'https://yanyubao.tseo.cn',		
-		wordpress_rest_api_url: 'https://cms.weiduke.com/openapi/Wordpress/restapi',
+		yanyubao_server_url: 'https://yanyubao.tseo.cn',
 		
+		//网站的网址，或者经过延誉宝转换后的网址（小程序平台安全业务域名需要）
+		//#ifdef MP-BAIDU | H5
+		//wordpress_rest_api_url: 'http://www.tseo.cn',
+		//#endif
+		
+		//#ifndef MP-BAIDU | H5
+		//wordpress_rest_api_url: 'https://cms.weiduke.com/openapi/Wordpress/restapi',
+		//#endif
+		
+		wordpress_rest_api_url: 'https://yanyubao.tseo.cn/openapi/Wordpress/restapi',
+		//wordpress_rest_api_url: 'http://www.tseo.cn',
 		
 		show_yanyubao_module_list:0
 };

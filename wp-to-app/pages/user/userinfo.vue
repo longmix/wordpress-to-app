@@ -10,7 +10,7 @@
 		
 		<!-- 修改昵称 -->
 		<view class="user_list">
-			<navigator :url="'/pages/usersetting/usersetting?nickname=1'">
+			<navigator :url="'/pages/user/usersetting?nickname=1'">
 				<view class="weui_cell">
 					<view class="weui_cell_bd">
 						<view class="weui_cell_bd_p"> 昵称 </view>
@@ -22,7 +22,7 @@
 		
 		<!-- 修改手机号 -->
 		<view class="user_list">
-			<navigator :url="'/pages/usersetting/usersetting?mobile=1'">          
+			<navigator :url="'/pages/user/usersetting?mobile=1'">          
 				<view class="weui_cell">      
 					<view class="weui_cell_bd">
 						<view class="weui_cell_bd_p"> 手机 </view>
@@ -35,7 +35,7 @@
 		
 		<!-- 设置账号及密码 -->
 		<view class="user_list">
-			<navigator :url="'/pages/usersetting/usersetting?account=1'">
+			<navigator :url="'/pages/user/usersetting?account=1'">
 				<view class="weui_cell">      
 					<view class="weui_cell_bd">
 						<view class="weui_cell_bd_p">设置登录账号及密码</view>
@@ -45,7 +45,8 @@
 			</navigator>
 		</view>
 
-		<button class='btn' @tap="logout" type="primary"> 退出登录 </button>
+		<button class='btn' @tap="logout" type="primary"
+			:style="{backgroundColor:wxa_shop_nav_bg_color, color:wxa_shop_nav_font_color}"> 退出登录 </button>
 		
 		
 	</view>
@@ -70,6 +71,7 @@
 				],
 				headimgurl: "", // 头像图片路径  
 				wxa_shop_new_name:'',
+				
 				wxa_shop_nav_bg_color:'',
 				wxa_shop_nav_font_color:''
 			}
@@ -90,15 +92,20 @@
 			this.getPage();
 		},
 		onLoad: function(){
-			this.abotapi.set_option_list_str(this, this.callback_function);		  
+			
+			this.abotapi.set_option_list_str(this, this.callback_function);	
+				  
 			var that = this
+			
 			var userInfo = this.abotapi.get_user_info();
+			
 			if ((!userInfo) || (!userInfo.userid)) {
 				uni.redirectTo({
 					url: '/pages/login/login',
 				})
 				return;
 			}
+			
 			console.log('userinfo onLoad 0100000')
 		},
 		
@@ -111,17 +118,13 @@
 				}
 				
 				console.log('cb_params====', cb_params);
+				
 				//====1、更新界面的颜色
-				this.abotapi.set_option_list_str(this,
-					function(that001, option_list){
-						that.abotapi.getColor();
-						
-							that.wxa_shop_nav_bg_color  = option_list.wxa_shop_nav_bg_color;
-							
-							that.wxa_shop_nav_font_color = option_list.wxa_shop_nav_font_color
-					
-					}
-				);
+				
+				that.wxa_shop_nav_bg_color  = cb_params.wxa_shop_nav_bg_color;
+				
+				that.wxa_shop_nav_font_color = cb_params.wxa_shop_nav_font_color
+				
 				
 				//网站名称
 				if (cb_params.wxa_shop_new_name) {
@@ -176,7 +179,7 @@
 							console.log('get_user_info====', res);
 							
 							if (res.data.code == "-1") {
-								var last_url = '/pages/usercenter/usercenter';
+								var last_url = '/pages/index/usercenter';
 								this.abotapi.goto_user_login(last_url, 'switchTab');
 							} else {
 								var data = res.data;

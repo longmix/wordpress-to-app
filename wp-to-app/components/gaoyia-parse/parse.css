@@ -27,7 +27,6 @@
 	padding-bottom: 0.5em;
 	clear: both;
 	/* letter-spacing: 0;//字间距 */
-	line-height: 1.8;
 }
 .wxParse .inline {
   display: inline;
@@ -42,28 +41,40 @@
 }
 
 .wxParse .h1{
-  font-size: 2em;
-  line-height: 1.2em;
-  margin: 0.67em 0;
+  margin: 10rpx 0;
+  font-size:36rpx;
+  border-left:10rpx solid #e7141a;
+  padding:2rpx 10rpx;
 }
 .wxParse .h2{
-  font-size: 1.5em;
-  margin: 0.83em 0;
+  margin: 12rpx 0;
+  font-size:32rpx;
+  border-left:10rpx solid #3369e8;
+  padding:2rpx 10rpx;
 }
 .wxParse .h3{
-  font-size: 1.17em;
-  margin: 1em 0;
+  margin: 14rpx 0;
+  font-size:28rpx;
+  border-left:10rpx solid #f37404;
+  padding:2rpx 10rpx;
 }
 .wxParse .h4{
-  margin: 1.33em 0;
+  margin: 16rpx 0;
+  font-size:24rpx;
+  border-left:10rpx solid #228B22;
+  padding:2rpx 10rpx;
 }
 .wxParse .h5{
-  font-size: 0.83em;
-  margin: 1.67em 0;
+  margin: 18rpx 0;
+  font-size:20rpx;
+  border-left:10rpx solid #3369e8;
+  padding:2rpx 10rpx;
 }
 .wxParse .h6{
-  font-size: 0.83em;
-  margin: 1.67em 0;
+  margin: 20rpx 0;
+  font-size:16rpx;
+  border-left:10rpx solid #f37404;
+  padding:2rpx 10rpx;
 }
 
 .wxParse .h1,
@@ -161,6 +172,7 @@
   max-width: 100%;
   margin-bottom: 0em;/* //与p标签底部padding同时修改 */
   overflow: hidden;
+  margin: 0rpx auto;
 }
 
 .wxParse .blockquote {

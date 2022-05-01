@@ -7,6 +7,16 @@
 					:attr_list="detail" />
 		</WpArticleDetail>
 		
+
+		<view class="topic-common-list" style="padding:10rpx;">
+			<view v-for="(detail_item, index) in detail.tags_name" 
+				:key="index"
+				@tap="goto_post_list(index)"
+				class="tag_item"
+				:style="{backgroundColor:wxa_shop_nav_font_color, border:'solid 1rpx ' + wxa_shop_nav_bg_color, color:wxa_shop_nav_bg_color}">
+				{{detail_item}}
+			</view>
+		</view>
 		
 		
 		
@@ -21,7 +31,7 @@
 		</view>
 		
 		
-		<view style="display: block; height:50rpx;">
+		<view style="display: block; height:50rpx;clear: both;">
 			
 		</view>
 		
@@ -39,7 +49,7 @@
 				<block v-else>
 					<view style="text-align: center;">
 						<image src="https://yanyubao.tseo.cn/Tpl/static/images/empty_order.png" 
-							style="width:200rpx;" mode="widthFix"></image>
+							style="width:200rpx;height:200rpx;" mode="widthFix"></image>
 						<view style="color:#555">暂无相关内容</view>
 					</view>
 					
@@ -105,22 +115,25 @@
 			<block v-else>
 				<view style="text-align: center;">
 					<image src="https://yanyubao.tseo.cn/Tpl/static/images/empty_remark.png" 
-						style="width:200rpx;" mode="widthFix"></image>
+						style="width:200rpx;height: 200rpx;" mode="widthFix"></image>
 					<view style="color:#555">哎呀，还没有评论哦，抢个沙发吧！</view>
 				</view>
 				
 			</block>
 			
-			<view  style="margin: 200rpx 0rpx 100rpx;" :style="{display:commentsList_display}">
+			<view  style="margin: 50rpx 0rpx 50rpx;" :style="{display:commentsList_display}">
 			    <view>
 			        <view class="no-more" style="font-size:25rpx;">一篇文章水有多深？到这里清可见底 ~</view>
 			    </view>
 			</view>
 		</view>
 		
+		
         <view class="canvas-box">
             <canvas style="width: 600px;height: 1290px;" canvas-id="mycanvas" />
         </view>
+		
+		
         <view class="ditail-copyright">
 			{{copyright_text}}
         </view>
@@ -156,23 +169,85 @@
 								:style="menuBackgroup ? 'display:block' : 'display:none'">
 								<view class="iconList">
 									<view class="iconLine">
-										<view style="width:20%; position: relative; float:left; text-align:center">
-											<view>
-												<image src="static/post_detail/forwarding.png" class="img-menu"></image>
-											</view>
-											<view>
-												<text>转发</text>
-											</view>
-											<button class="share-button touch-active" open-type="share"></button>
-										</view>
+										
+										
+										<view v-if="is_showPhotoModel" @tap="is_showPhotoModel = false" class="show_modal_mask"></view>
+										
+									
 										<view style="width:20%; float:left; text-align:center">
 											<view>
-												<image src="static/post_detail/poster.png" :data-src001="poster_url" @tap="showPhoto" data-name='5' data-target="Image" class="img-menu"></image>
+												<image src="static/post_detail/poster.png" :data-src001="poster_url" @tap="getPoster()"  class="img-menu" mode="widthFix"></image>
 											</view>
 											<view>
 												<text>海报</text>
 											</view>
+											
+											<view v-if="is_PhotoModel" @tap="is_PhotoModel = false" class="show_modal_mask" ></view>
+											<view v-if="is_PhotoModel" class="show_modal_pop">
+												<image :src="poster_url" mode="heightFix" style="height: 800rpx;"></image>											
+												<view class="baocun" @tap="getPhoto('pirce_poster')">保存</view>
+											</view>
+											
 										</view>
+										
+										<view style="width:20%; float:left; text-align:center">
+											<view>
+												<image :src="'static/post_detail/' + icon_favoriteImg"
+													@tap="set_my_favorite()"  class="img-menu" mode="widthFix"></image>
+											</view>
+											<view>
+												<text>收藏</text>
+											</view>
+											
+											
+										</view>
+										
+										
+										
+										
+										
+										<!--
+										<view style="width:20%; float:left; ">
+											
+											<view>
+												<image src="static/post_detail/appreciation.png" :data-src001="wp_zanshang_shoukuan_img_url" @tap="is_showPhotoModel = true"   class="img-menu"></image>
+											</view>
+											<view>
+												<text>转载</text>
+											</view>
+										
+											<view v-if="is_showPhotoModel" class="show_modal_pop">
+												
+												<image :src="wp_zanshang_shoukuan_img_url" mode="" style="background-color: #FFFFFF;"></image>
+																						
+												<view class="baocun" @tap="getPhoto('pirce_reprint')">保存</view>
+											</view>
+											
+										</view>
+										-->
+										
+										
+										
+										
+										<!-- #ifdef MP-BAIDU -->
+										<view style="width:20%; float:left; text-align:center; display:none;">
+											<view>
+												<image src="static/post_detail/entry-home.png" class="img-menu" :data-url="detail.link" @tap="goHome()"></image>
+											</view>
+											<view>
+												<text>返回首页</text>
+											</view>
+										</view>
+										<view style="width:20%; float:left; text-align:center">
+											<view>
+												<image :src="wap_h5_kefu_button_icon" mode="widthFix" class="img-menu" :data-url="detail.link" @tap="call_seller()"></image>
+											</view>
+											<view>
+												<text>客服</text>
+											</view>
+										</view>
+										<!-- #endif -->
+										<!-- #ifndef MP-BAIDU -->
 										<view style="width:20%; float:left; text-align:center">
 											<view>
 												<image src="static/post_detail/copy.png" class="img-menu" :data-url="detail.link" @tap="copyLink"></image>
@@ -181,40 +256,34 @@
 												<text>复制链接</text>
 											</view>
 										</view>
+										<!-- #endif -->
+										
+										
+										
+										
+										
+										
+										
 										<view style="width:20%; float:left; text-align:center">
 											<view>
-												<image :src="'static/post_detail/'+likeImag" @tap="Islike" id="likebottom" class="img-menu"></image>
+												<image :src="'static/post_detail/' + icon_likeImg" @tap="set_my_like" id="likebottom" class="img-menu"></image>
 											</view>
 											<view>
 												<text>点赞</text>
 											</view>
 										</view>
-										<view style="width:20%; float:left; ">
-											
+										
+										<view style="width:20%; position: relative; float:left; text-align:center">
 											<view>
-												<image src="static/post_detail/appreciation.png" :data-src001="wp_zanshang_shoukuan_img_url" @tap="showPhoto" data-name='6' data-target="Image" class="img-menu"></image>
+												<image src="static/post_detail/forwarding.png" class="img-menu"></image>
 											</view>
 											<view>
-												<text>转载</text>
+												<text>分享</text>
 											</view>
-											
-											<view class="cu-modal" :class="modalName=='Image'?'show':''">
-												<view class="cu-dialog">
-													<view class="bg-img">
-														<view style="padding: 60rpx;">
-															<view class="action" @tap="hideRichTextModal">
-																<!--<image :src="targetName=='6'? wp_zanshang_shoukuan_img_url:poster_url" mode="widthFix"></image>-->
-																<image :src="targetSrc" mode="widthFix"></image>
-															</view>
-														</view>
-													</view>
-													<view class="cu-bar bg-white">
-														<view class="action margin-0 flex-sub text-green solid-left" @tap="hideRichTextModal">取消</view>
-														<view class="action margin-0 flex-sub  solid-left" @tap="getPhoto">保存</view>
-													</view>
-												</view>
-											</view>
+											<button class="share-button touch-active" open-type="share"></button>
 										</view>
+										
+										
 									</view>
 								</view>
 							</view>
@@ -236,6 +305,7 @@
 	// #endif	
 
 	import WpArticleDetail from '../../components/wp-article-detail.vue'
+	
 	
 	var current_post_id;
 	var userInfo;
@@ -261,6 +331,9 @@
 				toFromId: '',
 				formId:'',
 				
+				//根据tag读取相关文章列表的时候，单次返回的数量
+				per_page: 10, 
+				
 				commentsList: null,
 				commentsList_display: 'none',
 				commentsList_is_load_all_ok:false,
@@ -282,6 +355,7 @@
 				userid: "",
 				focus: false,
 				menuBackgroup: false,
+				
 				isShow: false,//控制menubox是否显示
 				isLoad: true,//解决menubox执行一次
 				
@@ -293,7 +367,10 @@
 				tags:'',
 				related_post_list: null,
 				
-				likeImag: "like.png",
+				
+				icon_likeImg : "like.png",
+				icon_favoriteImg : 'favorite.png',
+				
 				user_info:'',
 				mobile:"",
 				modalName:null,
@@ -310,7 +387,17 @@
 				wp_zanshang_shoukuan_img_url:'',
 				wxa_shop_new_name:'',
 				
-				show_more_article:1
+				show_more_article:1,
+				
+				wxa_shop_nav_bg_color: '',
+				wxa_shop_nav_font_color: '',
+				
+				//模态框
+				is_PhotoModel:false,
+				is_showPhotoModel:false,
+				
+				wap_h5_kefu_button_icon:'',
+				wap_h5_kefu_mobile_num:''
 			}
 		},
 		
@@ -339,13 +426,26 @@
 		// },
 		
 		
+	
+		
+		
 		//下拉刷新
 		onPullDownRefresh: function () {
 			var that = this;
-			that.fetchDetailData();
+			
+			uni.removeStorage({
+				key: 'wordpress_detail_data_' + that.current_post_id,
+				success: (res) => {
+					
+					uni.stopPullDownRefresh();  //停止下拉刷新动画
+					
+					that.fetchDetailData();
+				}
+			});
+			
 
 			setTimeout(function () {
-				uni.stopPullDownRefresh();  //停止下拉刷新动画
+				
 			}, 1500);
 		},
 		
@@ -353,7 +453,7 @@
 		onReachBottom: function () {  
 			this.fetchCommentData();
 		},
-
+	 	
 		//分享文章
 		onShareAppMessage: function () {
 			return {
@@ -426,9 +526,30 @@
 				
 				
 				//====1、更新界面的颜色
-				this.abotapi.getColor();
+				that.abotapi.getColor();
+				
+				that.wxa_shop_nav_bg_color  = cb_params.wxa_shop_nav_bg_color;
+				that.wxa_shop_nav_font_color  = cb_params.wxa_shop_nav_font_color;
+				
 				
 				//====2、其他的设置选项：商品列表风格、头条图标等等
+				
+				//客服按钮图标
+				if (cb_params.wap_h5_kefu_button_icon) {
+					
+					that.wap_h5_kefu_button_icon = cb_params.wap_h5_kefu_button_icon
+					
+				}
+				that.wap_h5_kefu_button_icon = 'https://yanyubao.tseo.cn/Tpl/static/images/kefu_icon/kefu04.png';
+				
+				console.log('cb_params.wap_h5_kefu_button_icon ===>>> ' + cb_params.wap_h5_kefu_button_icon);
+				
+				//客服电话
+				if (cb_params.wap_h5_kefu_mobile_num) {
+					
+					that.wap_h5_kefu_mobile_num = cb_params.wap_h5_kefu_mobile_num
+					
+				}
 				
 
 				//网站名称
@@ -460,7 +581,7 @@
 					this.wp_zanshang_shoukuan_img_url = cb_params.wp_zanshang_shoukuan_img_url
 					
 				}
-				
+				console.log('wp_zanshang_shoukuan_img_url',this.wp_zanshang_shoukuan_img_url)
 				uni.setNavigationBarTitle({
 					title:this.wxa_shop_new_name
 				})
@@ -471,18 +592,167 @@
 				this.fetchDetailData();
 				this.fetchCommentData();
 				
+				this.__check_my_favortie('favorite', 'check', (response_data)=>{
+					if(response_data.code == 1){
+						this.icon_favoriteImg = 'favorite-on.png';
+					}
+					else{
+						this.icon_favoriteImg = 'favorite.png';
+					}
+				})
+				
+				
+				this.__check_my_favortie('like', 'check', (response_data)=>{
+					if(response_data.code == 1){
+						this.icon_likeImg = 'like-on.png';
+					}
+					else{
+						this.icon_likeImg = 'like.png';
+					}
+				})
+				
+				
+				
+				/*
 				setTimeout(() => {
 					that.getPoster();
 				}, 2000);
-				
+				*/
 				
 			},
 			
+			
+			__handle_detail_data:function(detail_data){
+				var that = this;
+				
+				var tyu = '';
+				
+				that.detail = detail_data;
+				console.log('detail_data00000000000000000000000000000',that.detail)
+				that.tags = that.detail.tags.join(',');
+				console.log("that.detail",that.detail);
+				console.log("that.tags",that.tags);
+				
+				if(!that.detail.title){
+					return;
+				}
+				
+				if(that.detail.title.rendered){
+					that.detail.title.rendered.replace(/&#8211;/g, '——');
+				}
+				
+				that.article_title = that.detail.title.rendered;
+				
+				//设置页面的标题以便更好的SEO
+				var new_title = that.article_title;
+				
+				//标题只保留9个字符
+				if(new_title && (new_title.length > 9)){
+					//new_title = new_title.substring(0, 9);
+					new_title = that.abotapi.globalData.wxa_website_name;
+				}
+				
+				uni.setNavigationBarTitle({
+					title: new_title
+				})
+				
+				/* uni.setStorageSync('mykeymas',JSON.stringify(this.msg)) */
+				
+				/* if (wx.getStorageSync("cache_options")) {
+				commentsList = JSON.parse(wx.getStorageSync("cache_options"));
+				}
+				 */
+				
+				
+				//uparse使用
+				that.index_rich_html_content = that.detail.content.rendered;
+				
+				
+				//v-html使用
+				that.article_content_html = that.detail.content.rendered;
+				
+				//console.log('that.article_content_html====>>>>111', that.article_content_html);
+				
+				const filter = that.$options.filters["formatRichText"];
+				that.article_content_html = filter(that.article_content_html);
+				
+				//console.log('that.article_content_html====>>>>', that.article_content_html);
+
+
+				//设置百度小程序中的页面SEO信息
+	// #ifdef MP-BAIDU				
+				//2021.7.22. 删除所有的超链接和对应的超链文本
+				that.index_rich_html_content = that.index_rich_html_content.replace(/(<\/?a.*?>)[^>]*<\/a>/g, '');
+				
+	// #endif	
+
+				
+	// #ifdef MP-ALIPAY 
+				
+				
+				
+				let data001 = that.article_content_html;
+				let newArr = [];
+				let arr = parseHtml(data001);
+				arr.forEach((item, index)=>{
+					newArr.push(item);
+				});
+				
+				//console.log('arr arr arr====>>>>', arr);
+				//console.log('newArr newArr newArr====>>>>', newArr);
+				
+				//rich-text使用
+				that.article_content_array = newArr;
+
+	// #endif						
+				
+				
+				// 调用API从本地缓存中获取阅读记录并记录
+				var logs = uni.getStorageSync('usercenters') || [];
+							
+				console.log('44444444444',logs);
+							
+				// 过滤重复值
+				if (logs.length > 0) {
+					logs = logs.filter(function (log) {
+						return log[0] !== that.detail.id;
+					});
+				}
+							
+				console.log('5555555555555');
+							
+				// 如果超过指定数量
+				if (logs.length > 19) {
+					logs.pop();//去除最后一个
+				}
+				
+				logs.unshift([that.detail.id, that.detail.title.rendered]);
+				uni.setStorageSync('usercenters', logs);
+				//end 
+				
+				
+				
+				if(!that.tags){
+					return;
+				}else{
+					that.display = '';
+					that.showLikeImg();
+				}
+				
+			},
 			
 			//获取文章内容
 			fetchDetailData: function () {
 				
 				var that = this;
+				
+				var detail_data = uni.getStorageSync('wordpress_detail_data_' + that.current_post_id)
+				
+				if(detail_data){
+					that.__handle_detail_data(detail_data);
+					
+					return;
+				}
 				
 				this.abotapi.abotRequest({
 				    url:this.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/posts/'+that.current_post_id,
@@ -493,140 +763,47 @@
 					
 				    success(res) {
 				    	
-						if(!res.data.code){
-							
-							var tyu = '';
-							that.detail = res.data;
-							that.tags = that.detail.tags.join(',');
-							console.log("that.detail",that.detail);
-							console.log("that.tags",that.tags);
-							
-							if(!res.data.title){
-								return;
-							}
-							
-							if(res.data.title.rendered){
-								res.data.title.rendered.replace(/&#8211;/g, '——');
-							}
-							
-							that.article_title = res.data.title.rendered;
-							
-							//设置页面的标题以便更好的SEO
-							var new_title = that.article_title;
-							
-							//标题只保留9个字符
-							if(new_title && (new_title.length > 9)){
-								//new_title = new_title.substring(0, 9);
-								new_title = that.abotapi.globalData.wxa_website_name;
-							}
-							
-							uni.setNavigationBarTitle({
-								title: new_title
-							})
-							
-							
-							
-						
-							
-							
-							//uparse使用
-							that.index_rich_html_content = res.data.content.rendered;
-							
-							
-							//v-html使用
-							that.article_content_html = res.data.content.rendered;
-							
-							//console.log('that.article_content_html====>>>>111', that.article_content_html);
-							
-							const filter = that.$options.filters["formatRichText"];
-							that.article_content_html = filter(that.article_content_html);
-							
-							//console.log('that.article_content_html====>>>>', that.article_content_html);
-
-
-							//设置百度小程序中的页面SEO信息
-// #ifdef MP-BAIDU
-							swan.setPageInfo({
-								title: that.article_title,
-								keywords: res.data.seo_keywords,
-								description: res.data.seo_description,
-								articleTitle: res.data.mp_baidu_seo_articleTitle,
-								releaseDate: res.data.mp_baidu_seo_releaseDate,
-								image: res.data.mp_baidu_seo_image,
-								video: res.data.mp_baidu_seo_video,
-								visit: {},
-								likes: '75',
-								comments: '13',
-								collects: '23',
-								shares: '8',
-								followers: '35',
-								success: res => {
-									console.log('setPageInfo success');
-								},
-								fail: err => {
-									console.log('setPageInfo fail', err);
-								}
-							});
-							
-							//2021.7.22. 删除所有的超链接和对应的超链文本
-							that.index_rich_html_content = that.index_rich_html_content.replace(/(<\/?a.*?>)[^>]*<\/a>/g, '');
-							
-// #endif	
-
-							
-// #ifdef MP-ALIPAY 
-							
-							
-							
-							let data001 = that.article_content_html;
-							let newArr = [];
-							let arr = parseHtml(data001);
-							arr.forEach((item, index)=>{
-								newArr.push(item);
-							});
-							
-							//console.log('arr arr arr====>>>>', arr);
-							//console.log('newArr newArr newArr====>>>>', newArr);
-							
-							//rich-text使用
-							that.article_content_array = newArr;
-
-// #endif						
-							
-							
-							// 调用API从本地缓存中获取阅读记录并记录
-							var logs = uni.getStorageSync('usercenters') || [];
-										
-							console.log('44444444444',logs);
-										
-							// 过滤重复值
-							if (logs.length > 0) {
-								logs = logs.filter(function (log) {
-									return log[0] !== that.detail.id;
-								});
-							}
-										
-							console.log('5555555555555');
-										
-							// 如果超过指定数量
-							if (logs.length > 19) {
-								logs.pop();//去除最后一个
-							}
-							
-							logs.unshift([that.detail.id, that.detail.title.rendered]);
-							uni.setStorageSync('usercenters', logs);
-							//end 
-							
-							
-							
-							if(!that.tags){
-								return;
-							}else{
-								that.display = '';
-								that.showLikeImg();
-							}
-							
+						if(res.data.code){
+							return;
 						}
+						
+						uni.setStorage({
+							key: 'wordpress_detail_data_' + that.current_post_id,
+							data: res.data
+						})
+						
+						//设置that变量
+						that.__handle_detail_data(res.data);
+						
+						
+						//设置百度小程序中的页面SEO信息
+						// #ifdef MP-BAIDU
+								swan.setPageInfo({
+									title: that.article_title,
+									keywords: that.detail.seo_keywords,
+									description: that.detail.seo_description,
+									articleTitle: that.detail.mp_baidu_seo_articleTitle,
+									releaseDate: that.detail.mp_baidu_seo_releaseDate,
+									image: that.detail.mp_baidu_seo_image,
+									video: that.detail.mp_baidu_seo_video,
+									visit: {},
+									likes: '75',
+									comments: '13',
+									collects: '23',
+									shares: '8',
+									followers: '35',
+									success: res => {
+										console.log('setPageInfo success');
+									},
+									fail: err => {
+										console.log('setPageInfo fail', err);
+									}
+								});
+								
+								//2021.7.22. 删除所有的超链接和对应的超链文本
+								that.index_rich_html_content = that.index_rich_html_content.replace(/(<\/?a.*?>)[^>]*<\/a>/g, '');
+								
+						// #endif	
 				    
 				    },
 				    fail: function (e) {
@@ -699,6 +876,8 @@
 						if(res && res.data && (res.data.length > 0) ){
 							that.related_post_list = res.data;
 						}
+						
+					
 				    },
 				    fail: function (e) {
 						uni.showToast({
@@ -714,11 +893,13 @@
 			ShowHideMenu: function () {
 				this.isShow = !this.isShow;
 				this.isLoad = false;
+				
 				this.menuBackgroup = !this.menuBackgroup;
 			},
 			//点击非评论区隐藏功能菜单
 			hiddenMenubox: function () {
 				this.isShow = false;
+				
 				this.menuBackgroup = false
 			},
 			
@@ -733,10 +914,11 @@
 			//复制链接
 			copyLink: function (e) {
 				console.log("e==>>",e);
+				console.log("e==>>",e.target.dataset.url);
 				
 				
 				// #ifdef MP-BAIDU
-					return;
+					//return;
 				// #endif
 				
 				
@@ -811,7 +993,11 @@
 								icon:'success',
 								duration:2000
 							})
+							
 							that.displayLike = 'block';
+							that.icon_likeImg = 'like-on.png';
+							
+							
 						}
 				    },
 				    fail: function (e) {
@@ -825,7 +1011,8 @@
 			},
 			
 			
-			//是否点赞
+			//是否点赞 
+			//2021.10.29 这个函数不再使用，用  set_my_like
 			Islike:function(){
 				var that = this;
 				
@@ -865,14 +1052,19 @@
 				    },
 					
 				    success(res) {
-				    	console.log("isdianzan_res", res);
+				    	console.log("isdianzan_res ===>>>", res);
+						
 						if(res.data.status == 200){
 							uni.showToast({
 								title:'已经点过了',
 								icon:'success',
 								duration:2000
 							})
-						}else{
+							
+							that.icon_likeImg = 'like-on.png';
+							
+						}
+						else{
 							that.clickLike();
 						}
 				    },
@@ -958,6 +1150,7 @@
 						post:that.current_post_id,
 						userid:userDetail.userid,
 						sellerid:that.abotapi.globalData.default_sellerid,
+						
 					},
 					success(res){
 						console.log("delite_res==>>>", res);
@@ -1054,7 +1247,7 @@
 							
 							console.log('comment_current_page===>>>下一次请求的页码：', that.comment_current_page);
 							
-							
+							console.log("commentsList ===>>> ", that.commentsList);
 							for(var i=0; i<that.commentsList.length; i++){
 							   that.commentsList[i].date = that.commentsList[i].date.replace('T',' ');
 							}
@@ -1063,6 +1256,9 @@
 							
 							that.commentsList_is_load_all_ok = false;
 							that.commentsList_display = 'none';
+							
+							
+							
 				
 						}
 						else{
@@ -1100,10 +1296,21 @@
 			
 			
 			//保存图片到本地
-			getPhoto:function(){
+			getPhoto:function(data_type='pirce_poster'){
 				var that = this;
+				
+				if (data_type == 'pirce_reprint' ){
+					var new_url = this.abotapi.globalData.weiduke_server_url + '/openapi/Wordpress/download_file?url='+ encodeURIComponent(that.wp_zanshang_shoukuan_img_url)+'&type=image';
+					
+				}
+				if (data_type == 'pirce_poster' ){
+					var new_url = this.abotapi.globalData.weiduke_server_url + '/openapi/Wordpress/download_file?url='+ encodeURIComponent(that.poster_url)+'&type=image';
+					
+				}
+				
 				uni.downloadFile({
-					url: this.abotapi.globalData.weiduke_server_url + '/openapi/Wordpress/download_file?url='+ encodeURIComponent(that.targetSrc)+'&type=image',
+					url:new_url,
+			
 					success: (res) =>{
 						console.log('uni.downloadFile======>>>>', res);
 						
@@ -1162,6 +1369,10 @@
 							
 							that.poster_url = res.data.url;
 						}
+						
+						console.log('poster_url2222222===>>>',that.poster_url)
+						that.is_PhotoModel = !that.is_PhotoModel;
+						
 					}
 				});
 			},
@@ -1189,7 +1400,111 @@
 				
 			},
 			
+			goto_post_list:function(tag_index){
+				
+				var tag_id = this.detail.tags[tag_index];
+				var tag_name = this.detail.tags_name[tag_index];
+				
+				console.log("goto_post_list tag ===>>> ", tag_id);
+				console.log("goto_post_list tag ===>>> ", tag_name);
+				
+				var new_url = '/pages/wordpress/list?';
+				
+				new_url += 'tag_id=' + tag_id + '&tag_name=' + tag_name;
+				
+				uni.navigateTo({
+					url:new_url
+				})
+			},
+			//拨打客服电话
+			call_seller: function () {
+			    console.log('wap_h5_kefu_mobile_num', this.wap_h5_kefu_mobile_num)
+			    uni.makePhoneCall({
+					phoneNumber: this.wap_h5_kefu_mobile_num,
+			    })
+			},
 			
+			__check_my_favortie(data_type, action, callback_function){
+				var that = this;
+				
+				var userInfo = this.abotapi.get_user_info();
+				
+				if(!userInfo && (action == 'check')){
+					return;
+				}
+				
+				if (!userInfo || userInfo.userid == null) {
+					uni.showModal({
+						title:'提示',
+						content: '请先登录',
+						showCancel:false,
+						success(res){
+							var last_url2 = '/pages/wordpress/detail?id='+that.current_post_id;
+							
+							that.abotapi.goto_user_login(last_url2,'normal');
+							
+							return;
+						}
+					})
+					
+					return;
+				}
+				
+				var post_url = that.abotapi.globalData.yanyubao_server_url + '/openapi/Wordpress/my_favortie';
+				var post_data = {
+					sellerid:that.abotapi.get_sellerid(),
+					userid:userInfo.userid,
+					checkstr:userInfo.checkstr,
+					postid:that.current_post_id,
+					data_type : data_type,
+					action: action
+				};
+				
+				this.abotapi.abotRequest({
+				    url: post_url,
+				    method: 'post',
+				    data: post_data,
+					
+				    success(res) {
+				    	console.log("isdianzan_res ===>>>", res);
+						
+						typeof callback_function == "function" && callback_function(res.data);
+						
+					}
+				});
+				
+				
+			},
+			set_my_favorite:function(){				
+				this.__check_my_favortie('favorite', 'add', (response_data)=>{
+					uni.showToast({
+						title: response_data.msg
+					})
+					
+					if(response_data.code == 1){
+						this.icon_favoriteImg = 'favorite-on.png';
+					}
+					else if(response_data.code == 2){
+						this.icon_favoriteImg = 'favorite.png';
+					}
+				});	
+			},
+			set_my_like:function(){
+				this.__check_my_favortie('like', 'add', (response_data)=>{
+					
+					uni.showToast({
+						title: response_data.msg
+					})
+					
+					if(response_data.code == 1){
+						this.icon_likeImg = 'like-on.png';
+					}
+					else if(response_data.code == 2){
+						this.icon_likeImg = 'like.png';
+					}
+				});				
+				
+			}
 			
 			
 		
@@ -1373,7 +1688,7 @@
 
 	.comment-button {
 	  width: 160rpx;
-	  height:60rpx;
+	  height:65rpx;
 	  display: flex !important;
 	  flex-direction: column;
 	  justify-content: center;
@@ -1524,7 +1839,7 @@
 	  text-align: center;
 	  color: #999;
 	  margin-top: 20rpx;
-	  padding-bottom: 120rpx;
+	  padding-bottom: 150rpx;
 	}
 
 	.menu-box {
@@ -1666,6 +1981,55 @@
 	.alignnone {
 		max-width: 100%  !important;
 	}
-
-
+	
+	
+	
+	
+	/*    2121.10.27    */
+	.show_modal_pop{
+		position: fixed;
+		z-index: 999;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%,-50%);
+	}
+	.show_modal_mask{
+		background-color: #000;
+		opacity: 0.7;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 999;
+	}
+	.baocun{
+		font-size: 40rpx;
+		width: 580rpx;
+		height: 80rpx;
+		line-height: 80rpx;
+		background-color: #1aad19;
+		color: #FFFFFF;
+		border-radius:50rpx ;
+		margin: 0 auto;
+	}
+	.topic-common-list {
+	   padding: 48rpx 0rpx 48rpx 48rpx; 
+	   margin: 0 auto;
+	   width: 100%;
+		float: left;
+	}
+	.tag_item {
+		font-size: 30rpx;
+		border-radius: 8rpx;
+		background-color:  #ffffff;
+		border:solid 1rpx #2d96ff;
+		color:#2d96ff;
+		display: block;
+		float: left;
+		margin: 10rpx;
+		padding: 10rpx;
+		height: 40rpx;
+		line-height: 40rpx;
+	}
 </style>

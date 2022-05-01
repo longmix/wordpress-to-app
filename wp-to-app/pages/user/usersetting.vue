@@ -2,11 +2,15 @@
 	<view>
 		<!-- 修改用户昵称 -->
 		<view v-if="is_nickname">
-			<view class="section">
-				<input placeholder="请输入昵称" :value="nicknames"  @input="nameInput" auto-focus/>
+			<view class="weui-cell">
+				<view class="weui-label">昵称</view>
+				<input placeholder="请输入昵称" :value="nicknames"  @input="nameInput" class="new_yangshi" auto-focus/>
 			</view>
 	
-			<button class="btn" type="primary" @tap="keep_button"> 保存 </button>
+			<button class="btn" type="primary" 
+				@tap="keep_button"
+				:style="{backgroundColor:wxa_shop_nav_bg_color, color:wxa_shop_nav_font_color}"
+				> 保存 </button>
 		</view>
 		
 		<!-- 修改手机号码 -->
@@ -25,7 +29,9 @@
 				<input type="number" placeholder="请输入手机验证码"  @input="telInput" auto-focus/>
 			</view>
 			
-			<button type="primary" @tap="check_button" class="btn" >设置手机号码</button>
+			<button type="primary" @tap="check_button" class="btn" 
+				:style="{backgroundColor:wxa_shop_nav_bg_color, color:wxa_shop_nav_font_color}"
+				>设置手机号码</button>
 		</view>
 		
 		<!-- 设置或修改用户账号及密码 -->
@@ -34,17 +40,19 @@
 			<form @submit="formSubmit">
 				<view class="weui-cell">
 					<view class="weui-label">账号</view>
-					<input name="new_account" placeholder="请输入新账号" :value='account'></input>
+					<input name="new_account" placeholder="请输入新账号" :value='account' class="new_yangshi"></input>
 				</view>
 				<view class="weui-cell">
 					<view class="weui-label">新密码</view>
-					<input type="password" name="new_password" placeholder="请输入新密码"></input>
+					<input type="password" name="new_password" placeholder="请输入新密码" class="new_yangshi"></input>
 				</view>
 				<view class="weui-cell">
 					<view class="weui-label">确认密码</view>
-					<input type="password" name="new_password2" placeholder="请再次输入新密码"></input>
+					<input type="password" name="new_password2" placeholder="请再次输入新密码" class="new_yangshi" ></input>
 				</view>
-				<button class="btn bg-green" formType="submit">确认修改</button>
+				<button class="btn bg-green" formType="submit"
+					:style="{backgroundColor:wxa_shop_nav_bg_color, color:wxa_shop_nav_font_color}"
+					>确认修改</button>
 			</form>
 			
 		</view>
@@ -83,13 +91,12 @@
 				disabled:false,
 				timer001:60,
 				img_checkcode_url:'',
-				account:''
+				account:'',
+				
+				wxa_shop_nav_bg_color: '',
+				wxa_shop_nav_font_color: '',
 			}
 		},
-		
-		
-		
-		
 		onLoad:function(options){
 			
 			// 页面初始化 options为页面跳转所带来的参数
@@ -180,6 +187,9 @@
 				
 				//====1、更新界面的颜色
 				this.abotapi.getColor();
+				
+				that.wxa_shop_nav_bg_color  = cb_params.wxa_shop_nav_bg_color;
+				that.wxa_shop_nav_font_color  = cb_params.wxa_shop_nav_font_color;
 				
 				//====2、其他的设置选项：商品列表风格、头条图标等等
 				
@@ -472,17 +482,21 @@
 </script>
 
 <style>
+
+	
 	page{
 	    background-color:#F0F0F0;  
 	}
 	
 	
+	
 	/* 修稿用户昵称 */
 	.section{
-	    width:100%;
+	    width:90%;
 	    height:100upx;
-	    background-color:#fff;
+	 
 	    margin:20upx auto;
+		
 	}
 	.section input{
 	    width:100%;
@@ -538,12 +552,13 @@
 	    -webkit-align-items: center;
 	    font-size: 31upx;
 	    border-bottom: 1upx solid #eee;
+		
 
 	}
 	
 	.weui-cell input{
 		width: 100%;
-		text-align: right;
+		
 		margin-right: 5%;
 
 	}
@@ -559,6 +574,19 @@
 	  padding: 19.2upx 48upx;
 	  display: block;
 		
+	}
+		
+	.bg-green{
+		background-color: #1aad19;
+		color: #FFFFFF;
+	}
+	.new_yangshi{
+	  background-color: #fff; 
+	  height: 80rpx;
+	  line-height: 80rpx;
+	  padding-left: 20rpx;
+	  border-radius: 50rpx;
+	  border:2rpx solid #17A8E2;	
 	}
 	
 </style>

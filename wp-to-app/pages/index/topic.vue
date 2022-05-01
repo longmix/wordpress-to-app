@@ -1,16 +1,13 @@
 <template>
 	<view>
-		<scroll-view style="height:100%; display:none;" scroll-y="true" lower-threshold="100rpx">
-			
-		</scroll-view>
-		
+
 		<view class="topic-common-list">
 			<block v-if="cata_topic_list_type == 1">
 				<block :key="index" v-for="(item,index) in cata_topic_list" >
-					<view class="list-item" @tap="redictToTopic($event)" :data-url="item.url">
+					<view class="list-item" @tap="redictToTopic(item.url)">
 						<view>
 							<image class="cover" mode="widthFix"
-								:src="item.src" :data-name="item.name" :data-url="item.url"></image>
+								:src="item.src"></image>
 						</view>
 						<view class="content-title">
 							<view class="topic-name">
@@ -25,20 +22,19 @@
 			<block v-else>
 				<block :key="index" v-for="(item,index) in categoriesList" >
 					<view class="list-item" 
-						@tap="redictIndex($event)" 
-						:data-id="item.id" 
-						:data-name="item.name" 
-						:data-description="item.description" 
+						@tap="goto_post_cata_list($event)" 
+						
+						:data-id="item.id"
+						:data-slug="item.slug"
+						:data-name="item.name"
+						
+						:data-description="item.description"
 						:data-src="item.category_thumbnail_image">
-						<view>
-							<image class="cover" mode="widthFix"
-								:src="item.category_thumbnail_image" 
-								:data-id="item.id" 
-								:data-slug="item.slug" 
-								:data-name="item.name" 
-								:data-description="item.description" 
-								:data-src="item.category_thumbnail_image"></image>
-						</view>
+						<image class="cover" mode="widthFix"
+							:data-id="item.id"
+							:data-slug="item.slug"
+							:data-name="item.name"
+							:src="item.category_thumbnail_image" ></image>
 						<view class="content-title">
 							<view class="topic-name">
 								<text>{{item.name}}</text>
@@ -55,10 +51,11 @@
 			
 		</view>
 		
+		
 		<view class="topic-common-list" style="padding:10rpx;">
 			<view v-for="(tagItem, index) in tagList" 
 				:key="index"
-				@tap="goto_post_list(tagItem.slug)"
+				@tap="goto_post_list(tagItem.id, tagItem.name)"
 				class="tag_item"
 				:style="{backgroundColor:wxa_shop_nav_bg_color, color:wxa_shop_nav_font_color}">
 				{{tagItem.name}}
@@ -102,37 +99,13 @@
 			}
 		},
 		onLoad:function() {
-			this.abotapi.set_option_list_str(this, function(that, option_list){
-				//====1、更新界面的颜色
-				that.abotapi.getColor();
-				
-				that.wxa_shop_nav_bg_color  = option_list.wxa_shop_nav_bg_color;
-				that.wxa_shop_nav_font_color  = option_list.wxa_shop_nav_font_color;
-				
-				
-				that.all_option_list = option_list;
-				
-				
-				if(option_list.cata_topic_list_type && (option_list.cata_topic_list_type == 1)){
-					//that.cata_topic_list_type = 1;
-					
-					//that.cata_topic_list = option_list.cata_topic_list;
-				}
-				else{
-					that.cata_topic_list_type = 0;
-					
-					that.getTopicList();
-					
-					that.getTagList();
-					
-				}
-			});
+			this.abotapi.set_option_list_str(this, this.callback_function);
 			
 			
 		},
 		
 		onShow:function() {
-			this.abotapi.set_option_list_str(this, this.callback_function);
+			//this.abotapi.set_option_list_str(this, this.callback_function);
 			
 			
 		},
@@ -148,8 +121,22 @@
 			
 			that.page = 1;
 			
-			that.getTopicList();
-			that.getTagList();
+			that.categoriesList = null;
+			
+			uni.removeStorage({
+				key:'wordpress_topic_list_data',
+				success: () => {
+					that.getTopicList();
+				}
+			});
+			
+			uni.removeStorage({
+				key:'wordpress_tag_list_data',
+				success: () => {
+					that.getTagList();
+				}
+			});
+			
 		},
 		
 		
@@ -234,6 +221,37 @@
 				
 				console.log('cb_params====', cb_params);
 				
+				//====1、更新界面的颜色
+				that.abotapi.getColor();
+				
+				that.wxa_shop_nav_bg_color  = cb_params.wxa_shop_nav_bg_color;
+				that.wxa_shop_nav_font_color  = cb_params.wxa_shop_nav_font_color;
+				
+				
+				that.all_option_list = cb_params;
+				
+				
+				// 0  使用Wordpress默认的
+				// 1  使用延誉宝“网站转APP后台”指定的内容分类列表
+				if(cb_params.cata_topic_list_type && (cb_params.cata_topic_list_type == 1)){
+					that.cata_topic_list_type = 1;
+					
+					that.cata_topic_list = cb_params.cata_topic_list;
+				}
+				else{
+					that.cata_topic_list_type = 0;
+					
+					that.getTopicList();
+					
+					
+				}
+				
+				
+				
+				that.getTagList();
+				
+				
+				
 				
 				//====2、其他的设置选项：商品列表风格、头条图标等等
 				
@@ -259,22 +277,17 @@
 				})
 				
 				
-				if(cb_params.cata_topic_list_type && (cb_params.cata_topic_list_type == 1)){
-					that.cata_topic_list_type = 1;
-					
-					that.cata_topic_list = cb_params.cata_topic_list;
-				}
-				else{
-					that.cata_topic_list_type = 0;
-					
-				}
+				
+				
+				
 				
 				
 			},
-			
-			
 			getTopicList:function(){
 				var that = this;
+				
+				
+				
 				
 				var page = that.page;
 				
@@ -290,6 +303,21 @@
 					});*/
 					return;
 				}
+				
+				//2021.10.27. 如果有缓存，则直接使用缓存
+				var topic_list_data = uni.getStorageSync('wordpress_topic_list_data');
+				
+				if(topic_list_data){
+					if(!that.categoriesList){
+						that.categoriesList = topic_list_data;
+					}
+					else{
+						that.categoriesList = that.categoriesList.concat(topic_list_data);
+					}
+					
+					return;
+				}
+				
 				
 				this.abotapi.abotRequest({
 				    url:this.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/categories',
@@ -326,6 +354,12 @@
 							//得到数据后停止下拉刷新
 							//uni.stopPullDownRefresh();
 							
+							
+							uni.setStorage({
+								key: 'wordpress_topic_list_data',
+								data: res.data
+							});
+							
 						} 				
 						
 				    },
@@ -339,8 +373,8 @@
 			},
 			
 			//跳转至分类详情
-			redictIndex:function(e){
-				console.log("redictIndex e ===>>> ", e);
+			goto_post_cata_list:function(e){
+				console.log("goto_post_cata_list e ===>>> ", e);
 				
 				var new_url = '/pages/wordpress/list?';
 				
@@ -355,33 +389,41 @@
 				})
 			},
 			//跳转至分类详情
-			goto_post_list:function(tag){
-				console.log("goto_post_list tag ===>>> ", tag);
+			goto_post_list:function(tag_id, tag_name){
+				console.log("goto_post_list tag ===>>> ", tag_id);
 				
 				var new_url = '/pages/wordpress/list?';
 				
-				new_url += 'tags=' + tag;
+				new_url += 'tag_id=' + tag_id + '&tag_name=' + tag_name;
 				
 				uni.navigateTo({
 					url:new_url
 				})
 			},
 			
-			redictToTopic:function(e){
-				var url = e.target.dataset.url;
-				
-				var var_list = Object();
-				console.log('redictToTopic to url ====>>>>>>', e);
-				
+			redictToTopic:function(url){
 				if(!url){
 					return;
 				}
+				
+				var var_list = {};
 				
 				this.abotapi.call_h5browser_or_other_goto_url(url, var_list, '');
 			},
 			
 			getTagList:function(){
 				var that = this;
+				
+				
+				//2021.10.27. 如果有缓存，则直接使用缓存
+				var tagList = uni.getStorageSync('wordpress_tag_list_data');
+				
+				if(tagList){
+					that.tagList = tagList;
+					
+					return;
+				}
+				
 				
 				this.abotapi.abotRequest({
 				    url:this.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/tags',
@@ -407,6 +449,11 @@
 						
 						console.log('获取标签列表', that.tagList)
 						
+						uni.setStorage({
+							key: 'wordpress_tag_list_data',
+							data: res.data
+						});
+						
 						
 				    },
 				    fail: function (e) {
@@ -427,8 +474,8 @@
 <style>
 
 	.topic-common-list {
-	   padding: 48rpx 0rpx 48rpx 48rpx; 
-	   margin: 0 auto;
+	   padding: 0; 
+	   margin: 0;
 	   width: 100%;
 		float: left;
 	}
@@ -437,14 +484,17 @@
 		position: relative;
 		float: left;
 		overflow: hidden;
-		width: 303rpx;
-		margin-bottom: 60rpx;
-		margin-right: 48rpx;
+		width: 40%;
+		margin-bottom: 0rpx;
+		margin-right: 0rpx;
+		text-align: center;
+		padding:20rpx;
 	}
 	
 	.list-item  image.cover {
-		width: 303rpx;
+		width: 240rpx;
 		border-radius: 12rpx;
+		margin:0 auto;
 	}
 	
 	.content-title {
@@ -488,6 +538,7 @@
 		float: left;
 		margin: 10rpx;
 		padding: 10rpx;
-		height: 70rpx;
+		height: 50rpx;
+		line-height: 50rpx;
 	}
 </style>

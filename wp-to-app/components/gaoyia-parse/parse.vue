@@ -6,6 +6,29 @@
  * for: uni-app框架下 富文本解析
  * 
  * 优化 by gaoyia@qq.com  https://github.com/gaoyia/parse
+ * 
+ 
+ 2021.1.26.
+ https://ext.dcloud.net.cn/plugin?id=364
+ 
+ 
+ 
+使用举例：传入参数 imgOptions为Boolean类型，图片点击事件禁用。
+:imgOptions=false  前面前冒号，确保 false作为boolean类型被传递，而不是string类型。
+
+		<u-parse v-if="show_rich_html_in_index == 1" 
+			:content="index_rich_html_content" 
+			:imageProp = "u_parse_imageProp"
+			:imgOptions=false
+			@preview888="index_rich_html_preview_image" 
+			@navigate="index_rich_html_click_link" />
+			
+		<!--<rich-text :nodes="index_rich_html_content|formatIndexRichText"></rich-text>-->
+		
+ 
+ 
+ 
+ 
  */-->
 
 <template>
@@ -65,12 +88,13 @@ import wxParseTemplate from './components/wxParseTemplate0';
 			},
 			noData: {
 				type: String,
-				default: '<div style="color: red;">数据加载中……</div>'
+				default: '<div style="color: red;">数据不能为空</div>'
 			},
 			startHandler: {
 				type: Function,
 				default: null
-				/*default () {
+				/* 在百度小程序的iPhone版本中，这里的设置会抛异常
+				default () {
 					return node => {
 						node.attr.class = null;
 						node.attr.style = null;

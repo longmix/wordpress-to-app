@@ -35,11 +35,25 @@
 				<view><image :src="header_bg_img_of_tag_list" class="cover"></image></view>
 				<view class="topic-content-title">
 					<text>标签：</text>
-					<text class="searchValue">{{post_list_option.tags}}</text>
+					<text class="searchValue">{{post_list_option.tag_name}}</text>
 				</view>
 				<view class="topic-content-title-line" :style="{borderBottom:'solid 1rpx ' + wxa_shop_nav_font_color}"></view>
 				<view class="topic-content-brief">
-					<text>以下是标签{{post_list_option.tags}}相关的内容</text>
+					<text>以下是标签“{{post_list_option.tag_name}}”相关的内容</text>
+				</view>
+			</view>
+		</view>
+		
+		<view class="topic-common-list" :style="{display:isMyFavoriteList}">
+			<view class="topic-list-item">
+				<view><image :src="header_bg_img_of_tag_list" class="cover"></image></view>
+				<view class="topic-content-title">
+					<text>{{MyFavoriteListTitle}}</text>
+					<text class="searchValue">{{post_list_option.tag_name}}</text>
+				</view>
+				<view class="topic-content-title-line" :style="{borderBottom:'solid 1rpx ' + wxa_shop_nav_font_color}"></view>
+				<view class="topic-content-brief">
+					<text>{{wxa_shop_new_name}}</text>
 				</view>
 			</view>
 		</view>
@@ -88,9 +102,14 @@
 			return {
 				post_list_option:null,
 				
+				//页面头部显示的风格
 				isCategoryPage:"none",
 				isSearchPage:'none',
 				isTagPage:'none',
+				isMyFavoriteList:'none',
+				
+				MyFavoriteListTitle:'我的收藏',
+				MyFavoriteList_postid_list_str:null,
 				
 				page: 1,
 				per_page:10,
@@ -110,6 +129,7 @@
 				header_bg_img_of_search_list: 'https://yanyubao.tseo.cn/Tpl/static/wordpress/website-search.png',
 				header_bg_img_of_tag_list: 'https://yanyubao.tseo.cn/Tpl/static/wordpress/website-search.png',
 				
+				wxa_shop_new_name:'',
 				wxa_shop_nav_bg_color: '',
 				wxa_shop_nav_font_color: '',
 				
@@ -239,9 +259,58 @@
 					 },
 				});
 			}
-			else if(that.post_list_option.tags){
+			else if(that.post_list_option.tag_id){
 				that.isTagPage = 'block';
+				
+				//#ifdef MP-WEIXIN
+					that.post_list_option.tag_id = decodeURIComponent(that.post_list_option.tag_id);
+				//#endif
+				
+				console.log('根据标签获取文章列表：', that.post_list_option.tag_id);
+				
 			}
+			else if(that.post_list_option.action && (that.post_list_option.action == 'my_favorite')){
+				that.isMyFavoriteList = 'block';
+				that.MyFavoriteListTitle = '我的收藏列表';
+				
+				console.log('获取我收藏的文章列表。');
+				
+				this.__check_my_favortie('favorite', 'list', (response_data)=>{
+					if(response_data.code == 1){
+						that.MyFavoriteList_postid_list_str = response_data.data;
+					}
+					else{
+						that.MyFavoriteList_postid_list_str = '-1';
+					}
+					
+					that.fetchCategoriesData();
+					
+				})
+				
+			}
+			else if(that.post_list_option.action && (that.post_list_option.action == 'my_like')){
+				that.isMyFavoriteList = 'block';
+				that.MyFavoriteListTitle = '我的点赞列表';
+				
+				console.log('获取我点赞的文章列表。');
+				
+				this.__check_my_favortie('like', 'list', (response_data)=>{
+					if(response_data.code == 1){
+						that.MyFavoriteList_postid_list_str = response_data.data;
+					}
+					else{
+						that.MyFavoriteList_postid_list_str = '-1';
+					}
+					
+					that.fetchCategoriesData();
+					
+				})
+				
+				
+				
+			}
+			
+			
 			
 			if(!that.categoriesImage){
 				that.categoriesImage = 'https://yanyubao.tseo.cn/Tpl/static/wordpress/vip.jpg';
@@ -255,18 +324,6 @@
 			
 		},
 
-		reload_all_list:function(e){
-			var that = this;
-			
-			
-			
-			that.page = 1;
-			that.fetch_list = [];
-			
-			that.fetchCategoriesData();
-			
-			
-		},
 		
 		
 		//下拉刷新
@@ -286,8 +343,7 @@
 		onReachBottom: function () {
 			var that = this;
 			
-			if(this.is_OK){
-				that.page = page;
+			if(this.is_OK){				
 				uni.showToast({
 					title: '到底啦~',
 					duration: 2000
@@ -298,6 +354,19 @@
 			that.fetchCategoriesData();
 		},	  
 		methods:{
+			reload_all_list:function(e){
+				var that = this;
+				
+				
+				
+				that.page = 1;
+				that.fetch_list = [];
+				
+				that.fetchCategoriesData();
+				
+				
+			},
+			
 			//获取网站基础信息配置项
 			callback_function:function(that, option_list){
 				
@@ -367,6 +436,10 @@
 			fetchCategoriesData: function (id) {
 				var that = this;
 				
+				if((that.isMyFavoriteList == 'block') && !that.MyFavoriteList_postid_list_str){
+					return;
+				}
+				
 				var post_data = {
 						per_page: that.per_page,
 						page: that.page,
@@ -386,8 +459,13 @@
 					post_data.search = that.searchValue;
 				}
 				
-				if(that.tags){
-					post_data.tags = that.tags;
+				if(that.post_list_option.tag_id){
+					post_data.tags = that.post_list_option.tag_id;
+				}
+				
+				//根据ID获取文章列表
+				if(that.isMyFavoriteList && that.MyFavoriteList_postid_list_str){
+					post_data.include = that.MyFavoriteList_postid_list_str;
 				}
 				
 				console.log('fetchCategoriesData post_data ===>>>', post_data);
@@ -406,7 +484,7 @@
 					
 						if(res.data.code){
 							uni.showToast({
-								title:'加载失败！'
+								title:'到底啦~'
 							})
 							return;
 						}
@@ -450,6 +528,55 @@
 				uni.navigateTo({
 					url:'../wordpress/detail?id='+id
 				})
+			},
+			
+			__check_my_favortie(data_type, action, callback_function){
+				var that = this;
+				
+				var userInfo = this.abotapi.get_user_info();
+				
+				if (!userInfo || userInfo.userid == null) {
+					uni.showModal({
+						title:'提示',
+						content: '请先登录',
+						showCancel:false,
+						success(res){
+							var last_url2 = '/pages/wordpress/detail?id='+that.current_post_id;
+							
+							that.abotapi.goto_user_login(last_url2,'normal');
+							
+							return;
+						}
+					})
+					
+					return;
+				}
+				
+				var post_url = that.abotapi.globalData.yanyubao_server_url + '/openapi/Wordpress/my_favortie';
+				var post_data = {
+					sellerid:that.abotapi.get_sellerid(),
+					userid:userInfo.userid,
+					checkstr:userInfo.checkstr,
+					postid:that.current_post_id,
+					data_type : data_type,
+					action: action
+				};
+				
+				this.abotapi.abotRequest({
+				    url: post_url,
+				    method: 'post',
+				    data: post_data,
+					
+				    success(res) {
+						
+				    	console.log("isdianzan_res ===>>>", res);
+						
+						typeof callback_function == "function" && callback_function(res.data);
+						
+					}
+				});
+				
+				
 			},
 			  
 		},

@@ -7,7 +7,7 @@
 			</view> -->
 			<view class="flex-center ">
 				<view @tap="goHome()" class="flex-center">
-					<image :src="wxa_share_img"  style="width: 150upx;margin: 10% auto; border-radius: 10upx;"  mode="widthFix"  class="wh-60"></image>
+					<image :src="wxa_share_img"  style="width: 150upx;margin: 10% 40%; border-radius: 10upx;"  mode="widthFix"  class="wh-60"></image>
 				</view>
 			</view>
 		<!-- </view> -->
@@ -44,16 +44,15 @@
 				open-type="getUserInfo" class="btn-row-submit" 
 				style="width: 92%;background: #2E85D8;" 
 				@click="btn_user_login"	
-				>立即登录</button>			
+				>登陆/注册</button>			
 			<!-- #endif -->	
 			
 			<!-- #ifdef MP-WEIXIN -->
-			<button type="primary" 
-				open-type="getUserInfo" class="btn-row-submit" 
-				style="width: 92%;background: #2E85D8;" 
-				@click="btn_user_login"				
-				@getuserinfo="btn_wxa_get_userinfo"				
-				>立即登录</button>			
+			<button type="primary"  formType="submit"
+				class="btn-row-submit" 
+				:style="{width:'92%', background:wxa_shop_nav_bg_color,color:wxa_shop_nav_font_color}" 
+				@click="btn_user_login"			
+				>登陆/注册</button>			
 			<!-- #endif -->	
 			
 			<!-- #ifdef MP-BAIDU -->
@@ -61,7 +60,7 @@
 				open-type="getUserInfo" class="btn-row-submit" 
 				style="width: 92%;background: #2E85D8;" 
 				@click="btn_user_login"	
-				>立即登录</button>			
+				>登陆/注册</button>			
 			<!-- #endif -->
 			
 			<!-- #ifdef MP-ALIPAY -->
@@ -69,7 +68,7 @@
 				open-type="getUserInfo" class="btn-row-submit" 
 				style="width: 92%;background: #2E85D8;" 
 				@click="btn_user_login"	
-				>立即登录</button>			
+				>登陆/注册</button>			
 			<!-- #endif -->
 			
 			<!-- #ifdef MP-TOUTIAO -->
@@ -77,7 +76,7 @@
 				open-type="getUserInfo" class="btn-row-submit" 
 				style="width: 92%;background: #2E85D8;" 
 				@click="btn_user_login"	
-				>立即登录</button>			
+				>登陆/注册</button>			
 			<!-- #endif -->
 			
 			<!-- #ifdef MP-QQ -->
@@ -85,7 +84,7 @@
 				open-type="getUserInfo" class="btn-row-submit" 
 				style="width: 92%;background: #2E85D8;" 
 				@click="btn_user_login"	
-				>立即登录</button>			
+				>登陆/注册</button>			
 			<!-- #endif -->
 				
 				
@@ -104,8 +103,11 @@
 			</div>
 			<div class="flex flex-center">
 				<!-- <button open-type="getUserInfo" @getuserinfo="wxLogin" class="btn-round bg-success icon-weixin"></button> -->
-				<button open-type="getPhoneNumber" plain="true"  
-					class="btn-round bg-success icon-weixin" @getphonenumber="btn_wxa_one_click_login"></button>
+				<button open-type="getPhoneNumber" 
+					type="primary"
+					class="btn-row-submit" 
+					style="width: 92%;background: #228B22;"
+					@getphonenumber="btn_wxa_one_click_login">微信一键登录</button>
 			</div>
 			<!-- #endif -->
 			
@@ -119,7 +121,7 @@
 					@getphonenumber="btn_baidu_one_click_login"
 					type="primary"
 					class="btn-row-submit"
-					style="width: 92%;background: #2E85D8;">百度手机号快速登录</button>
+					style="width: 92%;background: #2E85D8;">百度账号快速登录</button>
 			</div>
 			<!-- #endif -->
 			
@@ -127,7 +129,7 @@
 		</form>
 	     <!--站位-->
 		 <div class="place-buttom"></div>
-		 <div class="icon-jump" @click="gotoHomePage" :style="{background:icon_jump_bg_color}" v-if="wxa_show_return_to_index_in_usercenter == 0">
+		 <div class="icon-jump" @click="gotoHomePage" :style="{background:wxa_shop_nav_bg_color}" v-if="wxa_show_return_to_index_in_usercenter == 0">
 		 <image src="../../static/img/shouye.svg"></image>
 		 <div :style="{color:wxa_shop_nav_font_color}">首页</div>
 		 </div>
@@ -183,14 +185,23 @@
 				wxa_share_img:'',
 				user_info:'',
 				wxa_shop_new_name:'',
-				icon_jump_bg_color:'#2E85D8',
+				
+				wxa_shop_nav_bg_color: '',
 				wxa_shop_nav_font_color:'#fff',
+				
 				wxa_show_return_to_index_in_usercenter:0,  //控制返回首页是否显示
+				
+				login_after_get_userinfo:0,
+				
+				//2021.9.19. 将  获取 js code的过程提前
+				current_weixin_js_code:null,
 			}
 		},
 		onLoad:function(){
 			// this.isWeixin=this.abotapi.isWeixin();		
 			this.abotapi.set_option_list_str(this, this.callback_function);
+			
+			//刷新验证码图片
 			this.click_check();
 			
 			var self = this;
@@ -198,6 +209,35 @@
 			uni.setNavigationBarTitle({
 				title:self.abotapi.globalData.wxa_website_name
 			})
+			
+			
+			// #ifdef MP-WEIXIN
+			this.login_after_get_userinfo = 0;
+			
+			
+			var that = this;
+			
+			console.log('uni.login <<<==== btn_wxa_one_click_login');
+				  
+			uni.login({
+				success: function (res) {
+					console.log("btn_wxa_one_click_login 获取到的jscode是:" + res.code);
+				  
+					//如果拒绝授权， e.detail.errMsg
+					//console.log(e.detail.errMsg);return;
+				  
+					that.current_weixin_js_code = res.code;
+				  
+				},
+				fail: function (login_res) {
+					console.log('login.js  uni.login失败。');
+				}
+			});
+			
+			
+			// #endif
+			
+			
 		},
 		
 		
@@ -233,6 +273,14 @@
 				//====1、更新界面的颜色
 				this.abotapi.getColor();
 				
+				if(cb_params.wxa_shop_nav_bg_color){
+					that.wxa_shop_nav_bg_color = cb_params.wxa_shop_nav_bg_color
+				}
+				
+				if(cb_params.wxa_shop_nav_font_color){
+					that.wxa_shop_nav_font_color = cb_params.wxa_shop_nav_font_color
+				}
+				
 				//网站logo返回值
 				if (cb_params.wxa_share_img) {
 				  
@@ -246,6 +294,9 @@
 				    this.wxa_shop_new_name = cb_params.wxa_shop_new_name
 				  
 				}
+				
+				
+				
 				
 				
 				uni.setNavigationBarTitle({
@@ -337,13 +388,6 @@
 					}
 				})
 			},
-			
-			//获取用户信息（在微信、支付宝、百度小程序中有效，H5中无效）
-			btn_wxa_get_userinfo:function(e){
-				console.log('111111111111====>>>btn_wxa_get_userinfo====>>', e);
-				
-				this.btnWxaGetUserinfo(e);
-			},
 			gotoHomePage:function(){
 				uni.switchTab({
 					url: '/pages/index/index'
@@ -355,6 +399,7 @@
 			    console.log('getUserInfo button click, and get following msg');
 			    // console.log(userinfo);
 				var that = this;
+				
 			    if (!this.mobile) {
 					uni.showToast({
 						title: '请输入手机号码！',
@@ -380,9 +425,12 @@
 					return;
 			    }
 				
+				if(that.login_after_get_userinfo == 1){
+					return;
+				}
+				
 				this.abotapi.abotRequest({
 				    url: this.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=ShopAppWxa&a=login',
-				    method: "POST",
 				    data: { 
 						mobile: that.mobile,
 						verifycode_sms: that.tel,
@@ -391,6 +439,7 @@
 				    success: function (request_res) {
 						console.log(4444444444444444444);
 						console.log(request_res);
+						
 						var data = request_res.data;
 						//var res = JSON.parse(data);
 						//console.log(res);
@@ -412,59 +461,12 @@
 							that.abotapi.set_user_info(that.abotapi.globalData.userInfo);
 							  
 				 
-							that.getUserInfoFromYanyubao();
+							that.getUserInfoFromYanyubao(request_res.data.msg);
 							
-							uni.showModal({
-								title: '提示',
-								content: request_res.data.msg,
-								showCancel: false,
-								success: function (res) {
-									//console.log("回调结果"+res.code);
-									if (res.confirm) {		 
-									//=======检查登录成功之后的跳转=======
-										var last_url = uni.getStorageSync('last_url');
-				 
-										
-				 
-										var page_type = uni.getStorageSync('page_type');
-										
-										console.log('last_url-----page_type ', last_url, page_type)
-										
-										
-										if (last_url) {
-											uni.removeStorageSync('last_url');
-											uni.removeStorageSync('page_type');
-											
-											uni.reLaunch({
-												url:last_url
-											})
-											return;
-															 
-															 
-											if (page_type && (page_type == 'switchTab')) {
-				 
-												uni.switchTab({
-													url: last_url,
-												})
-											} else {
-												uni.redirectTo({
-													url: last_url,
-												})
-											}
-				 
-											
-											return;
-										}
-									//===========End================
-				              
-										uni.reLaunch({
-											url: '/pages/index/index'
-										})
-									}
-								}
-							});
+							
 						} else {
 							console.log(request_res);
+							
 							uni.showToast({
 								title: '登录失败',
 								icon: 'fail',
@@ -487,175 +489,97 @@
 				console.log(e.detail.errMsg)
 				console.log(e.detail.iv)
 				console.log(e.detail.encryptedData)
-		  
-				console.log('uni.login <<<==== btn_wxa_one_click_login');
-		  
-				uni.login({
-					success: function (res) {
-						console.log("btn_wxa_one_click_login 获取到的jscode是:" + res.code);
-		  
-						//如果拒绝授权， e.detail.errMsg
-						//console.log(e.detail.errMsg);return;
-		  
-						that.abotapi.abotRequest({
-							url: that.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=ShopAppWxa&a=wxa_one_click_login',
-							method: "POST",
-							dataType: 'json',
-							data: {
-								js_code: res.code,
-								xiaochengxu_appid: that.abotapi.globalData.xiaochengxu_appid,
-								iv: e.detail.iv,
-								encryptedData: e.detail.encryptedData,
-								sellerid: that.abotapi.globalData.default_sellerid,
-								parentid: 0,
-							},
-							success: function (res) {
-								console.log(res);
-			  
-								if (res.data && (res.data.code == 1)) {
-									//更新checkstr和uwid，
-									that.abotapi.globalData.userInfo.userid = res.data.userid;
-									//this.abotapi.globalData.userInfo.checkstr = res.data.checkstr;
-				  
-									console.log('一键登录成功，userid:' + res.data.userid);
-									console.log('一键登录成功，userid:' + res.data.openid);
-				  
-									that.abotapi.globalData.userInfo.user_openid = res.data.openid;
-									that.abotapi.globalData.userInfo.userid = res.data.userid;
-									that.abotapi.globalData.userInfo.checkstr = res.data.checkstr;
-									that.abotapi.globalData.userInfo.is_get_userinfo = res.data.is_get_userinfo;
-				  
-									//保存openid
-									that.abotapi.set_current_openid(res.data.openid);
-					  
-									console.log(that.abotapi.globalData.userInfo);
-					  
-									that.abotapi.set_user_info(that.abotapi.globalData.userInfo);
-									
-									that.getUserInfoFromYanyubao();
-									
-									uni.showToast({
-										title: res.data.msg,
-										icon: 'success',
-										duration: 2000
-									})
-				  
-									//=======检查登录成功之后的跳转=======
-									var last_url = uni.getStorageSync('last_url');
-				 
-									console.log('last_url-----', last_url)
-				 
-									var page_type = uni.getStorageSync('page_type');
-									if (last_url) {
-										if (page_type && (page_type == 'switchTab')) {
-				 
-											uni.switchTab({
-												url: last_url,
-											})
-										} else {
-											uni.redirectTo({
-												url: last_url,
-											})
-										}
-				 
-										uni.removeStorageSync('last_url');
-										uni.removeStorageSync('page_type');
-				 
-										return;
-									}
-									//===========End================
+				
+				if(!that.current_weixin_js_code){
+					uni.showModal({
+						title:'提示',
+						content:'微信一键登录异常，是否重启小程序？',
+						success: (res) => {
+							if(res.confirm){
+								uni.reLaunch({
+									url:'/pages/index/index'
+								})
+							}
+						}
+					})
+					return;
+				}
 
-									uni.redirectTo({
-										url: '/pages/index/index'
-									})
-			
-								}else {
-									//一键登录返回错误代码
-									uni.showModal({
-										title: '提示',
-										content: res.data.msg,
-										showCancel:false,
-										success(res) {
-											if (res.confirm) {
-												console.log('用户点击确定')
+		  
+				that.abotapi.abotRequest({
+					url: that.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=ShopAppWxa&a=wxa_one_click_login',
+					data: {
+						js_code: that.current_weixin_js_code,
+						xiaochengxu_appid: that.abotapi.globalData.xiaochengxu_appid,
+						iv: e.detail.iv,
+						encryptedData: e.detail.encryptedData,
+						sellerid: that.abotapi.globalData.default_sellerid,
+						parentid: 0,
+					},
+					success: function (res) {
+						console.log(res);
+							  
+						if (res.data && (res.data.code == 1)) {
+							//更新checkstr和uwid，
+							that.abotapi.globalData.userInfo.userid = res.data.userid;
+							//this.abotapi.globalData.userInfo.checkstr = res.data.checkstr;
+								  
+							console.log('一键登录成功，userid:' + res.data.userid);
+							console.log('一键登录成功，openid:' + res.data.openid);
+								  
+							that.abotapi.globalData.userInfo.user_openid = res.data.openid;
+							that.abotapi.globalData.userInfo.userid = res.data.userid;
+							that.abotapi.globalData.userInfo.checkstr = res.data.checkstr;
+							that.abotapi.globalData.userInfo.is_get_userinfo = res.data.is_get_userinfo;
+								  
+							//保存openid
+							that.abotapi.set_current_openid(res.data.openid);
+									  
+							console.log(that.abotapi.globalData.userInfo);
+									  
+							that.abotapi.set_user_info(that.abotapi.globalData.userInfo);
+							
+							that.getUserInfoFromYanyubao(res.data.msg);
+
+						}else {
+							//一键登录返回错误代码
+							uni.showModal({
+								title: '提示',
+								content: res.data.msg,
+								showCancel:false,
+								success(res) {
+									if (res.confirm) {
+										console.log('用户点击确定');
+										
+										//重新获取js_code
+										uni.login({
+											success: function (res) {
+												console.log("btn_wxa_one_click_login 获取到的jscode是:" + res.code);
+											  
+												//如果拒绝授权， e.detail.errMsg
+												//console.log(e.detail.errMsg);return;
+											  
+												that.current_weixin_js_code = res.code;
+											  
+											},
+											fail: function (login_res) {
+												console.log('login.js  uni.login失败。');
 											}
-										}
-									})		  
+										});
+										
+										
+									}
 								}
-							}
-						});
-		  
-					},
-					fail: function (login_res) {
-						console.log('login.js  uni.login失败。');
+							});
+								  
+								  
+						}
 					}
 				});
+				
+				
 			},
 			
-			btnWxaGetUserinfo:function(e){
-				var that = this;
-				console.log(e.detail.errMsg)
-				console.log(e.detail.iv)
-				console.log(e.detail.encryptedData)
-					  
-				console.log('uni.login <<<==== btnWxaGetUserinfo');
-					  
-				uni.login({
-					success: function (res) {
-						console.log("btnWxaGetUserinfo 获取到的jscode是:" + res.code);
-					  
-						//如果拒绝授权， e.detail.errMsg
-						//console.log(e.detail.errMsg);return;
-					  
-						that.abotapi.abotRequest({
-							url: that.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=ShopAppWxa&a=wxa_get_userinfo',
-							method: "POST",
-							dataType: 'json',
-							data: {
-								js_code: res.code,
-								xiaochengxu_appid: that.abotapi.globalData.xiaochengxu_appid,
-								iv: e.detail.iv,
-								encryptedData: e.detail.encryptedData,
-								sellerid: that.abotapi.globalData.default_sellerid,
-							},
-							success: function (res) {
-								console.log(res);
-			  
-								if (res.data && (res.data.code == 1)) {
-									
-									console.log('一键登录成功，userid:' + res.data.openid);
-									
-									//保存openid
-									that.abotapi.set_current_openid(res.data.openid);
-									
-									
-									that.abotapi.globalData.userInfo = that.abotapi.get_user_info();
-
-									that.abotapi.globalData.userInfo.is_get_userinfo = 1;	//标志已经获取了头像和昵称
-				  
-									
-					  
-									console.log(that.abotapi.globalData.userInfo);
-					  
-									that.abotapi.set_user_info(that.abotapi.globalData.userInfo);
-						  
-									uni.showToast({
-										title: res.data.msg,
-										icon: 'success',
-										duration: 2000
-									})
-				  
-			
-								}
-							}
-						});
-					  
-					},
-					fail: function (login_res) {
-						console.log('login.js  uni.login失败。');
-					}
-				});
-			},
 			//2021.7.22. 百度一键登录
 			/*
 			detail
@@ -730,8 +654,9 @@
 					  
 									that.abotapi.set_user_info(that.abotapi.globalData.userInfo);
 									
-									that.getUserInfoFromYanyubao();
+									that.getUserInfoFromYanyubao(res.data.msg);
 									
+									/*
 									uni.showToast({
 										title: res.data.msg,
 										icon: 'success',
@@ -766,6 +691,7 @@
 									uni.redirectTo({
 										url: '/pages/index/index'
 									})
+									*/
 			
 								}else {
 									//一键登录返回错误代码
@@ -808,48 +734,95 @@
 			},
 			
 			
-			formSubmit:function(e){
-				console.log('aaaaaaaaaaaaaaaaa====>>>>>formSubmit', e);
-				
-				var that=this;
-				
-				that.btn_user_login();
-				 
-			},
-			
-			
-			
 			//获取用户信息
-			getUserInfoFromYanyubao: function () {
+			getUserInfoFromYanyubao: function (msg_text) {
 				var userInfo = this.abotapi.get_user_info();
 				
-				var that = this;
+				if(!userInfo || !userInfo.userid){
+					return;
+				}
 				
-				if(userInfo && userInfo.userid){
+				var that = this;
 					
-					this.abotapi.abotRequest({
-						url: this.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=ShopAppWxa&a=get_user_info',
-						data: {
-							sellerid: this.abotapi.globalData.default_sellerid,
-							checkstr: userInfo.checkstr,
-							userid: userInfo.userid,
-							appid: this.abotapi.globalData.xiaochengxu_appid,
-						},
+				var post_data = {
+						sellerid: this.abotapi.globalData.default_sellerid,
+						checkstr: userInfo.checkstr,
+						userid: userInfo.userid,
+					};
+					
+				// #ifdef MP-WEIXIN
+					post_data.appid = that.abotapi.globalData.xiaochengxu_appid,
+					post_data.xiaochengxu_appid = that.abotapi.globalData.xiaochengxu_appid,
+					post_data.xiaochengxu_openid = that.abotapi.get_current_openid();
+				// #endif
+
+				
+				this.abotapi.abotRequest({
+					url: this.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=ShopAppWxa&a=get_user_info',
+					data: post_data,
+					success: function (res) {
+						console.log('get_user_info====', res);
 						
-						method: "POST",
-						success: function (res) {
-							console.log('get_user_info====', res);
-							
-							if(res.data.code == 1){
-								that.abotapi.set_user_account_info(res.data.data)
+						if(res.data.code == 1){
+							that.abotapi.set_user_account_info(res.data.data)
+						}
+						
+						uni.showModal({
+							title: '提示',
+							content: msg_text,
+							showCancel: false,
+							success: function (res) {
+								
+								//console.log("回调结果"+res.code);
+								
+								if (res.confirm) {		 
+									//=======检查登录成功之后的跳转=======
+									var last_url = uni.getStorageSync('last_url');
+										 
+									
+										 
+									var page_type = uni.getStorageSync('page_type');
+									
+									console.log('last_url-----page_type ', last_url, page_type)
+									
+									
+									if (last_url) {
+										uni.removeStorageSync('last_url');
+										uni.removeStorageSync('page_type');
+										
+										uni.reLaunch({
+											url:last_url
+										})
+										return;
+														 
+														 
+										if (page_type && (page_type == 'switchTab')) {
+										 
+											uni.switchTab({
+												url: last_url,
+											})
+										} else {
+											uni.redirectTo({
+												url: last_url,
+											})
+										}
+										 
+										
+										return;
+									}
+									//===========End================
+						  
+									uni.redirectTo({
+										url: '/pages/index/index'
+									})
+								}
 							}
-							
-							
-							//uni.setStorageSync('userDetail',res.data.data)
-					    }
-					})
+						});
 						
-				}		
+					}
+				})
+						
+	
 			},
 			
 		}
@@ -914,7 +887,7 @@
 	padding: 22upx 22upx;
 	align-items: center;
 	width: 90%;
-	margin-left: 5%;
+	margin-left: 2%;
 }
 
 .flexIcon-icon {

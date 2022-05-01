@@ -24,8 +24,9 @@
 	@import "./common/index.css";
 	@import "./common/icon.css";
 	@import "./common/iconfont.css";
+	/* 2021.10.25.
 	@import "./common/dt-ui-uni.css";
-	@import "./common/main.css";
+	@import "./common/main.css";*/
 	@import "./components/gaoyia-parse/parse.css";
 	/*覆盖文本编辑器里面的图片的大小*/
 	uni-rich-text img{ max-width: 100% !important;}

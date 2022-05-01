@@ -17,13 +17,13 @@
 				"text": "首页"
 			},
 			{
-				"pagePath": "pages/wordpress/topic",
+				"pagePath": "pages/index/topic",
 				"iconPath": "static/wp-tabbar-img/tar-topic.png",
 				"selectedIconPath": "static/wp-tabbar-img/tar-topic-on.png",
 				"text": "分类"
 			},
 			{
-				"pagePath": "pages/usercenter/usercenter",
+				"pagePath": "pages/index/usercenter",
 				"iconPath": "static/wp-tabbar-img/tar-person.png",
 				"selectedIconPath": "static/wp-tabbar-img/tar-person-on.png",
 				"text": "我的"
@@ -45,16 +45,16 @@
 				"backgroundTextStyle":"dark",
 				"enablePullDownRefresh": true
 			}
-		}
-	    ,{	//文章详情页
-            "path" : "pages/wordpress/detail",
-            "style" : {
+		},
+		{	//'专题'页面
+		    "path" : "pages/index/topic",
+		    "style" : {
 				"backgroundTextStyle":"dark",
 				"enablePullDownRefresh": true
 			}
-        },
-		{	//'关于'页面
-		    "path" : "pages/wordpress/page",
+		},
+		{	//'我的'页面
+		    "path" : "pages/index/usercenter",
 		    "style" : {
 				"backgroundTextStyle":"dark",
 				"enablePullDownRefresh": true
@@ -63,32 +63,8 @@
 		{	//链接跳转页
 		    "path" : "pages/h5browser/h5browser",
 		    "style" : {}
-		}
-		,{	//'我的'页面
-		    "path" : "pages/usercenter/usercenter",
-		    "style" : {
-				"backgroundTextStyle":"dark",
-				"enablePullDownRefresh": true
-			}
-		}
-		,{	//'我的'页面
-		    "path" : "pages/user/log",
-		    "style" : {
-				"backgroundTextStyle":"dark",
-				"enablePullDownRefresh": true,
-				"navigationBarTitleText": "余额明细"
-			}
-		}
-		
-		,{	//'我的'页面
-		    "path" : "pages/user/logscore",
-		    "style" : {
-				"backgroundTextStyle":"dark",
-				"enablePullDownRefresh": true,
-				"navigationBarTitleText": "积分明细"
-			}
-		}
-		,{	//'关于'页面
+		},
+		{	//'关于'页面
 		    "path" : "pages/about/about",
 		    "style" : {
 				"backgroundTextStyle":"dark",
@@ -104,76 +80,6 @@
 				"enablePullDownRefresh": true
 		    }
 		},
-		{	//个人信息页
-		    "path" : "pages/userinfo/userinfo",
-		    "style" : {
-				"navigationBarTitleText": "个人资料",
-				"backgroundTextStyle":"dark",
-				"enablePullDownRefresh": true
-			}
-		}
-		,{	//修改个人信息页
-		    "path" : "pages/usersetting/usersetting",
-		    "style" : {}
-		}
-		,{	//手机验证码登录页
-			"path": "pages/login/login",
-			"style": {
-				"navigationBarTitleText": "手机账号登录",
-				"navigationBarTextStyle":"white",
-				"app-plus": {
-		            "bounce": "none" ,//关闭窗口回弹效果
-					"softinputNavBar":"none"
-		        }
-			}
-		}
-		,{	//'专题'页面
-		    "path" : "pages/wordpress/topic",
-		    "style" : {
-				"backgroundTextStyle":"dark",
-				"enablePullDownRefresh": true
-			}
-		},
-		{	//账号密码登录页
-			"path": "pages/login/login_by_password",
-			"style": {
-				"navigationBarTitleText": "账号密码登录",
-				"navigationBarTextStyle":"white",
-				"app-plus": {
-		            "bounce": "none" ,//关闭窗口回弹效果
-					"softinputNavBar":"none"
-		        }
-			}
-		},
-		{	//账号注册页
-			"path": "pages/login/register",
-			"style": {
-				"navigationBarTitleText": "注册账号",
-				"navigationBarTextStyle":"white",
-				"app-plus": {
-				    "bounce": "none" ,//关闭窗口回弹效果
-					"softinputNavBar":"none"
-				}
-			}
-		},
-		{
-			"path": "pages/login/resetpasswd",
-			"style": {
-				"navigationBarTitleText": "重置密码",
-				"navigationBarTextStyle":"white",
-				"app-plus": {
-				    "bounce": "none" ,//关闭窗口回弹效果
-					"softinputNavBar":"none"
-				}
-			}
-		},
-		{	//文章列表页
-		    "path" : "pages/wordpress/list",
-		    "style" : {
-				"backgroundTextStyle":"dark",
-				"enablePullDownRefresh": true
-			}
-		},
 		{	//网站关闭页
 		    "path" : "pages/shutdown_website/shutdown_website",
 		    "style" : {
@@ -184,8 +90,133 @@
 		{
 		    "path" : "pages/welcome_page/welcome_page",
 		    "style" : {}
+		},
+		{
+		    "path" : "pages/publish/publish_write",
+		    "style" : {}
 		}
-    ]
+    ],
+	
+	"subPackages": [
+		//======= wordpress相关的分包 Begin  ====
+		{
+			"root": "pages/wordpress",
+			"pages": [
+				{	//文章列表页
+				    "path" : "list",
+				    "style" : {
+						"backgroundTextStyle":"dark",
+						"enablePullDownRefresh": true
+					}
+				},
+				{	//文章详情页
+				    "path" : "detail",
+				    "style" : {
+						"backgroundTextStyle":"dark",
+						"enablePullDownRefresh": true
+					}
+				},
+				{	//'关于'页面
+				    "path" : "page",
+				    "style" : {
+						"backgroundTextStyle":"dark",
+						"enablePullDownRefresh": true
+					}
+				}
+			]
+			
+		},
+		//======= wordpress相关的分包 End  ====
+		//======= user相关的分包 Begin  ====
+		{
+			"root": "pages/user",
+			"pages": [
+				{	//'我的'页面
+				    "path" : "log",
+				    "style" : {
+						"backgroundTextStyle":"dark",
+						"enablePullDownRefresh": true,
+						"navigationBarTitleText": "余额明细"
+					}
+				},
+				{	//'我的'页面
+				    "path" : "logscore",
+				    "style" : {
+						"backgroundTextStyle":"dark",
+						"enablePullDownRefresh": true,
+						"navigationBarTitleText": "积分明细"
+					}
+				},
+				{	//个人信息页
+				    "path" : "userinfo",
+				    "style" : {
+						"navigationBarTitleText": "个人资料",
+						"backgroundTextStyle":"dark",
+						"enablePullDownRefresh": true
+					}
+				},{	//修改个人信息页
+				    "path" : "usersetting",
+				    "style" : {}
+				}
+			]
+			
+		},
+		//======= user相关的分包 End  ====
+		//======= Login相关的分包 Begin  ====
+		{
+			"root": "pages/login",
+			"pages": [
+				{	//手机验证码登录页
+					"path": "login",
+					"style": {
+						"navigationBarTitleText": "手机账号登录",
+						"navigationBarTextStyle":"white",
+						"app-plus": {
+				            "bounce": "none" ,//关闭窗口回弹效果
+							"softinputNavBar":"none"
+				        }
+					}
+				},
+				
+				{	//账号密码登录页
+					"path": "login_by_password",
+					"style": {
+						"navigationBarTitleText": "账号密码登录",
+						"navigationBarTextStyle":"white",
+						"app-plus": {
+				            "bounce": "none" ,//关闭窗口回弹效果
+							"softinputNavBar":"none"
+				        }
+					}
+				},
+				{	//账号注册页
+					"path": "register",
+					"style": {
+						"navigationBarTitleText": "注册账号",
+						"navigationBarTextStyle":"white",
+						"app-plus": {
+						    "bounce": "none" ,//关闭窗口回弹效果
+							"softinputNavBar":"none"
+						}
+					}
+				},
+				{
+					"path": "resetpasswd",
+					"style": {
+						"navigationBarTitleText": "重置密码",
+						"navigationBarTextStyle":"white",
+						"app-plus": {
+						    "bounce": "none" ,//关闭窗口回弹效果
+							"softinputNavBar":"none"
+						}
+					}
+				}
+			]
+			
+		}
+		//======= Login相关的分包 End  ====
+	]
+	
 	
 	
 }

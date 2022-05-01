@@ -2,7 +2,19 @@
 	<view v-if="articleList">
 		<view class="common-list">
 			<block v-for="(item,index) in articleList" :key="index">
-				<view class="list-item has-img" :index="index" :id="item.id" @click="redictDetail(item)">
+				
+				<view v-if="item.show_style_in_list_of_app == 'bigimg'"
+					class="list-item has-img" :index="index" :id="item.id" @click="redictDetail(item)"
+					style="padding: 0rpx;">
+					<image :src="item.show_style_bigimg_url" mode="widthFix" class="cover_big" style="width: 100%;"></image>
+					<view class="content-title" v-if="item && item.show_style_bigimg_title && (item.show_style_bigimg_url.length > 0)"
+						style="margin-left: 0rpx;height: 60rpx;margin-bottom: 0rpx;">
+						<text>{{item.show_style_bigimg_title}} </text>
+					</view>
+				</view>
+				
+				<view v-else
+					class="list-item has-img" :index="index" :id="item.id" @click="redictDetail(item)">
 					<view class="content-title" v-if="item && item.title">
 						<text>{{item.title.rendered}}</text>
 					</view>
@@ -18,6 +30,7 @@
 					</view>
 					<image :src="item.post_thumbnail_image" mode="aspectFill" class="cover"></image>
 				</view>
+				
 			</block>
 		</view>
 		<view class="loadingmore" v-if="articleList.length == 0">
