@@ -5,10 +5,9 @@
 之前已经预报过，本项目即将合并到“通版商城V2”这个项目中，后续不会有大的版本更新了。“通版商城V2”提供强大的智能建站功能，管理后台功能丰富，同样支持APP和微信、支付宝、百度等小程序自动生成，将于近期上传到github上，之前已经有一些人拿到了项目源代码。
 
 
-
 ## 1 在线预览
 
-![在线预览](https://gitee.com/longmix/wordpress-to-app/raw/master/docs/7-%E5%9C%A8%E7%BA%BF%E9%A2%84%E8%A7%88.jpg)
+![在线预览](https://saas.tseo.cn/staticsvc/uploads/2020/03/26/21945247ab3e1e5df10c8daaec620f993352.jpg)
 
 
 
@@ -59,7 +58,7 @@
 
 **使用上的问题和疑问，请用微信扫码查看其他开发者的提问和回复记录，也可以在文章末尾写留言。**
 
-<img src="https://gitee.com/longmix/wordpress-to-app/raw/master/docs/0-%E4%B8%87%E8%83%BD%E7%9A%84CTO%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BA%A4%E6%B5%81.png" width="150px">
+<img src="http://www.tseo.cn/wp-content/uploads/2020/04/9be115d08294dd9f1eb588d52d662dde.png" width="150px">
 
 
 ---
@@ -121,13 +120,15 @@
   - 入口02： /pages/welcome_page/welcome_page?parentid=4321&data_url=https%3A%2F%2Fyanyubao.tseo.cn%2Fopenapi%2FTestData%2Fwelcome_data
     > parentid为推荐者的userid，data_url为获取的要显示的内容。 
 
-[设置选项]:http://127.0.0.1/yanyubao_server/index.php?g=Supplier&m=WelcomePageMgr&a=index&setting_type=index "自定义页面的设置选型"
+[设置选项]:http://yanyubao.tseo.cn/Supplier/WelcomePageMgr/index/setting_type/index.html "自定义页面的设置选型"
 
 * 万能表单  【[设置选项]】
   - 支持对万能表单和文章自定义属性的挂接， 点击设置选型查看详情。
   - CMS万能表单：/pages/publish/publish_write?form_type=2&token=abcdefg&formid=1234
-    > token为CMS控制台的项目token，设置路径为： 系统设置 > 全局配置选项 >商城头条token， 【 点击这里设置】，formid为CMS控制台的表单ID。
+    > token为CMS控制台的项目token，设置路径为： 系统设置 > 全局配置选项 >商城头条token， 【 [点击这里设置]】，formid为CMS控制台的表单ID。
 
+[设置选项]:http://yanyubao.tseo.cn/Supplier/SelfformMgr/index/setting_type/index.html "万能表单的设置选型"
+[点击这里设置]:http://yanyubao.tseo.cn/Supplier/Setting/supplier_option.html "系统配置>>全局配置选项"
 
 
 ### 3.2 Tab页面和非Tab页面跳转
@@ -221,7 +222,7 @@
     - 修改current_platform为当前要发布的平台名称，可以设置的值有： app， h5， mp-weixin，  mp-alipay，   mp-baidu。
 
 
-![源代码修改](https://gitee.com/longmix/wordpress-to-app/raw/master/docs/5-%E8%AE%BE%E7%BD%AEabot_data.png)
+![源代码修改](https://www.abot.cn/wp-content/themes/abotcn/uploads/2021/04/202104140916377859.png)
 
   * 【选改】在项目根目录下，打开pages.json，
 
@@ -248,22 +249,26 @@
 
    包括“WP转APP和小程序”和“WP-PostViews”两个插件，并在后台启用，如下图所示：
 
-[![WP后台插件列表截图](https://gitee.com/longmix/wordpress-to-app/raw/master/docs/1-%E4%B8%8B%E8%BD%BDWordPress%E6%8F%92%E4%BB%B6.jfif)](https://gitee.com/longmix/wordpress-to-app/raw/master/docs/1-%E4%B8%8B%E8%BD%BDWordPress%E6%8F%92%E4%BB%B6.jfif)
+[![WP后台插件列表截图](http://www.tseo.cn/wp-content/uploads/2020/03/Wordpress_Zhuan_APP_Xiao_Cheng_Xu_-01_Fu_Ben.jpg)](http://www.tseo.cn/wp-content/uploads/2020/03/Wordpress_Zhuan_APP_Xiao_Cheng_Xu_-01_Fu_Ben.jpg)
 
 
   - 下载插件“WP转APP和小程序”： [https://github.com/longmix/wordpress-to-app/blob/master/wordpress-plugin/yanyubao-wp-to-app.zip](https://github.com/longmix/wordpress-to-app/blob/master/wordpress-plugin/yanyubao-wp-to-app.zip)
 
   - 下载插件“WP-PostViews”：[https://yanyubao.tseo.cn/download/wordpress-plugin/wp-postviews.zip](https://yanyubao.tseo.cn/download/wordpress-plugin/wp-postviews.zip)
 
-    ```
-    查看缓存空间大小： http://cms.weiduke.com/index.php/openapi/Wordpress/restapi_cache_list_size?sellerid=pQNNmSkaq
-    删除所有缓存： http://cms.weiduke.com/index.php/openapi/Wordpress/restapi_cache_list_clear?sellerid=pQNNmSkaq
-    删除指定缓存： http://cms.weiduke.com/index.php/openapi/Wordpress/restapi_cache_list_clear?sellerid=pQNNmSkaq&cacheurl=%2Fwp-json%2Fwp%2Fv2%2Fposts%2F123456
-    其中cacheurl为对应的实际请求网址。
-    删除指定缓存： http://cms.weiduke.com/index.php/openapi/Wordpress/restapi_cache_list_clear?sellerid=pQNNmSkaq&cacheidmd5=5b06a23afe028d41e039bdde03d47701
-    其中cacheidmd5为对应的实际请求网址的md5字符串。
-    ```
+  - 管理WordPress缓存
+    
+    - 查看缓存空间大小： http://cms.weiduke.com/index.php/openapi/Wordpress/restapi_cache_list_size?sellerid=pQNNmSkaq
+    
+    - 删除所有缓存： http://cms.weiduke.com/index.php/openapi/Wordpress/restapi_cache_list_clear?sellerid=pQNNmSkaq
+    
+    - 删除指定缓存（url）： http://cms.weiduke.com/index.php/openapi/Wordpress/restapi_cache_list_clear?sellerid=pQNNmSkaq&cacheurl={{完整的WP网址}}
+    其中cacheurl为对应的实际请求网址，举例：
+      > http://www.tseo.cn/wp-json/wp/v2/posts/1792
 
+    - 删除指定缓存（md5）： http://cms.weiduke.com/index.php/openapi/Wordpress/restapi_cache_list_clear?sellerid=pQNNmSkaq&cacheidmd5={{WP网址的MD5值}}
+    其中cacheidmd5为对应的实际请求网址的md5字符串。
+    
 
  2. **在Wordpress后台的路径“设置>>网站转APP设置”中**，
 
@@ -276,7 +281,7 @@
 
     增加或编辑某个目录的时候，设置目录封面，也可以自定义封面，如下图。
 
-[![WP后台插件列表截图](https://gitee.com/longmix/wordpress-to-app/raw/master/docs/3-%E8%AE%BE%E7%BD%AEAPP%E5%B0%81%E9%9D%A2.jpg)](https://gitee.com/longmix/wordpress-to-app/raw/master/docs/3-%E8%AE%BE%E7%BD%AEAPP%E5%B0%81%E9%9D%A2.jpg)
+[![WP后台插件列表截图](http://www.tseo.cn/wp-content/uploads/2020/03/Wordpress_Zhuan_APP_Xiao_Cheng_Xu_-03_Fu_Ben.jpg)](http://www.tseo.cn/wp-content/uploads/2020/03/Wordpress_Zhuan_APP_Xiao_Cheng_Xu_-03_Fu_Ben.jpg)
 
 4. **设置电子会员卡，路径为：“信息中心>>电子会员卡”。**
 
@@ -290,7 +295,7 @@
 
 ## 5 更多关于此项目的案例请参考下图
 
-![在线预览](https://gitee.com/longmix/wordpress-to-app/raw/master/docs/9-%E6%9B%B4%E5%A4%9A%E6%A1%88%E4%BE%8B.png)
+![在线预览](https://www.abot.cn/wp-content/themes/abotcn/uploads/2020/08/202008280733442920.png)
 
 
 ## 6 常见问题（FAQ）
