@@ -65,7 +65,11 @@
 
 ## 3 常用路径设置说明
 
-如果你不会代码开发，那么在后台设置和挂接这些路径链接，即可以将你的WordPress网站组织成个性化的，功能丰富的小程序或者手机APP，APP完全符合苹果应用商店（App Store）的上架要求。
+如果你不会代码开发，那么在后台**设置路径**和挂接这些路径链接，即可以将你的WordPress网站组织成个性化的，功能丰富的小程序或者手机APP，APP完全符合苹果应用商店（App Store）的上架要求。
+
+> 设置路径：SaaS云后台>>智能建站>>网站转APP和小程序>>基础信息 **【[传送门]】**
+
+[传送门]:http://yanyubao.tseo.cn/Supplier/WordpressMgr/index/setting_type/basic.html "SaaS云后台>>智能建站>>网站转APP和小程序>>基础信息"
 
 ### 3.1 小程序内链接设置
 
@@ -258,15 +262,15 @@
 
   - 管理WordPress缓存
     
-    - 查看缓存空间大小： http://cms.weiduke.com/index.php/openapi/Wordpress/restapi_cache_list_size?sellerid=pQNNmSkaq
+    - 查看缓存空间大小： https://yanyubao.tseo.cn/openapi/Wordpress/restapi_cache_list_size?sellerid=pNJNyxkkP
     
-    - 删除所有缓存： http://cms.weiduke.com/index.php/openapi/Wordpress/restapi_cache_list_clear?sellerid=pQNNmSkaq
+    - 删除所有缓存： https://yanyubao.tseo.cn/openapi/Wordpress/restapi_cache_list_clear?sellerid=pNJNyxkkP
     
-    - 删除指定缓存（url）： http://cms.weiduke.com/index.php/openapi/Wordpress/restapi_cache_list_clear?sellerid=pQNNmSkaq&cacheurl={{完整的WP网址}}
+    - 删除指定缓存（url）： https://yanyubao.tseo.cn/openapi/Wordpress/restapi_cache_list_clear?sellerid=pNJNyxkkP&cacheurl={{完整的WP网址}}
     其中cacheurl为对应的实际请求网址，举例：
       > http://www.tseo.cn/wp-json/wp/v2/posts/1792
 
-    - 删除指定缓存（md5）： http://cms.weiduke.com/index.php/openapi/Wordpress/restapi_cache_list_clear?sellerid=pQNNmSkaq&cacheidmd5={{WP网址的MD5值}}
+    - 删除指定缓存（md5）： https://yanyubao.tseo.cn/openapi/Wordpress/restapi_cache_list_clear?sellerid=pNJNyxkkP&cacheidmd5={{WP网址的MD5值}}
     其中cacheidmd5为对应的实际请求网址的md5字符串。
     
 
