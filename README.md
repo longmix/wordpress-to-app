@@ -80,43 +80,61 @@
   - 关于页面 /pages/about/about
 
 * **跳转文章列表**：支持以下参数：
+   - /pages/wordpress/list
+     > 不带任何参数，返回所有的文章列表，按照最后更新时间排序。
+
+  - /pages/wordpress/list?categorySlug=ebiz
+    > 显示分类别名为“ebiz”的文章列表，同时自动读取分类的名称和图片。
+
   - /pages/wordpress/list?categoryID=1234
     > categoryID为分类ID，可以在Wordpress网站后台找到。
-  - /pages/wordpress/list?search=延誉宝，则按照关键词“延誉宝”搜素指定的文章并形成列表，需要做URL编码。
-  - /pages/wordpress/list?categorySlug=ebiz，显示分类别名为“ebiz”的文章列表。
-  - /pages/wordpress/list?tag_id=167&tag_name=延誉宝，显示内容中包含标签ID为167的文章列表，多个标签ID用半角逗号分开；同时将标签名称显示为“延誉宝”。
-  - /pages/wordpress/list?action=my_favorite，显示我的收藏。
-  - /pages/wordpress/list?action=my_like，显示我的点赞。
-    > 可以（1）追加参数“categoryName=文章分类”指定显示的文章分类名称；（2）追加参数 “categorySrc=http开头的图片网址”指定文章列表上方显示的头部图片。
+
+  - /pages/wordpress/list?search=延誉宝
+    > 则按照关键词“延誉宝”搜素指定的文章并形成列表，需要做URL编码。
+  
+  - /pages/wordpress/list?tag_id=167&tag_name=延誉宝
+    > 显示内容中包含标签ID为167的文章列表，多个标签ID用半角逗号分开；同时将标签名称显示为“延誉宝”。
+
+  - /pages/wordpress/list?action=my_favorite
+    > 显示我的收藏。
+
+  - /pages/wordpress/list?action=my_like
+    > 显示我的点赞。
+
+ ```
+ 可以（1）追加参数“categoryName=文章分类”指定显示的文章分类名称；（2）追加参数 “categorySrc=http开头的图片网址”指定文章列表上方显示的头部图片。
+```
 
 * **其他重要路径链接**
 * 跳转文章详情  
   - /pages/wordpress/detail?id=1234
-  - id为文章ID，可以在Wordpress网站后台找到。
+    > id为文章ID，可以在Wordpress网站后台找到。
+
+    > 可以直接参数参数one_article=1，不显示相关的文章列表。
 
 * 跳转页面详情 
   - /pages/wordpress/page?id=1234
-  - id为页面ID，可以在Wordpress网站后台找到。
+    > id为页面ID，可以在Wordpress网站后台找到。
 
 * 个人资料页面（有退出登录的按钮）  
   - /pages/user/userinfo 
-  - 可以修改个人资料，也可以退出登录
+    >  可以修改个人资料，也可以退出登录
 
 * 修改账号和密码  
   - /pages/user/usersetting?account=1  
-  - 可以从个人资料页面跳转过来，也可以直接挂接。
+    > 可以从个人资料页面跳转过来，也可以直接挂接。
 
 * 修改昵称  
   - /pages/user/usersetting?nickname=1  
-  - 可以从个人资料页面跳转过来，也可以直接挂接。
+    > 可以从个人资料页面跳转过来，也可以直接挂接。
 
 * 修改手机号  
   - /pages/user/usersetting?mobile=1  
-  - 可以从个人资料页面跳转过来，也可以直接挂接。
+    > 可以从个人资料页面跳转过来，也可以直接挂接。
 
 * “关于”页面  
   - switchTab pages/about/about
-  - 需要增加 switchTab，没有其他特殊要求。
+    > 需要增加 switchTab，没有其他特殊要求。
 
 * 自定义页面 【[设置选项]】
   - 入口01： /pages/welcome_page/welcome_page?scene=1234@4321@cms
