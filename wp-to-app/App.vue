@@ -9,6 +9,17 @@
 			
 			this.abotapi.globalData = abot_data.globalData;
 			
+			//如果不是强制使用sellerid，则存储临时的sellerid
+			if(!this.abotapi.force_sellerid){
+				
+				console.log('没有强制设置sellerid，存储原始的：'+this.abotapi.globalData.default_sellerid);
+				
+				uni.setStorage({
+					key:'org_sellerid',
+					data:this.abotapi.globalData.default_sellerid
+				})
+			}
+			
 		},
 		onShow: function() {
 			console.log('App Show')
@@ -34,12 +45,12 @@
 <style>
 	
 	* {
-		font-size: 30rpx;
+		/*font-size: 30rpx;*/
 	}
 
 	page {
 		background: #FFFFFF;
-		font-family: '微软雅黑';
+		/*font-family: '微软雅黑';*/
 	}
 
 	.copyright_info {
