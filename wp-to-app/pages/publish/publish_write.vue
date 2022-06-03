@@ -46,7 +46,7 @@
 			<!--平铺广告图片end-->
 			
 			
-			<view class="main-body">
+			<view class="main-body" v-if="show_input_list == 1">
 				
 				<form @submit="formSubmit">
 					<block v-for="item in input_field_list" :key="item.fieldname">
@@ -110,7 +110,7 @@
 									</view>
 								</view>
 							</picker>
-							<input :name="item.fieldname" :value="item.options[item.index]" :hidden='true' />
+							<input :name="item.fieldname" :value="item.options[item.index]" :hidden='true' style="display:none;" />
 						</view>
 						
 						<view class="box-checkbox" v-if="item.inputtype == 'checkbox'">
@@ -172,17 +172,17 @@
 								<label class="FH" v-if="item.require == 1">*</label>
 							</view>
 							<biaofun-datetime-picker
-								placeholder="请选择活动时间"
+								placeholder="请选择时间"
 								:defaultValue="time_start_end[item.fieldname]"
 								fields="minute"
-								:name="item.fieldname" 
+								:name="item.fieldname + '_time_picker'" 
 								:data-name="item.fieldname"
 								@change="changeDatetimePicker"
 								:change_name="item.fieldname"
 							></biaofun-datetime-picker>
-							<input type="hidden" style="display: none;" 
-							:name="item.fieldname" 
-							:value="time_start_end[item.fieldname]">
+							<input type="text" style="display: none;" 
+								:name="item.fieldname" 
+								:value="time_start_end[item.fieldname]">
 						</view>						
 						
 						<!-- <view class="input-flex" style="overflow: auto;border-bottom: #DDDDDD 1rpx solid;padding:17px 20px 10px" v-if="item.inputtype== 'date' || item.inputtype== 'text' && item.fieldname != 'imgimg_title'">
@@ -224,22 +224,22 @@
 					
 					
 					<!-- <upimg-box></upimg-box> -->
-					<view class="fabu_xuzhi_block" v-if="shop_option_data"> 
+					<view class="fabu_xuzhi_block" v-if="publish_write_fabu_xuzhi"> 
 					
 						<checkbox-group name='fabu_xuzhi' style="zoom:70%;margin-right: 8rpx;">
 								<checkbox value="1">
 									
 								</checkbox>
 						</checkbox-group>
-						<view>我已阅读并同意<text @click="knows" style="color: #007AFF;">《内容规范》</text></view>
+						<view>我已阅读并同意<text @click="show_knows" style="color: #007AFF;">《内容规范》</text></view>
 					</view>
 					<button formType="submit" class="btn-row-submit"
 						:style="{backgroundColor:wxa_shop_nav_bg_color}">{{submit_text}}</button>
 				</form>
 				
 				<!-- 发布须知的弹层 -->
-				<view class="zhezhao" v-if="know==true"></view>
-				<view class="kcrzxy" v-if="know==true">
+				<view class="zhezhao" v-if="is_know_showed==true"></view>
+				<view class="kcrzxy" v-if="is_know_showed==true">
 				    <view class="kcrzxyhd" :style="{background:wxa_shop_nav_bg_color, fontSize:'26rpx'}">内容规范</view>
 				    <scroll-view scrollY class="kcrzxybd" style="height: 600rpx;">
 				        <textarea :value="publish_write_fabu_xuzhi" 
@@ -248,7 +248,7 @@
 							auto-height='true' 
 							maxlength="-1"></textarea>
 				    </scroll-view>
-				    <view @click="knows" class="queren" :style="{background:wxa_shop_nav_bg_color, fontSize:'26rpx'}">确定</view>
+				    <view @click="show_knows" class="queren" :style="{background:wxa_shop_nav_bg_color, fontSize:'26rpx'}">确定</view>
 				</view>
 				
 			</view><!-- End of main-body -->
@@ -263,6 +263,10 @@
 	import uParse from '@/components/gaoyia-parse/parse.vue'
 	
 	import md5 from '../../common/md5.min.js'
+	
+	// #ifdef MP-ALIPAY
+		import parseHtml from "../../common/html-parser.js"
+	// #endif
 	
 	export default {
 		components:{
@@ -281,7 +285,7 @@
 				
 				formid:'',
 				
-				know:false,
+				is_know_showed:false,
 				
 				hezuodiqu: [],
 				tigongziyuan:[],
@@ -293,6 +297,7 @@
 				
 				inputtype:'',
 				
+				show_input_list:0,
 				input_field_list:[],
 				
 				red:'red',
@@ -415,6 +420,11 @@
 				console.log('======>>>>>that002.wxa_shop_nav_bg_color ====>>>'+that002.wxa_shop_nav_bg_color);
 				
 				
+				if(!that002.cms_token){					
+					that002.cms_token = shop_option_data.cms_token;
+				}
+				
+				
 				that.getWriteFormInputList();
 				
 			});
@@ -422,7 +432,8 @@
 			
 			
 			//判断登录（如果不是 2 万能表单，其他情况都要求用户登录后才能进入填写表单）
-			var userInfo = that.abotapi.get_user_info();		
+			var userInfo = that.abotapi.get_user_info();
+				
 			if(( (this.form_type != 2) || ((this.form_type == 2) && options.mustlogin && (options.mustlogin == 1) ) ) 
 				&& (!userInfo || !userInfo.userid)){
 				
@@ -697,23 +708,25 @@
 				
 			},
 			//关闭发布须知的遮罩层
-			knows: function(e) {
-					var know = this.know;
+			show_knows: function(e) {
+					var is_know_showed = this.is_know_showed;
 					
-					this.know = !know;
+					this.is_know_showed = !is_know_showed;
 					
 			},
 			getWriteFormInputList:function(){
 				
-				if(!this.cms_token){
-					var shop_option_data = uni.getStorageSync('shop_option_data_' + this.abotapi.globalData.default_sellerid);
-					var json_shop_option_data = JSON.parse(shop_option_data);
-					
-					this.cms_token = json_shop_option_data.option_list.cms_token;
-				}
+				
 				
 				
 				var that = this;
+				
+				
+				//console.log('that.formid ===>>>', that.formid);
+				
+				if( (that.form_type == 3) && (!that.formid) ){
+					return;
+				}
 				
 				//form_type 判断那个url
 				var url = '';
@@ -846,6 +859,7 @@
 								
 							that.input_field_list = list;
 							
+							that.show_input_list = 1;
 								
 						}
 										
@@ -1111,6 +1125,8 @@
 				
 					//选择的时间
 					this.time_start_end[change_name] = date.f3;
+					
+					this.$forceUpdate();	// 强制刷新数组元素
 				
 					console.log('选择的日期时间的change_name：', change_name);
 					
@@ -1227,8 +1243,8 @@
 		padding: 20rpx 40rpx;
 		border-bottom: 1px solid #EEEEEE;
 		background: #FFFFFF;
-		height: 60rpx;
-		line-height: 60rpx;
+		height: 80rpx;
+		line-height: 80rpx;
 	}
 	
 	.box-file-upload {
@@ -1272,6 +1288,7 @@
 	}
 	.uni-textarea002{
 		background: #FFFFFF;
+		height: 430rpx;
 	}
 	
 	.uni-textarea002 textarea{
@@ -1334,11 +1351,11 @@
 	}
 	
 	.queren {
-	position: relative;
-	height: 70rpx;
+	position: relative;	
 	width: 30%;
 	left: 35%;
 	font-size: 30rpx;
+	height: 70rpx;
 	line-height: 70rpx;
 	text-align: center;
 	color: white;

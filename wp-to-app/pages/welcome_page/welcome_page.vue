@@ -39,7 +39,7 @@
 		
 		<!-- 客服功能按钮 -->
 		<view v-if="usercenter_contact_status == 1">
-			<!-- #ifdef MP-WEIXIN -->
+			<!-- #ifdef MP-WEIXIN | MP-BAIDU -->
 				<view v-if="usercenter_contact_btn_type == 0">
 					<button type="default" style="width: 80%;margin-top: 10rpx;"
 						:style="{backgroundColor:wxa_shop_nav_bg_color,color:wxa_shop_nav_font_color=='#000000' ? '#333' : wxa_shop_nav_font_color}" 
@@ -131,9 +131,15 @@ export default {
 			wxa_default_imgid_in_welcome_page:0,
 			content_type:'cms',
 			video_autoplay:false,
+			
+			//普通类型的文章，对应的标题和图片
 			current_title : '',
-			content_pic_image:'',
-			content_pic_url:'',
+			current_pic: '',
+			
+			//如果内容类型为图片，则图片的URL和对应点击后跳转网址
+			content_pic_image:'',	// 图片的URL
+			content_pic_url:'',		// 点击后跳转网址
+			
 			video_cover_url:'',
 			video_url:'',
 			wxa_show_latest_product_in_welcome_page:'',
@@ -195,6 +201,8 @@ export default {
 		}
 		//===== End ======
 		
+		this.current_options = options;
+		
 		this.abotapi.set_option_list_str(this, this.__handle_option_list);
 		
 		if (options.scene != null) {
@@ -237,7 +245,7 @@ export default {
 			
 		}
 		
-		this.current_options = options;
+		
 		
 		this.__load_welcome_page_date(options);
 		
@@ -282,36 +290,66 @@ export default {
 		
 	},
 	onShareAppMessage: function () {
-		console.log('app.globalData.shop_name : ' + app.globalData.shop_name);
+		var that = this;
+		
+		console.log('app.globalData.shop_name : ' + this.abotapi.globalData.shop_name);
 		
 		var last_url = '/pages/welcome_page/welcome_page';
 		if(that.current_params_str.length > 5){
 			last_url = '/pages/welcome_page/welcome_page?'+that.current_params_str;
 		}
 		
+		var share_img = that.current_pic;
+		if(!share_img){
+			share_img = that.wxa_share_img;
+		}
 		
-		return {
-		  title: '' + this.data.current_title,
+		console.log('onShareAppMessage ==>> ' + this.current_title);
+		console.log('onShareAppMessage ==>> ' + last_url);
+		console.log('onShareAppMessage ==>> ' + share_img);
+		
+		var share_data = {
+		  title: '' + this.current_title,
 		  path: last_url,
+		  imageUrl: share_img,
 		  success: function (res) {
 			// 分享成功
 		  },
 		  fail: function (res) {
 			// 分享失败
 		  }
-		}
+		};
+		
+		//#ifdef MP-BAIDU
+			share_data.content = share_data.title;
+		//#endif
+		
+		return share_data;
 		
 	},
 	onShareTimeline: function () {
+		var that = this;
+		
+		console.log('app.globalData.shop_name : ' + this.abotapi.globalData.shop_name);
+		
+		
 		var last_url = '';
+		
 		if(that.current_params_str.length > 5){
 			last_url = ''+that.current_params_str;
 		}
 		
-		var share_img = that.wxa_share_img;
+		var share_img = that.current_pic;
+		if(!share_img){
+			share_img = that.wxa_share_img;
+		}
+		
+		console.log('onShareAppMessage ==>> ' + this.current_title);
+		console.log('onShareAppMessage ==>> ' + last_url);
+		console.log('onShareAppMessage ==>> ' + share_img);
 		
 		return {
-		    title: '' + this.data.current_title,
+		    title: '' + this.current_title,
 		    query: last_url,
 		    imageUrl:share_img,
 		}
@@ -365,9 +403,10 @@ export default {
 			
 		},
 		__handle_option_list:function(that, option_list){
-		    that.abotapi.getColor();
+		    //that.abotapi.getColor();
 			
 			console.log('1222dsfsd23456',option_list);
+			console.log('that.current_options ==>>', that.current_options);
 			
 			//获取自定义页面导航图标
 			if(option_list && option_list.welcome_page_bottom_icon_list){
@@ -386,6 +425,10 @@ export default {
 					
 				that.welcome_page_bottom_icon_list = option_list.welcome_page_bottom_icon_list;
 				that.welcome_page_btn_count = option_list.welcome_page_bottom_icon_list.length;
+				
+				if(that.current_options.hidden_bottom_icon_list){
+					that.welcome_page_btn_count = 0;
+				}
 				
 				
 				if(option_list.welcome_page_bottom_icon_list.length == 1){
@@ -409,10 +452,12 @@ export default {
 			    that.wxa_share_img = option_list.wxa_share_img;
 			}
 			
+			console.log('usercenter_contact_show_in_welcome_page 000===>>> ' + option_list.usercenter_contact_show_in_welcome_page);
 			
-			
-			if(option_list.usercenter_contact_status){
-				that.usercenter_contact_status = option_list.usercenter_contact_status;
+			if(option_list.usercenter_contact_show_in_welcome_page){
+				that.usercenter_contact_status = option_list.usercenter_contact_show_in_welcome_page;
+				
+				console.log('usercenter_contact_show_in_welcome_page 111===>>> ' + that.usercenter_contact_status);
 				
 				if(option_list.usercenter_contact_btn_type){
 					that.usercenter_contact_btn_type = option_list.usercenter_contact_btn_type;
@@ -531,6 +576,11 @@ export default {
 			})
 			  
 			that.current_title = http_data.title;
+			
+			//当前文章对应的图片
+			if(http_data.pic){
+				that.current_pic = http_data.pic;
+			}
 			  		          
 			that.index_rich_html_content = http_data.info;
 			
