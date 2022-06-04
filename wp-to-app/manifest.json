@@ -1,9 +1,9 @@
 {
-    "name" : "延誉宝SaaS云",
-    "appid" : "__UNI__3E06BE0",
+    "name" : "Wordpress转APP专用号",
+    "appid" : "__UNI__A1C4189",
     "description" : "",
-    "versionName" : "1.3.0",
-    "versionCode" : 108,
+    "versionName" : "1.4.1",
+    "versionCode" : 136,
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {

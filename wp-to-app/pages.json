@@ -2,8 +2,10 @@
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "Loading...",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8",
+		"navigationBarBackgroundColor" : "#269ad7",
+		"backgroundColor" : "#ffffff",
+		"backgroundColorTop":"#ffffff",
+		"backgroundColorBottom":"#ffffff",
 		"rpxCalcBaseDeviceWidth": 750
 	},
 	"tabBar": {
@@ -21,7 +23,7 @@
 				"pagePath": "pages/index/topic",
 				"iconPath": "static/wp-tabbar-img/tar-topic.png",
 				"selectedIconPath": "static/wp-tabbar-img/tar-topic-on.png",
-				"text": "分类"
+				"text": "标签"
 			},
 			{
 				"pagePath": "pages/index/usercenter",
