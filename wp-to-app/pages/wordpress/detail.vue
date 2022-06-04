@@ -274,32 +274,13 @@
 										</view>
 										
 										<view style="width:20%; position: relative; float:left; text-align:center">
-											<!-- #ifdef MP -->
-												<view>
-													<image src="static/post_detail/forwarding.png" class="img-menu"></image>
-												</view>
-												<view>
-													<text>分享</text>
-												</view>
-												<button class="share-button touch-active" open-type="share"></button>
-											<!-- #endif -->
-											<!-- #ifdef APP-PLUS -->
-												<view>
-													<image src="static/post_detail/forwarding.png" class="img-menu" @click="is_share_api_show"></image>
-												</view>
-												<view>
-													<text @click="is_share_api_show">分享</text>
-												</view>
-											<!-- #endif -->
-											<!-- #ifdef H5 -->
-												<view>
-													<image src="static/post_detail/forwarding.png" class="img-menu" @click="share_publish"></image>
-												</view>
-												<view>
-													<text @click="share_publish">分享</text>
-												</view>
-											<!-- #endif -->
-											
+											<view>
+												<image src="static/post_detail/forwarding.png" class="img-menu"></image>
+											</view>
+											<view>
+												<text>分享</text>
+											</view>
+											<button class="share-button touch-active" open-type="share"></button>
 										</view>
 										
 										
@@ -314,28 +295,6 @@
 			</view>
 		</view>
 		<!-- 评论区end -->
-		
-		
-		
-		<abotKefuButton
-			:wap_h5_show_kefu_button="wap_h5_show_kefu_button"
-			:wap_h5_kefu_bg_no_color_flag="wap_h5_kefu_bg_no_color_flag"
-			:wap_h5_kefu_bg_color="wap_h5_kefu_bg_color"
-			:wap_h5_kefu_button_icon="wap_h5_kefu_button_icon"
-			:wap_h5_kefu_form_url="wap_h5_kefu_form_url"
-			@onNavRedirect="onNavRedirect"></abotKefuButton>
-			
-			
-		<abotshare
-			ref="share_api"
-			@click_wxa_share="click_wxa_share"   
-			@click_wxa_circle_share='click_wxa_circle_share'  
-			@click_wxa_applet_share='click_wxa_applet_share'  
-			@click_wxa_system_share='click_wxa_system_share'
-			@click_wxa_command_copy='click_wxa_command_copy'
-			flag_hidden_btn_command_copy=1
-		></abotshare>
-			
 	</view>
 </template>
 
@@ -345,21 +304,16 @@
 		import parseHtml from "../../common/html-parser.js"
 	// #endif	
 
-	import WpArticleDetail from '../../components/wp-article-detail.vue';
+	import WpArticleDetail from '../../components/wp-article-detail.vue'
 	
 	
-	import abotKefuButton from '../../components/abot-kefu-button.vue';
-	
-	//APP上分享转发的按钮
-	import abotshare from '../../components/abot_share_api/abot_share_api.vue';
-	import abotsharejs from '../../common/abot_share_api.js';
+	var current_post_id;
+	var userInfo;
 	
 	export default {
 		
 		components: {
-			WpArticleDetail,
-			abotKefuButton,
-			abotshare
+			WpArticleDetail
 			
 		},
 		data() {
@@ -442,17 +396,8 @@
 				is_PhotoModel:false,
 				is_showPhotoModel:false,
 				
-				wap_h5_kefu_button_type:'',
 				wap_h5_kefu_button_icon:'',
-				wap_h5_kefu_mobile_num:'',
-				wap_h5_kefu_form_url:'',
-				
-				wap_h5_kefu_bg_color:'',
-				wap_h5_kefu_bg_no_color_flag:0,
-				
-				wap_h5_show_kefu_button:1,
-				
-				abotshare_show:'none',
+				wap_h5_kefu_mobile_num:''
 			}
 		},
 		
@@ -589,11 +534,22 @@
 				
 				//====2、其他的设置选项：商品列表风格、头条图标等等
 				
+				//客服按钮图标
+				if (cb_params.wap_h5_kefu_button_icon) {
+					
+					that.wap_h5_kefu_button_icon = cb_params.wap_h5_kefu_button_icon
+					
+				}
+				that.wap_h5_kefu_button_icon = 'https://yanyubao.tseo.cn/Tpl/static/images/kefu_icon/kefu04.png';
 				
-							
+				console.log('cb_params.wap_h5_kefu_button_icon ===>>> ' + cb_params.wap_h5_kefu_button_icon);
 				
-				
-				
+				//客服电话
+				if (cb_params.wap_h5_kefu_mobile_num) {
+					
+					that.wap_h5_kefu_mobile_num = cb_params.wap_h5_kefu_mobile_num
+					
+				}
 				
 
 				//网站名称
@@ -617,69 +573,6 @@
 					this.copyright_text = cb_params.copyright_text
 					
 				}
-				
-				
-				//是否存在客服按钮
-				if (cb_params.wap_h5_show_kefu_button) {
-					
-					this.wap_h5_show_kefu_button = parseInt(cb_params.wap_h5_show_kefu_button)
-					
-				}
-				
-				//客服按钮背景颜色
-				if (cb_params.wap_h5_kefu_bg_color) {
-					
-					this.wap_h5_kefu_bg_color = cb_params.wap_h5_kefu_bg_color
-					
-				}
-				
-				if (cb_params.wap_h5_kefu_bg_no_color_flag) {
-					
-					this.wap_h5_kefu_bg_no_color_flag = parseInt(cb_params.wap_h5_kefu_bg_no_color_flag)
-					
-				}
-				
-				
-				//客服按钮类型   1 拨打电话   2 跳转网址
-				if (cb_params.wap_h5_kefu_button_type) {
-					
-					this.wap_h5_kefu_button_type = cb_params.wap_h5_kefu_button_type
-					
-				}
-				
-				//客服按钮图标
-				if (cb_params.wap_h5_kefu_button_icon) {
-					
-					this.wap_h5_kefu_button_icon = cb_params.wap_h5_kefu_button_icon
-					
-				}
-				
-				//客服电话
-				if (cb_params.wap_h5_kefu_mobile_num) {
-					
-					this.wap_h5_kefu_mobile_num = cb_params.wap_h5_kefu_mobile_num
-					
-				}
-				
-				//客服链接
-				if (cb_params.wap_h5_kefu_form_url) {
-					
-					this.wap_h5_kefu_form_url = cb_params.wap_h5_kefu_form_url
-					
-				}
-				
-				//如果是拨打电话
-				if(this.wap_h5_kefu_button_type == 1){
-					this.wap_h5_kefu_form_url = 'tel:' + this.wap_h5_kefu_mobile_num
-				}
-				
-				
-				
-				
-				
-				
-				
-				
 				
 				
 				//赞赏文章图片
@@ -1012,7 +905,9 @@
 			
 			//返回首页
 			goHome: function () {
-				this.abotapi.call_h5browser_or_other_goto_url('/pages/index/index');
+				uni.switchTab({
+					url: '/pages/index/index'
+				})
 			},
 			
 			
@@ -1227,7 +1122,7 @@
 					return;
 				}
 				
-				console.log("userInfo", that.abotapi.get_user_info());
+				console.log("userInfo",that.abotapi.get_user_info());
 				
 				var userDetail = that.abotapi.get_user_account_info();
 				
@@ -1273,15 +1168,10 @@
 							that.commentsList = null;
 							that.fetchCommentData();
 							
-							/*uni.showToast({
+							uni.showToast({
 								title: '评论成功',
 								icon: 'success',
 								duration: 2000
-							});*/
-							uni.showModal({
-								title:'提示',
-								content:res.data.message,
-								showCancel:false
 							});
 							
 							
@@ -1614,70 +1504,8 @@
 					}
 				});				
 				
-			},
-			//首页图标、轮播图及其他h5链接跳转  &&  拨打客服电话
-			onNavRedirect:function(url){
-				console.log('new url =====>>>>', url);
-				
-				var var_list = Object();
-				this.abotapi.call_h5browser_or_other_goto_url(url, var_list, '');
-			},
+			}
 			
-			
-			//app  分享点击
-			click_wxa_share:function (){
-				
-				abotsharejs.click_wxa_share(this.share_href, this.share_titles, this.share_summary, this.share_imageUrl);
-			},
-			
-			click_wxa_circle_share:function (){
-				abotsharejs.click_wxa_circle_share(this.share_href, this.share_titles, this.share_summary, this.share_imageUrl);
-			},
-			
-			
-			click_wxa_applet_share:function (){
-				var path = 'pages/help/detail'+ this.options_str;
-				var account = this.abotapi.globalData.xiaochengxu_account;
-				abotsharejs.click_wxa_applet_share(this.share_href, this.share_titles, path, this.share_imageUrl, account);
-			},
-			
-			
-			click_wxa_system_share:function (){
-				
-				abotsharejs.click_wxa_system_share(this.share_summary, this.share_href);
-			},
-			click_wxa_command_copy:function(){
-				/*var userid = 0;
-				var sellerid = this.abotapi.get_sellerid();
-				var cmd_type = 'product';
-			
-				var userInfo = this.abotapi.get_user_info();
-				if (userInfo) {
-					userid = userInfo.userid;
-				}
-			
-			
-				abotsharejs.click_wxa_command_copy(this.abotapi, cmd_type, this.goods_detail["productid"], userid, sellerid);*/
-			},
-			is_share_api_show:function(){
-				console.log('is_share_api_show ===>>>>');
-				
-				//this.abotshare_show = 'block';
-				
-				//console.log(this.$refs.share_api);
-				
-				this.$refs.share_api.is_show();
-			},
-			
-			//h5点击分享触发
-			share_publish:function(){
-				console.log('==================>>>h5');
-				uni.showModal({
-					title:'请点击浏览器菜单中的分享按钮',
-					showCancel:false,
-				})
-				return;
-			},
 			
 		
 		},
@@ -1730,9 +1558,7 @@
 </script>
 
 <style>
-	* {
-		word-break: break-word;
-	}
+	
 	
 	
 	.article_content_p_css{

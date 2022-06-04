@@ -4,17 +4,13 @@
 			<view class="topic-list-item" :style="{backgroundColor:wxa_shop_nav_bg_color}">
 				<image :src="categoriesImage" class="cover"></image>
 				<view class="topic-content-title">
-					<block v-if="post_list_option.categoryName">
-						<text>分类：</text>
-						<text>{{post_list_option.categoryName}}</text>
-					</block>
-					<text v-else>全部分类</text>
+					<text v-if="post_list_option.categoryName">{{post_list_option.categoryName}}</text>
+					<text v-else></text>
 				</view>
 				<view class="topic-content-title-line" :style="{borderBottom:'solid 1rpx ' + wxa_shop_nav_font_color}"></view>
 				<view class="topic-content-brief" style="width:80%;">
-					<text v-if="post_list_option.categoryDescription">
-						{{post_list_option.categoryDescription}}</text>
-					<text v-else>以下是最近更新的内容</text>
+					<view class="topic-content-brief_text" v-if="post_list_option.categoryDescription">{{post_list_option.categoryDescription}}</view>
+					<text v-else></text>
 				</view>
 			</view>
 		</view>
@@ -24,12 +20,12 @@
 			<view class="topic-list-item">
 				<view><image :src="header_bg_img_of_search_list" class="cover"></image></view>
 				<view class="topic-content-title">
-					<text>搜索：</text>
-					<text>{{searchValue}}</text>
+					<text>搜索关键字：</text>
+					<text class="searchValue">{{searchValue}}</text>
 				</view>
 				<view class="topic-content-title-line" :style="{borderBottom:'solid 1rpx ' + wxa_shop_nav_font_color}"></view>
 				<view class="topic-content-brief">
-					<text>以下是“{{searchValue}}”相关的内容</text>
+					<text>本搜索是全文搜索</text>
 				</view>
 			</view>
 		</view>
@@ -39,11 +35,11 @@
 				<view><image :src="header_bg_img_of_tag_list" class="cover"></image></view>
 				<view class="topic-content-title">
 					<text>标签：</text>
-					<text>{{post_list_option.tag_name}}</text>
+					<text class="searchValue">{{post_list_option.tag_name}}</text>
 				</view>
 				<view class="topic-content-title-line" :style="{borderBottom:'solid 1rpx ' + wxa_shop_nav_font_color}"></view>
 				<view class="topic-content-brief">
-					<text>以下是标签“{{post_list_option.tag_name}}”相关的内容{{post_list_option.tag_name}}{{post_list_option.tag_name}}{{post_list_option.tag_name}}</text>
+					<text>以下是标签“{{post_list_option.tag_name}}”相关的内容</text>
 				</view>
 			</view>
 		</view>
@@ -53,7 +49,7 @@
 				<view><image :src="header_bg_img_of_tag_list" class="cover"></image></view>
 				<view class="topic-content-title">
 					<text>{{MyFavoriteListTitle}}</text>
-					<text>{{post_list_option.tag_name}}</text>
+					<text class="searchValue">{{post_list_option.tag_name}}</text>
 				</view>
 				<view class="topic-content-title-line" :style="{borderBottom:'solid 1rpx ' + wxa_shop_nav_font_color}"></view>
 				<view class="topic-content-brief">
@@ -137,11 +133,6 @@
 				wxa_shop_nav_bg_color: '',
 				wxa_shop_nav_font_color: '',
 				
-				//随机返回10篇文章，同时排除指定ID
-				flag_get_rand_10:false,
-				//请求是否完成了（避免请求第二次）
-				flag_get_rand_10:false,
-				flag_get_rand_exclude_ids:null,
 				
 			}
 		},
@@ -318,9 +309,6 @@
 				
 				
 			}
-			else{
-				that.isCategoryPage = "block";
-			}
 			
 			
 			
@@ -448,7 +436,6 @@
 			fetchCategoriesData: function (id) {
 				var that = this;
 				
-				//如果是  我的收藏 并且 没有设置需要获取的文章ID，则不请求。
 				if((that.isMyFavoriteList == 'block') && !that.MyFavoriteList_postid_list_str){
 					return;
 				}
@@ -460,46 +447,26 @@
 						order: 'desc',
 						sellerid: that.abotapi.globalData.default_sellerid,
 					};
-					
-				//如果是随机获取10篇
-				if(that.flag_get_rand_10 && !that.flag_get_rand_10_ok){
-					//获取第一页
-					post_data.page = 1;
-					//每页10个
-					post_data.per_page = 10;
-					//exclude 排除指定的ID
-					post_data.exclude = that.flag_get_rand_exclude_ids;
-					//按照最后修改时间排序
-					post_data.orderby = 'modified';
-					
-					//已经请求了随机的10篇
-					that.flag_get_rand_10_ok  = true;
+				
+				if(that.categoriesId){
+					post_data.categories = that.categoriesId;
 				}
-				else{
-					
-					if(that.categoriesId){
-						post_data.categories = that.categoriesId;
-					}
-					else if(that.categorySlug){
-						post_data.category_name = that.categorySlug;
-					}
-					
-					if(that.searchValue){
-						post_data.search = that.searchValue;
-					}
-					
-					if(that.post_list_option.tag_id){
-						post_data.tags = that.post_list_option.tag_id;
-					}
-					
-					//根据ID获取文章列表
-					if(that.isMyFavoriteList && that.MyFavoriteList_postid_list_str){
-						post_data.include = that.MyFavoriteList_postid_list_str;
-					}
-					
+				else if(that.categorySlug){
+					post_data.category_name = that.categorySlug;
 				}
 				
+				if(that.searchValue){
+					post_data.search = that.searchValue;
+				}
 				
+				if(that.post_list_option.tag_id){
+					post_data.tags = that.post_list_option.tag_id;
+				}
+				
+				//根据ID获取文章列表
+				if(that.isMyFavoriteList && that.MyFavoriteList_postid_list_str){
+					post_data.include = that.MyFavoriteList_postid_list_str;
+				}
 				
 				console.log('fetchCategoriesData post_data ===>>>', post_data);
 				
@@ -540,33 +507,6 @@
 						if(res.data.length < that.per_page){
 							that.is_OK = true;
 						}
-						
-						//2022.5.21. 如果文章内容少于4篇，则随机返回10篇
-						
-						console.log('that.flag_get_rand_10 ===>>', that.flag_get_rand_10);
-						console.log('that.isMyFavoriteList ===>>', that.isMyFavoriteList);
-						console.log('res.data.length ===>>', res.data.length);
-						
-						if(!that.flag_get_rand_10 
-							&& ( that.isMyFavoriteList != 'block')  
-							&& (res.data.length <= 3) ){
-								
-							that.flag_get_rand_10 = true;
-							that.flag_get_rand_10_ok = false;
-							
-							var flag_get_rand_exclude_id_list = [];
-							
-							for(var ii=0; ii<res.data.length; ii++) {
-								flag_get_rand_exclude_id_list.push( res.data[ii]['id'] );
-							}
-							
-							that.flag_get_rand_exclude_ids = flag_get_rand_exclude_id_list.join(',');
-							
-							console.log('准备请求最新的10篇，同时排除ID：' + that.flag_get_rand_exclude_ids);
-							
-							that.fetchCategoriesData();
-						}
-						//=========== End ==============
 						
 						
 					},
@@ -677,20 +617,19 @@
 	}
 	
 	.topic-content-title text {
-	  font-size: 40rpx;
+	  font-size: 48rpx;
 	  line-height: 48rpx;
 	  color: #fff;
-	  text-shadow: -1rpx 1rpx 0 #000000, 1rpx 1rpx 0 #000000, 1rpx -1rpx 0 #000000, -1rpx -1rpx 0 #000000;
 	}
 	
 	.topic-content-title-line{
-	  width: 300rpx;
+	  width: 48px;
 	  padding: 16rpx 0rpx;
 	  overflow: hidden;
 	  text-overflow: ellipsis;
 	  white-space: nowrap;
 	  position: absolute;
-	  border-bottom: 1rpx solid #fff; 
+	  border-bottom: 1px solid #fff; 
 	  z-index: 2;
 	  left: 64rpx;
 	  top: 180rpx;
@@ -698,31 +637,38 @@
 	
 	
 	.topic-content-brief {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 		position: absolute;
 		z-index: 2;
 		left: 60rpx;
 		top: 240rpx;
-		margin-right: 60rpx;
 	}
 	
 	.topic-content-brief text {
-		font-size: 30rpx;
-		text-shadow: -1rpx 1rpx 0 #000000, 1rpx 1rpx 0 #000000, 1rpx -1rpx 0 #000000, -1rpx -1rpx 0 #000000;
+		font-size: 32rpx;
 		line-height: 32rpx;
-		color: #ffffff;
+		color: #fff;
 		
+		white-space: nowrap; 
 		overflow: hidden; 
-		
-		/* 显示2行，没有省略号的方案，兼容主流设备 */
-		height: 64rpx;
-		
-		/* 显示2行，有省略号的方案，只在主流的Web浏览器中生效*/
-		/*white-space: nowrap; 
-		
 		text-overflow: ellipsis;
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;*/
 	}
 	
+	.topic-content-brief_text {
+		font-size: 32rpx;
+		line-height: 32rpx;
+		color: #fff;
+		
+		white-space: nowrap; 
+		overflow: hidden; 
+		text-overflow: ellipsis;
+		
+		width: 80%;
+	}
+	
+	.searchValue {
+		color: #121b23;
+	}
 </style>

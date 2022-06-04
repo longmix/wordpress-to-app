@@ -7,7 +7,7 @@
 			</view> -->
 			<view class="flex-center ">
 				<view @tap="goHome()" class="flex-center">
-					<image :src="wxa_share_img"  style="width: 150upx;margin: 10% auto; border-radius: 10upx;"  mode="widthFix"  class="wh-60"></image>
+					<image :src="wxa_share_img"  style="width: 150upx;margin: 10% 40%; border-radius: 10upx;"  mode="widthFix"  class="wh-60"></image>
 				</view>
 			</view>
 		<!-- </view> -->
@@ -127,20 +127,11 @@
 			
 			
 		</form>
-		
 	     <!--站位-->
-		 <div class="place-buttom">
-			 
-		 </div>
-		 
-		 <div class="icon-jump" @click="gotoHomePage" 
-			:style="{background:wxa_shop_nav_bg_color}" 
-			v-if="wxa_show_return_to_index_in_usercenter == 0">
-			
-			<image src="../../static/img/shouye.svg"></image>
-			<div :style="{color:wxa_shop_nav_font_color}">
-				首页
-			</div>
+		 <div class="place-buttom"></div>
+		 <div class="icon-jump" @click="gotoHomePage" :style="{background:wxa_shop_nav_bg_color}" v-if="wxa_show_return_to_index_in_usercenter == 0">
+		 <image src="../../static/img/shouye.svg"></image>
+		 <div :style="{color:wxa_shop_nav_font_color}">首页</div>
 		 </div>
 		 
 		 
@@ -221,29 +212,27 @@
 			
 			
 			// #ifdef MP-WEIXIN
+			this.login_after_get_userinfo = 0;
 			
-				this.login_after_get_userinfo = 0;
-				
-				
-				var that = this;
-				
-				
-				console.log('uni.login <<<==== btn_wxa_one_click_login');
-					  
-				uni.login({
-					success: function (res) {
-						console.log("btn_wxa_one_click_login 获取到的jscode是:" + res.code);
-					  
-						//如果拒绝授权， e.detail.errMsg
-						//console.log(e.detail.errMsg);return;
-					  
-						that.current_weixin_js_code = res.code;
-					  
-					},
-					fail: function (login_res) {
-						console.log('login.js  uni.login失败。');
-					}
-				});
+			
+			var that = this;
+			
+			console.log('uni.login <<<==== btn_wxa_one_click_login');
+				  
+			uni.login({
+				success: function (res) {
+					console.log("btn_wxa_one_click_login 获取到的jscode是:" + res.code);
+				  
+					//如果拒绝授权， e.detail.errMsg
+					//console.log(e.detail.errMsg);return;
+				  
+					that.current_weixin_js_code = res.code;
+				  
+				},
+				fail: function (login_res) {
+					console.log('login.js  uni.login失败。');
+				}
+			});
 			
 			
 			// #endif
@@ -281,9 +270,8 @@
 				}
 				
 				console.log('cb_params====', cb_params);
-				
 				//====1、更新界面的颜色
-				//this.abotapi.getColor();
+				this.abotapi.getColor();
 				
 				if(cb_params.wxa_shop_nav_bg_color){
 					that.wxa_shop_nav_bg_color = cb_params.wxa_shop_nav_bg_color
@@ -306,6 +294,9 @@
 				    this.wxa_shop_new_name = cb_params.wxa_shop_new_name
 				  
 				}
+				
+				
+				
 				
 				
 				uni.setNavigationBarTitle({
@@ -398,11 +389,9 @@
 				})
 			},
 			gotoHomePage:function(){
-				/*uni.switchTab({
+				uni.switchTab({
 					url: '/pages/index/index'
-				})*/
-				
-				this.abotapi.call_h5browser_or_other_goto_url('/pages/index/index');
+				})	
 			},
 			
 			//手机验证码登录
@@ -496,11 +485,7 @@
 			 
 				
 			btn_wxa_one_click_login:function(e){
-				
-				// #ifdef MP-WEIXIN
-				
 				var that = this;
-				
 				console.log(e.detail.errMsg)
 				console.log(e.detail.iv)
 				console.log(e.detail.encryptedData)
@@ -593,8 +578,6 @@
 				});
 				
 				
-				// #endif
-				
 			},
 			
 			//2021.7.22. 百度一键登录
@@ -613,7 +596,7 @@
 			btn_baidu_one_click_login:function(e){
 				var that = this;
 				
-				console.log('百度一键登录 <<<==== btn_baidu_one_click_login  ====>>> 手机号码授权登录：', e);
+				console.log('uni.login <<<==== btn_baidu_one_click_login', e);
 				
 				console.log(e.detail.errMsg)
 				console.log(e.detail.iv)
@@ -629,9 +612,9 @@
 					return;
 				}
 					  
-				swan.getLoginCode({
+				uni.login({
 					success: function (res) {
-						console.log("btn_baidu_one_click_login 获取到的getLoginCode ==>> jscode是:", res);
+						console.log("btn_baidu_one_click_login 获取到的jscode是:" + res.code);
 					  
 						//如果拒绝授权， e.detail.errMsg
 						//console.log(e.detail.errMsg);return;
@@ -819,15 +802,19 @@
 												url: last_url,
 											})
 										} else {
-											that.abotapi.call_h5browser_or_other_goto_url(last_url);
+											uni.redirectTo({
+												url: last_url,
+											})
 										}
 										 
 										
 										return;
 									}
 									//===========End================
-									that.abotapi.call_h5browser_or_other_goto_url('/pages/index/index');
-									
+						  
+									uni.redirectTo({
+										url: '/pages/index/index'
+									})
 								}
 							}
 						});
@@ -972,8 +959,5 @@
 	  height: 60rpx;
 	}
 
-.flex-center {
-	text-align: center;
-}
 
 </style>

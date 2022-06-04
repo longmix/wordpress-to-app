@@ -3,8 +3,7 @@
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "Loading...",
 		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8",
-		"rpxCalcBaseDeviceWidth": 750
+		"backgroundColor": "#F8F8F8"
 	},
 	"tabBar": {
 		"color": "#333333",
@@ -61,10 +60,6 @@
 				"enablePullDownRefresh": true
 			}
 		},
-		{	//用于兼容 pages/index/index 在tabbar不能带参数在内部跳转的需求
-			"path": "pages/index/goto_index",
-			"style": {}
-		},
 		{	//链接跳转页
 		    "path" : "pages/h5browser/h5browser",
 		    "style" : {}
@@ -118,8 +113,7 @@
 				    "path" : "detail",
 				    "style" : {
 						"backgroundTextStyle":"dark",
-						"enablePullDownRefresh": true,
-						"softinputNavBar":"none"
+						"enablePullDownRefresh": true
 					}
 				},
 				{	//'关于'页面

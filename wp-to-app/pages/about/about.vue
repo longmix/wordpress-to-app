@@ -16,44 +16,18 @@
 					:content_array_html="article_content_array"
 					:attr_list="attr_list" />
 		</WpArticleDetail>
-		
-		
-		
-		<view class="box_img">
-			<view style="width: 50%;float:left;text-align:center;">
-				<!-- #ifdef APP-PLUS -->
-				<button class="xg_button" style="width:90%;margin: 0 auto;" @tap="call_seller" type="primary">联系客服</button>
-				<!-- #endif -->
-				<!-- #ifdef H5 -->
-				<button class="xg_button" style="width:90%;margin: 0 auto;" @tap="call_seller" type="primary">联系客服</button>
-				<!-- #endif -->
-				<!-- #ifdef MP-WEIXIN -->
-				<button class="xg_button" style="width:90%;margin: 0 auto;" open-type="contact" type="primary">小程序客服</button>
-				<!-- #endif -->
-				<!-- #ifdef MP-BAIDU -->
-				<!-- <button class="xg_button" style="width:90%;margin: 0 auto;" @tap="call_seller" type="primary">联系客服</button> -->
-				<button class="xg_button" style="width:90%;margin: 0 auto;" open-type="contact"  bindcontact="baidu_mp_contactCB" type="primary">小程序客服</button>
-				<!-- #endif -->
-				<!-- #ifdef MP-ALIPAY -->
-				<button class="xg_button" style="width:90%;margin: 0 auto;" @tap="call_seller" type="primary">联系客服</button>
-				<!-- #endif -->
+			
+			
+			
+				
+			
+			<view style='text-align:center'>
+				<button class="gotowebpage-button" formType="submit" @tap="gotowebpage()">问题反馈收集表</button>
 			</view>
 			
-			<view style="width: 50%;float:left;text-align:center;">
-				<button
-					@tap="gotowebpage()" 
-					class="xg_button" 
-					style="width:90%;margin: 0 auto;background-color: #eee;color:#222;"
-					type="primary">问题反馈</button>
-			</view>
+			<!-- #ifdef MP-WEIXIN -->	
 			
-		</view>
-		
-		
-		
-		
-		
-		<!-- #ifdef MP-WEIXIN -->
+			
 			<view style='text-align:center'>
 				<button class="praise-button" formType="submit" @tap="praise">赞赏软件开发记</button>
 			</view>
@@ -65,31 +39,11 @@
 					<button class="payonline-button" formType="submit" @tap="payonline">微信支付宝转账</button>
 				</view>
 			</view>
-		<!-- #endif --> 
-		
-		<view class="copyright" style="color: #666;">
-			<view>版本号： {{current_version_str}}</view>
+			<!-- #endif --> 
 			
-			<view style="margin-top: 50rpx;"
-				@tap="clearStorageIncludeSellerid"
-				:style="{display:show_clear_all_data_include_sellerid}">
-				重置此应用数据
+			<view class="copyright" style="color: #666;">
+				版本号： {{current_version_str}}
 			</view>
-			
-		</view>
-		
-		
-		
-		
-		
-		
-		
-			
-			
-			
-				
-			
-			
 			
 
 		<view class="copyright">
@@ -119,7 +73,6 @@
 				aboutus_pageid:0,
 				
 				current_pageid:0,
-				current_page_request_url:'',
 				
 				wxa_shop_new_name:'',
 				copyright_text:'',
@@ -140,23 +93,11 @@
 				
 				current_version_str:'',
 				
-				//是否显示删除所有业务数据的按钮
-				show_clear_all_data_include_sellerid:'none',
-				
-				//客服电话
-				usercenter_kefu_telephone:'',
-				
 			}
 		},		
 		onLoad: function (options) {
-			var that = this;
-			
 			if(options.pageid){
 				this.current_pageid = options.pageid;
-			}
-			
-			if(!that.abotapi.globalData.force_sellerid){
-				that.show_clear_all_data_include_sellerid = 'block';
 			}
 			
 			//var test001 = '<p><a href="http://www.abot.cn/988.html" target="_blank" rel="noopener"><img class="size-large aligncenter" src="http://www.abot.cn/wp-content/themes/abotcn/uploads/2018/05/2018050103263341.jpg" width="800" height="267" /></a></p>';
@@ -168,12 +109,11 @@
 			this.current_version_str = this.abotapi.globalData.version_str;
 			
 		    this.abotapi.set_option_list_str(this, this.callback_function);
-			
-			
 		},
 		onPullDownRefresh: function () {
 			var that = this;
 			
+			//uni.removeStorageSync('wordpress_data_list_str');
 			
 			
 			
@@ -275,25 +215,7 @@
 				
 				console.log('渲染数据完毕，准备更新文章详情');
 				
-				//2022.4.21. 如果没有设置pageid，或者设置了diy_tmp_sn_default_aboutus_page_url则优先使用。
-				if(cb_params.diy_tmp_sn_default_aboutus_page_url){					
-					that.current_page_request_url = cb_params.diy_tmp_sn_default_aboutus_page_url;
-				}
-				else{					
-					that.current_page_request_url = that.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/pages/'+that.current_pageid;
-				}
-				
-				//读取客服电话
-				if(cb_params.usercenter_kefu_telephone){
-					that.usercenter_kefu_telephone = cb_params.usercenter_kefu_telephone;
-				}
-				
-				
-				
-				
 				that.fetchPageData();
-				
-				
 				
 			},
 			
@@ -370,7 +292,7 @@
 				
 				
 				this.abotapi.abotRequest({
-				    url:that.current_page_request_url,
+				    url:this.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/pages/'+that.current_pageid,
 				    method: 'get',
 				    data:{
 				    	sellerid:this.abotapi.globalData.default_sellerid,
@@ -433,50 +355,7 @@
 				uni.previewImage({
 				  urls: [src, src2],
 				});
-			},
-			
-			//拨打客服电话
-			call_seller: function() {
-				// #ifdef MP-WEIXIN
-					//return;
-				// #endif
-				
-				var that = this;
-			
-				uni.makePhoneCall({
-					phoneNumber: that.usercenter_kefu_telephone,
-				})
-			},
-			
-			//删除sellerid，使用系统默认的
-			clearStorageIncludeSellerid: function() {
-				uni.getStorage({
-					key:'org_sellerid',
-					success: (res) => {
-						
-						console.log('获取原始的sellerid成功==>>>', res);
-						
-						this.abotapi.globalData.default_sellerid = res.data;
-						
-						this.abotapi.set_sellerid(this.abotapi.globalData.default_sellerid);
-						
-						this.abotapi.clearStorage();
-						
-						uni.reLaunch({
-							url:'/pages/index/index'
-						})
-					},
-					fail: (res) => {
-						uni.showToast({
-							title:'获取原始sellerid失败'
-						})
-					}
-				})
-				
-				
-				
-			},
-			
+			}
 			
 			
 		},
@@ -564,7 +443,7 @@
 		border:none;
 	}
 	
-	/*.gotowebpage-button {
+	.gotowebpage-button {
 		font-size: 30upx;
 		font-weight: normal;
 		color:  #fff;
@@ -579,7 +458,7 @@
 	
 	.gotowebpage-button::after{
 		border: none; 
-	}*/
+	}
 	
 	.payonline-button {
 		font-size: 30upx;
@@ -605,12 +484,4 @@
 	.alignnone {
 		max-width: 100%  !important;
 	}
-	
-	.box_img {
-		height: 100rpx;
-		margin: 0 auto;
-		padding-top: 60rpx;
-	
-	}
-	
 </style>

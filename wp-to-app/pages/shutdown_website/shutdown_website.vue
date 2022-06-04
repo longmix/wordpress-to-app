@@ -20,29 +20,21 @@
 		onPullDownRefresh: function () {
 			var that = this;
 			
-			// #ifndef MP-ALIPAY
-			uni.showToast({
-				title: '数据更新中……',
-				icon:'loading',
-			});
-			// #endif
-			
-			// #ifdef MP-ALIPAY
-			uni.showToast({
-				title: '数据更新中……',
-				//icon:'loading', 	//支付宝不支持icon为 loading
-				//duration:2000
-			});
-			// #endif
-			
-			that.abotapi.set_shop_option_data_remove();
-			that.abotapi.set_option_list_str(that, that.callback_function);
-					
-			uni.stopPullDownRefresh();  //停止下拉刷新动画
-			
 			setTimeout(function () {
-				uni.hideToast();
+				uni.stopPullDownRefresh();  //停止下拉刷新动画
 			}, 1500);
+			
+			uni.removeStorage({
+				key:'wordpress_data_list_str',
+				success:function (res) {
+					console.log('removeStorage success');
+					
+					that.abotapi.set_option_list_str(that, that.callback_function);
+				}
+			});
+			
+			
+			
 		},
 		
 		

@@ -1,7 +1,7 @@
 <template>
 	<view class="usercenter-container">
 		<!-- 电子会员卡 -->
-		<view class="ecard_box">
+		<view style="width:100%;height:350rpx;margin-top: 15rpx;">
 			<view  class="cardNo" :style="[{'background-image':'url('+ vip_detail.card_bg_img +')' }]">
 				<view class="cardtop" @tap="toUserInfo">
 					<image class="cardNoIMG" :src="data2 && data2.fenxiao_info.headimgurl?data2.fenxiao_info.headimgurl:vip_detail.card_logo"></image>
@@ -41,7 +41,7 @@
 
 		<!-- 余额显示 积分显示-->
 		
-		<view class="jifeng_box" :style="{display:show_daohang_box}">
+		<view class="jifeng_box">
 			
 				<view class="money_box">
 					余额
@@ -60,45 +60,18 @@
 			
 		</view>
 		
-		<!-- 平铺图片 -->
-		<view style="width: 100%;margin: 0;" v-if="wxa_usercenter_ad_list">
-			<image style="width: 100%;" @tap="toUrl(item.url)" v-for="(item,index) in wxa_usercenter_ad_list" :key="index" :src="item.image"
-			 mode="widthFix"></image>
-		</view>
-		
 		<!-- 工具栏 -->
 		<view class="toolbar">
 			<view class="title">我的工具栏</view>
 			<view class="list">
-				<view class="box" v-for="(row,index) in tool_icon_list" :key="index" @tap="toPage(row.url)">
+				<view class="box" v-for="(row,index) in gooosList" :key="index" @tap="toPage(row.url)">
 					<view class="img">
 						<image :src="row.src"></image>
 					</view>
 					<view class="text">{{row.name}}</view>
 				</view>
-				
-				<view class="box" 
-					v-if="usercenter_show_scan_qrcode == 1"
-					@tap="toMyQR">
-					<view class="img">
-						<image src="https://yanyubao.tseo.cn/Tpl/static/images/scan_qrcode.png"></image>
-					</view>
-					<view class="text">扫一扫</view>
-				</view>
-				
 			</view>
 		</view>
-		
-		<!-- 隐私协议 -->
-		<view style="display: flex;justify-content: center;margin: 30rpx;align-items: center;">
-			
-			<view style="color: #0055FF;float: left;font-size: 30rpx;margin-right: 10rpx;" 
-				@tap="toUrl(yinsixieyi_url)">服务协议</view>
-			|
-			<view style="color: #0055FF;float: left;font-size: 30rpx;margin-left: 10rpx;"
-				@tap="toUrl(yinsixieyi_url)">隐私政策</view>
-		</view>
-		<!-- end -->
 		
 		<!-- 网站版权 -->
 		<view class="copyright" v-if="copyright_text">{{copyright_text}}</view>
@@ -110,7 +83,7 @@
 	export default {
 		data() {
 			return {
-				tool_icon_list:'',
+				gooosList:'',
 				user_info:'',
 				wxa_shop_new_name:'',
 				wxa_shop_operation_logo_url:'',
@@ -125,30 +98,20 @@
 				balance_zengkuan_total:'888.88',
 				balance_score_total:'88888',
 				
-				
-				wxa_usercenter_ad_list: [], //平铺图片
-				
-				usercenter_show_scan_qrcode:0, // 扫一扫图标
-				
-				//隐私协议网址
-				yinsixieyi_url:'',
-				
 			}
 		},
 		onLoad: function (options) {  
-		   var that = this;
+		    var that = this;
 			
-			/*this.abotapi.set_option_list_str(this, function(that, cb_params){
+			this.abotapi.set_option_list_str(this, function(that, cb_params){
 				//====1、更新界面的颜色
 				that.abotapi.getColor();
 			});
-			*/
-		   this.abotapi.set_option_list_str(this, this.callback_function);
 			
-			this.yinsixieyi_url = this.abotapi.globalData.yinsixieyi_url;
+			
 		},
 		onShow:function() {
-			
+			this.abotapi.set_option_list_str(this, this.callback_function);
 			
 			this.getPage();
 			
@@ -181,7 +144,7 @@
 				}
 				
 				
-				//显示 余额  积分 和 赠款
+				
 				if (cb_params.hidden_balance_zengkuan_score &&
 					(cb_params.hidden_balance_zengkuan_score == 1)) {
 					this.show_daohang_box = 'none';
@@ -212,32 +175,15 @@
 				uni.setNavigationBarTitle({
 					title:this.wxa_shop_new_name
 				})
-				
-				
-				//广告图片
-				if (cb_params.wxa_usercenter_ad_list) {
-					this.wxa_usercenter_ad_list = cb_params.wxa_usercenter_ad_list;
-				}
-				
-				
 								
-				//九宫格图标：如果是-1，代表使用自定义配置
+				
 				if(cb_params.user_function_icon_type == -1){
-					this.tool_icon_list = cb_params.user_function_icon_list;
+					this.gooosList = cb_params.user_function_icon_list;
 				}
 				else{
 					this.user_function_icon_type = cb_params.user_function_icon_type
 					this.getToolIcon();
 				}
-				
-				//显示 扫一扫功能图标
-				// #ifndef H5
-					if (cb_params.usercenter_show_scan_qrcode) {
-						this.usercenter_show_scan_qrcode = cb_params.usercenter_show_scan_qrcode;
-					}
-				// #endif
-				
-				
 			},
 			
 			//获取用户信息
@@ -347,11 +293,9 @@
 				    
 				    success: function (res) {
 						console.log('kaafff===', res);
-
-						that.tool_icon_list = res.data.data;
-						
-						console.log('akafff===', that.tool_icon_list);
-						
+						var productlist = res.data.data;
+						console.log('akafff===', productlist);
+						that.gooosList = productlist
 				    },
 					
 				    fail: function (e) {
@@ -368,7 +312,7 @@
 			getVIP:function(){
 				var that002 = this;
 				
-				this.abotapi.set_shop_option_data(this, function(that002, data){
+				this.abotapi.set_wordpress_data_list(this, function(that002, data){
 					
 					console.log("会员卡的设置信息为=====>>>", data.card_data);
 					
@@ -378,56 +322,7 @@
 				});
 				
 				
-			},
-			
-			toUrl: function(url) {
-				this.abotapi.call_h5browser_or_other_goto_url(url);
-			},
-			//使用二维码扫码工具
-			toMyQR() {
-				// uni.navigateTo({
-				// 	url:'/pages/user/myQR/myQR'
-				// })
-				var that = this;
-			
-				uni.scanCode({
-					success: function(res) {
-						console.log('res===', res);
-						console.log('条码类型：' + res.scanType);
-						console.log('条码内容：' + res.result);
-			
-						var result = res.result;
-						if ((result.indexOf('http://') == 0) ||
-							(result.indexOf('https://') == 0) ||
-							(result.indexOf('/') == 0)) {
-							var var_list = Object();
-			
-							//这个地方不能调用 decodeURIComponent， 
-							//因为此时的网址中还包含 %oneclicklogin%（扫码登录的场景），遇到  % 都有转为 %25 才可以。
-							//result = decodeURIComponent(result);							
-							//console.log('条码内容==>>decodeURIComponent==>>：' + result);
-			
-							that.abotapi.call_h5browser_or_other_goto_url(result, var_list);
-						} else {
-							uni.showModal({
-								title: '提示',
-								content: result,
-								showCancel: false,
-								success: function(res) {
-			
-								}
-							});
-						}
-			
-					}
-				});
-			
-			
-			},
-			
-			
-			
-			
+			}
 		}
 	}
 </script>
@@ -524,19 +419,8 @@
 		font-size: 31rpx;
 		color: #3d3d3d;
 	}
-	
-	.money_box{
-		float: left;
-		display: block;
-		text-align: center;
-		width: 33%;
-		margin-top: 35rpx; 
-		line-height: 45rpx;
-		font-size:28rpx;
-		
-	}
 	.num{
-		font-size: 36rpx;
+		font-size: 32rpx;
 	}
 	
 	
@@ -574,12 +458,11 @@
 		/* background-color: #9000FF; */
 	}
 	.cardbottom{
-		width: 90%;
-		height: 50rpx;
-		line-height: 50rpx;
+		width: 100%;
+		height: 20%;
 		/* background-color: #2bf666; */
 		text-align: right;
-		margin-right: 50rpx;
+		padding-right: 30px;
 	}
 	
 	.card_top_text{
@@ -627,16 +510,20 @@
 		    display: block;
 		    margin-top: 8rpx;
 	}
-	
-	.ecard_box {
-		width:100%;height:350rpx;margin-top: 15rpx;margin-bottom: 15rpx;
-	}
-	
 	.jifeng_box{
 		width: 100%;
 		height: 150rpx;
 		background-color: #FFFFFF;
 		border-radius: 15rpx;
+		margin-top: 15rpx;
 	}
-	
+	.money_box{
+		float: left;
+		display: block;
+		text-align: center;
+		width: 33%;
+		margin-top: 35rpx; 
+		line-height: 45rpx;
+		
+	}
 </style>

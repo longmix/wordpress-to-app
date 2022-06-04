@@ -1,52 +1,6 @@
 <template>
 	<view>
 
-		
-		<!-- 显示所有的tag列表 -->
-		<view class="topic-common-list" v-if="tagList != null">
-			<view style="padding:40rpx; text-align: center;">
-				-- 热门标签 --
-			</view>
-			
-		</view>
-		
-		<view class="topic-common-list">
-			<view style="padding:10rpx;">
-				<view v-for="(tagItem, index) in tagList"
-					:key="index"
-					@tap="goto_post_list(tagItem.id, tagItem.name)"
-					class="tag_cloud"
-					:style="{
-						textShadow: '-1rpx 1rpx 0 '+wxa_shop_nav_font_color +', 1rpx 1rpx 0 '+wxa_shop_nav_font_color+', 1rpx -1rpx 0 '+wxa_shop_nav_font_color+', -1rpx -1rpx 0 '+wxa_shop_nav_font_color,
-						color:tagItem.font_color, 
-						fontSize:tagItem.font_size+'rpx'}">
-					{{tagItem.name}}<text :style="{color:tagItem.font_color}">({{tagItem.count}})</text>
-				</view>
-			</view>
-			
-		</view>
-		
-		<!--
-		<view class="topic-common-list">
-			<view style="padding:10rpx;">
-				<view v-for="(tagItem, index) in tagList"
-					:key="index"
-					@tap="goto_post_list(tagItem.id, tagItem.name)"
-					class="tag_item"
-					:style="{backgroundColor:wxa_shop_nav_bg_color, color:wxa_shop_nav_font_color}">
-					{{tagItem.name}}<text>({{tagItem.count}})</text>
-				</view>
-			</view>
-			
-		</view> -->
-		
-		<!-- 分类名称列表 -->
-		<view class="topic-common-list">
-			<view style="padding:40rpx; text-align: center;">
-				-- 内容分类 --
-			</view>
-			
-		</view>
 		<view class="topic-common-list">
 			<block v-if="cata_topic_list_type == 1">
 				<block :key="index" v-for="(item,index) in cata_topic_list" >
@@ -68,7 +22,7 @@
 			<block v-else>
 				<block :key="index" v-for="(item,index) in categoriesList" >
 					<view class="list-item" 
-						@tap="goto_post_list_by_cataid(item.id, item.slug)" 
+						@tap="goto_post_cata_list($event)" 
 						
 						:data-id="item.id"
 						:data-slug="item.slug"
@@ -77,7 +31,9 @@
 						:data-description="item.description"
 						:data-src="item.category_thumbnail_image">
 						<image class="cover" mode="widthFix"
-							
+							:data-id="item.id"
+							:data-slug="item.slug"
+							:data-name="item.name"
 							:src="item.category_thumbnail_image" ></image>
 						<view class="content-title">
 							<view class="topic-name">
@@ -96,6 +52,15 @@
 		</view>
 		
 		
+		<view class="topic-common-list" style="padding:10rpx;">
+			<view v-for="(tagItem, index) in tagList" 
+				:key="index"
+				@tap="goto_post_list(tagItem.id, tagItem.name)"
+				class="tag_item"
+				:style="{backgroundColor:wxa_shop_nav_bg_color, color:wxa_shop_nav_font_color}">
+				{{tagItem.name}}
+			</view>
+		</view>
 		
 		
 		
@@ -408,8 +373,8 @@
 			},
 			
 			//跳转至分类详情
-			goto_post_list_by_cataid:function(cataid, cataSlug){
-				//console.log("goto_post_cata_list e ===>>> ", e);
+			goto_post_cata_list:function(e){
+				console.log("goto_post_cata_list e ===>>> ", e);
 				
 				var new_url = '/pages/wordpress/list?';
 				
@@ -417,9 +382,7 @@
 				//new_url += '&categorySrc='+e.target.dataset.src+'&categoryName='+e.target.dataset.name+'&categoryDescription'+e.target.dataset.description;
 				
 				//2021.2.24. 通过slug请求分类的信息，包括了分类图标和分类名称以及分类描述
-				//new_url += 'categorySlug='+e.target.dataset.slug;
-				
-				new_url += 'categorySlug=' + cataSlug;
+				new_url += 'categorySlug='+e.target.dataset.slug;
 				
 				uni.navigateTo({
 					url:new_url
@@ -448,10 +411,6 @@
 				this.abotapi.call_h5browser_or_other_goto_url(url, var_list, '');
 			},
 			
-			__getRandomInt:function(min, max) {
-				return Math.floor(Math.random() * (max - min)) + min;
-			},
-			
 			getTagList:function(){
 				var that = this;
 				
@@ -459,13 +418,7 @@
 				//2021.10.27. 如果有缓存，则直接使用缓存
 				var tagList = uni.getStorageSync('wordpress_tag_list_data');
 				
-				//console.log('tagList ==>>', tagList);
-				//console.log('type of tagList ==>>'+ typeof(tagList))
-				
-				
-				
 				if(tagList){
-					
 					that.tagList = tagList;
 					
 					return;
@@ -479,7 +432,6 @@
 				    	sellerid:this.abotapi.globalData.default_sellerid,
 						orderby:'count',
 						order:'desc',
-						hide_empty:1,
 						per_page:50
 				    },					
 				    success(res) {
@@ -492,68 +444,8 @@
 							return;
 						}
 						
-						var tagList = res.data;
 						
-						if(!tagList){
-							return;
-						}
-						
-						//=====2022.5.2. 美化标签列表 Begin ===
-						//将数组随机排序
-						const randomSort = () => {
-							return Math.random() > 0.5 ? -1 : 1;
-						};
-						
-						tagList.sort(() => randomSort());
-						
-						//为了防止数字过大造成文字大小显示扩张，统一减去一个基数
-						var min_counter = 0;
-						for(var i=0; i<tagList.length; i++){
-							if(min_counter == 0){
-								min_counter = tagList[i]['count'];
-							}
-							
-							if(tagList[i]['count'] < min_counter){
-								min_counter = tagList[i]['count'];
-							}
-						}
-						
-						console.log('标签文章数量最小值===>>>' + min_counter);
-						
-						var min_counter_span = 0;
-						if(min_counter > 1){
-							min_counter_span = min_counter - 1;
-						}
-						
-						for(var i=0; i<tagList.length; i++){
-							//定义文字大小
-							var tag_counter = tagList[i]['count'];
-							if(tag_counter > 10){
-								tag_counter = 10;
-							}
-							if(tag_counter == 0){
-								tag_counter = 1;
-							}
-							
-							tag_counter = 1 + parseFloat( (tag_counter - min_counter_span)/5 );
-							tagList[i]['font_size'] = parseInt(tag_counter * 32);
-							
-							//定义字体颜色
-							const getRandomInt = (min, max) => {
-								return Math.floor(Math.random() * (max - min)) + min;
-							};
-							
-							tagList[i]['font_color'] = '#' + getRandomInt(10, 99) + getRandomInt(10, 99) + getRandomInt(10, 99);
-						
-							//console.log("tagList[i]['font_color'] ===>>>" + tagList[i]['font_color']);
-						}
-						
-						//=====2022.5.2. 美化标签列表 End ===
-						
-						
-						
-						
-						that.tagList = tagList;
+						that.tagList = res.data;
 						
 						console.log('获取标签列表', that.tagList)
 						
@@ -639,7 +531,7 @@
 	}
 	
 	.tag_item {
-		font-size: 36rpx;		  
+		font-size: 36rpx;
 		border-radius: 8rpx;
 		border: solid 0rpx red;
 		display: block;
@@ -649,18 +541,4 @@
 		height: 50rpx;
 		line-height: 50rpx;
 	}
-	
-	.tag_cloud {
-	  color: #a33;
-	  display: block;
-	  font-size: 32rpx;
-	  padding: 5rpx 10rpx;
-	  text-decoration: none;
-	  position: relative;
-	  float:left;
-	}
-	.tag_cloud text, .tag_cloud uni-text, .tag_cloud span {
-		font-size: 30rpx;
-	}
-	
 </style>
