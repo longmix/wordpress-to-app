@@ -1,9 +1,9 @@
 {
-    "name" : "Wordpress转APP专用号",
+    "name" : "软件开发记",
     "appid" : "__UNI__A1C4189",
     "description" : "",
-    "versionName" : "1.4.1",
-    "versionCode" : 136,
+    "versionName" : "1.8.5",
+    "versionCode" : 182,
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {
@@ -52,7 +52,52 @@
                 "idfa" : false
             },
             /* SDK配置 */
-            "sdkConfigs" : {}
+            "sdkConfigs" : {},
+            "splashscreen" : {
+                "iosStyle" : "storyboard",
+                "androidStyle" : "default",
+                "android" : {
+                    "hdpi" : "unpackage/res/splashscreen_ruanjiankaifaji/splashscreen_480x762.9.png",
+                    "xhdpi" : "unpackage/res/splashscreen_ruanjiankaifaji/splashscreen_720x1242.9.png",
+                    "xxhdpi" : "unpackage/res/splashscreen_ruanjiankaifaji/splashscreen_1080x1882.9.png"
+                },
+                "ios" : {
+                    "storyboard" : "unpackage/res/apple dev - ruanjiankaifaji/CustomStoryboard.zip"
+                },
+                "useOriginalMsgbox" : true
+            },
+            "icons" : {
+                "android" : {
+                    "hdpi" : "unpackage/res/icons_ruanjiankaifaji/72x72.png",
+                    "xhdpi" : "unpackage/res/icons_ruanjiankaifaji/96x96.png",
+                    "xxhdpi" : "unpackage/res/icons_ruanjiankaifaji/144x144.png",
+                    "xxxhdpi" : "unpackage/res/icons_ruanjiankaifaji/192x192.png"
+                },
+                "ios" : {
+                    "appstore" : "unpackage/res/icons_ruanjiankaifaji/1024x1024.png",
+                    "ipad" : {
+                        "app" : "unpackage/res/icons_ruanjiankaifaji/76x76.png",
+                        "app@2x" : "unpackage/res/icons_ruanjiankaifaji/152x152.png",
+                        "notification" : "unpackage/res/icons_ruanjiankaifaji/20x20.png",
+                        "notification@2x" : "unpackage/res/icons_ruanjiankaifaji/40x40.png",
+                        "proapp@2x" : "unpackage/res/icons_ruanjiankaifaji/167x167.png",
+                        "settings" : "unpackage/res/icons_ruanjiankaifaji/29x29.png",
+                        "settings@2x" : "unpackage/res/icons_ruanjiankaifaji/58x58.png",
+                        "spotlight" : "unpackage/res/icons_ruanjiankaifaji/40x40.png",
+                        "spotlight@2x" : "unpackage/res/icons_ruanjiankaifaji/80x80.png"
+                    },
+                    "iphone" : {
+                        "app@2x" : "unpackage/res/icons_ruanjiankaifaji/120x120.png",
+                        "app@3x" : "unpackage/res/icons_ruanjiankaifaji/180x180.png",
+                        "notification@2x" : "unpackage/res/icons_ruanjiankaifaji/40x40.png",
+                        "notification@3x" : "unpackage/res/icons_ruanjiankaifaji/60x60.png",
+                        "settings@2x" : "unpackage/res/icons_ruanjiankaifaji/58x58.png",
+                        "settings@3x" : "unpackage/res/icons_ruanjiankaifaji/87x87.png",
+                        "spotlight@2x" : "unpackage/res/icons_ruanjiankaifaji/80x80.png",
+                        "spotlight@3x" : "unpackage/res/icons_ruanjiankaifaji/120x120.png"
+                    }
+                }
+            }
         },
         "uniStatistics" : {
             "enable" : false
@@ -62,7 +107,7 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "wx00d1e2843c3b3f77",
+        "appid" : "wxa36bafa53080cac8",
         "setting" : {
             "urlCheck" : false
         },

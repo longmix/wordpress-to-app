@@ -47,9 +47,7 @@
 		
 		        if (url_data.length < 2) {
 					//跳转到首页
-					uni.switchTab({
-						url: '/pages/index/index'
-					})
+					this.abotapi.call_h5browser_or_other_goto_url('/pages/index/index');
 		        }
 		
 		        var url = 'https://www.abot.cn';

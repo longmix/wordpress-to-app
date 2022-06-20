@@ -96,9 +96,7 @@
 			var userInfo = this.abotapi.get_user_info();
 			this.abotapi.set_option_list_str(this, this.callback_function);
 			if(userInfo && userInfo.userid){
-				uni.switchTab({
-					url: '/pages/index/index'
-				})
+				this.abotapi.call_h5browser_or_other_goto_url('/pages/index/index');
 			}
 			this.click_check();
 			
@@ -325,9 +323,7 @@
 										}
 							//===========End================
 				
-										uni.switchTab({
-											url: '/pages/index/index'
-										})
+										that.abotapi.call_h5browser_or_other_goto_url('/pages/index/index');
 									}
 								}
 							});
@@ -385,9 +381,7 @@
 				 
 			},
 			goToHomwPage1:function(){
-				uni.switchTab({
-					url: '/pages/index/index'
-				})
+				this.abotapi.call_h5browser_or_other_goto_url('/pages/index/index');
 			}
 		}
 	}
@@ -523,5 +517,8 @@
 	right: 0upx;
 }
 
+.flex-center {
+	text-align: center;
+}
 
 </style>
