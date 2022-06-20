@@ -1,5 +1,6 @@
 <template>
 	<view class="content">
+		<!-- 滚动图片 -->
 		<view class="index-header">
 		    <swiperBanner v-if="roll_picture_list"
 		    	:imgUrls="roll_picture_list" 
@@ -9,42 +10,54 @@
 		    	@goto_url="onNavRedirect"></swiperBanner>
 			
 		</view>
+		
+		<!-- 图标导航 -->
+		<view class="top-Nav">
+		    <block v-for="(item2,index2) in index_icon_list" :key="index2">
+		        <view class="top-item" @click="onNavRedirect(item2.url)">
+		            <view>
+		                <image :src="item2.src"></image>
+		            </view>
+		            <view>
+		                <text>{{item2.name}}</text>
+		            </view>
+		        </view>
+		    </block>
+		    
+		</view>
+		<!-- 图标导航end -->
+		
 
 		<view class="index-main">
-		    <view>
-		        <!-- 图标导航 -->
-		        <view class="top-Nav">
-		            <block v-for="(item2,index2) in index_icon_list" :key="index2">
-		                <view class="top-item" @click="onNavRedirect(item2.url)">
-		                    <view>
-		                        <image :src="item2.src"></image>
-		                    </view>
-		                    <view>
-		                        <text>{{item2.name}}</text>
-		                    </view>
-		                </view>
-		            </block>
-		            
-		        </view>
-		        <!-- 图标导航end -->
-				
-				
+			
+			<form @submit="formSubmit" id="search-form" v-if="hidden_search_box_in_front_page != 1">
+			    <view class="search-pancel">
+			        <input value="" id="search-input" name="input" confirm-type="search" class="search-input" placeholder="搜索你感兴趣的内容..."></input>
+			        <button class="search-button" form-type="submit" size="mini" plain="true">
+			            <icon type="search" color="#959595" />
+			        </button>
+			    </view>
+			</form>
+		</view>
 		
-		        <form @submit="formSubmit" @reset="formReset" id="search-form" v-if="hidden_search_box_in_front_page != 1">
-		            <view class="search-pancel">
-		                <input value="" id="search-input" name="input" confirm-type="search" class="search-input" placeholder="搜索你感兴趣的内容..."></input>
-		                <button class="search-button" form-type="submit" size="mini" plain="true">
-		                    <icon type="search" color="#959595" size="12" />
-		                </button>
-		            </view>
-		        </form>
-				
-				
-				<!-- 广告图 -->
-				<view v-for="(tab,index) in pingpu_picture_list" :key="index" @click="onNavRedirect(tab.url)">
-					<view class="banner" >
-						<image :src="tab.image" style="width: 100%;vertical-align: middle;" mode="widthFix"></image>
+		<view class="index-main">
+			<view style="width:100%;">
+				<block v-for="(function_item, index) in function_images_list"
+					:key="index" >
+					<view :style="{width: '' + function_item.width_percent+'%', 'float':'left'}" 
+						@click="onNavRedirect(function_item.url)">
+						<image :src="function_item.image" style="width: 100%;vertical-align: middle;" mode="widthFix"></image>
 					</view>
+				</block>
+			</view>
+			
+		</view>
+			
+		<view class="index-main">	
+		    
+				<!-- 广告图 -->
+				<view class="banner" v-for="(tab,index) in pingpu_picture_list" :key="index" @click="onNavRedirect(tab.url)">
+					<image :src="tab.image" style="width: 100%;vertical-align: middle;" mode="widthFix"></image>
 				</view>
 		
 		
@@ -54,10 +67,8 @@
 							<view class="txt-h">{{item.name}}</view>
 				 </view> -->
 				 
-		    </view>
-			
-			
-			<!-- 显示功能模块列表 -->
+		   
+			<!-- 显示功能模块列表的链接 -->
 			<view class="container" v-if="show_yanyubao_module_list == 1">
 				<view class="banner" >
 					<image :src="yanyubao_module_list_image" 
@@ -94,44 +105,28 @@
 		    
 		</view>
 		
-		<view class="u-tap-btn" v-if="wap_h5_show_kefu_button==1">
-			<block v-if="wap_h5_kefu_bg_no_color_flag == 0">
-				<block v-if="wap_h5_kefu_button_type==1">
-					<button plain="true" class="u-go-home2" @tap="call_seller" :style="{backgroundColor:wap_h5_kefu_bg_color}">
-						<image :src="wap_h5_kefu_button_icon" mode="widthFix"></image>
-					</button>
-				</block>
-				<block v-if="wap_h5_kefu_button_type==2">
-					<button plain="true" class="u-go-home2" @tap="onNavRedirect(wap_h5_kefu_form_url)" :style="{backgroundColor:wap_h5_kefu_bg_color}">
-						<image :src="wap_h5_kefu_button_icon" mode="widthFix"></image>
-					</button>
-				</block>
-			</block>
-			<block v-else>
-				<block v-if="wap_h5_kefu_button_type==1">
-					<button plain="true" class="u-go-home2" @tap="call_seller">
-						<image :src="wap_h5_kefu_button_icon" mode="widthFix"></image>
-					</button>
-				</block>
-				<block v-if="wap_h5_kefu_button_type==2">
-					<button plain="true" class="u-go-home2" @tap="onNavRedirect(wap_h5_kefu_form_url)">
-						<image :src="wap_h5_kefu_button_icon" mode="widthFix"></image>
-					</button>
-				</block>
-			</block>
-			
-		</view>
+		
+		<abotKefuButton
+			:wap_h5_show_kefu_button="wap_h5_show_kefu_button"
+			:wap_h5_kefu_bg_no_color_flag="wap_h5_kefu_bg_no_color_flag"
+			:wap_h5_kefu_bg_color="wap_h5_kefu_bg_color"
+			:wap_h5_kefu_button_icon="wap_h5_kefu_button_icon"
+			:wap_h5_kefu_form_url="wap_h5_kefu_form_url"
+			@onNavRedirect="onNavRedirect"></abotKefuButton>
+
 	</view>
 </template>
 
 <script>
 	import fetchList from '../../components/wp-article-list.vue'
 	import swiperBanner from '../../components/swiper-banner.vue';
+	import abotKefuButton from '../../components/abot-kefu-button.vue';
 	
 	export default {
 		components:{
 			fetchList,
-			swiperBanner
+			swiperBanner,
+			abotKefuButton
 		},
 		
 		data() {
@@ -141,6 +136,7 @@
 				
 				roll_picture_list:'',
 				pingpu_picture_list:'',
+				function_images_list:'',	//功能图片列表（与平铺图片不同，可以定义图片显示在屏幕上的宽度百分比）
 				
 				per_page:10,
 				current_page:1,
@@ -154,6 +150,8 @@
 				aboutus_pageid:'',
 				index_icon_list:'',
 				navigation_icon:'',
+				
+				
 				wap_h5_kefu_button_type:'',
 				wap_h5_kefu_button_icon:'',
 				wap_h5_kefu_mobile_num:'',
@@ -162,7 +160,7 @@
 				wap_h5_kefu_bg_color:'',
 				wap_h5_kefu_bg_no_color_flag:0,
 				
-				wap_h5_show_kefu_button:'',
+				wap_h5_show_kefu_button:1,
 				
 				wp_enable_comment_option:'',
 				copyright_text:'',
@@ -180,6 +178,10 @@
 				//module_icon_list:null,
 				show_yanyubao_module_list:0,
 				yanyubao_module_list_image: 'http://www.abot.cn/wp-content/themes/abotcn/uploads/2019/09/6163a391dbf598b587d0f8aa92c1941d.png',
+				
+				//隐藏的文章的ID
+				hide_post_id_list:null,
+				
 			}
 		},
 		
@@ -191,9 +193,7 @@
 		    
 			var that = this;
 			
-			uni.setNavigationBarTitle({
-				title:that.abotapi.globalData.wxa_website_name
-			})
+			
 			
 			uni.getSystemInfo({
 			    success: function (res) {
@@ -203,11 +203,6 @@
 					
 			    }
 			});
-			
-			//获取功能图标
-			if(this.abotapi.globalData.show_yanyubao_module_list == 1){
-				this.show_yanyubao_module_list = 1;
-			}
 			
 			uni.showLoading({
 				title:'正在加载...',
@@ -222,7 +217,83 @@
 			    uni.hideLoading();
 			}, 2000);
 			
-			this.abotapi.set_option_list_str(this, this.callback_function);
+			
+			//=====判断sellerid和parentid Begin=====
+			var sellerid = null;
+			
+			console.log('sellerid 01：' + sellerid);
+				
+			if (options && options.parentid) {
+			  this.abotapi.set_current_parentid(options.parentid);
+			}
+			else if (options && options.scene) {
+			  var parentid_value = decodeURIComponent(options.scene);
+				
+			  console.log('来自小程序码的推荐者ID：' + parentid_value);
+			  if (parentid_value && (parentid_value.indexOf('parentid_') != -1)) {
+				parentid_value = parentid_value.replace('parentid_', '');
+				
+				this.abotapi.set_current_parentid(parentid_value);
+			  }
+			  else {
+				console.log('推荐者ID：' + parentid_value + '不是 parentid_开头的，默认为sellerid的值');
+				
+				sellerid = options.scene;
+				
+				console.log('sellerid 0101：' + sellerid);
+				
+			  }
+				
+			}
+				
+			if (options || options != null) {
+			  if (options.sellerid) {
+				sellerid = options.sellerid;
+				console.log('sellerid 02：' + sellerid);
+			  }
+				
+			  if (!sellerid && options.scene) {
+				var sellerid_scene = decodeURIComponent(options.scene);
+				if (sellerid_scene && sellerid_scene.indexOf('sellerid_') != -1) {
+				  sellerid = sellerid_scene.replace('sellerid_', '');
+				}
+				
+				console.log('sellerid 03：' + sellerid);
+				
+			  }
+			}
+			
+			if (!sellerid) {
+			  sellerid = this.abotapi.get_sellerid();
+			  console.log('sellerid 04：' + sellerid);
+			}
+				
+			console.log('sellerid 05：' + sellerid);
+				
+			if (!sellerid) {
+			  console.log('!!!!!!缺少商户ID，使用默认的' + this.abotapi.globalData.default_sellerid);
+			  sellerid = this.abotapi.globalData.default_sellerid;
+			}
+				
+			if (this.abotapi.globalData.force_sellerid == 1) {
+			  sellerid = this.abotapi.globalData.default_sellerid;
+			}
+				
+			console.log('sellerid 06：' + sellerid);
+				
+			this.abotapi.globalData.default_sellerid = sellerid
+			this.abotapi.set_sellerid(sellerid);
+			//========  End =======
+			
+			
+			
+			that.abotapi.set_option_list_str(that, that.callback_function);
+			
+			
+			uni.setNavigationBarTitle({
+				title:that.abotapi.globalData.wxa_website_name
+			})
+						
 			
 			//#ifdef MP-BAIDU
 			swan.showFavoriteGuide({
@@ -247,24 +318,42 @@
 		onPullDownRefresh: function () {
 			var that = this;
 			
+			// #ifndef MP-ALIPAY
+			uni.showToast({
+				title: '数据更新中……',
+				icon:'loading',
+			});
+			// #endif
+			
+			// #ifdef MP-ALIPAY
+			uni.showToast({
+				title: '数据更新中……',
+				//icon:'loading', 	//支付宝不支持icon为 loading
+				//duration:2000
+			});
+			// #endif
+			
+			
+			
 			that.current_page = 1;
 			
 			that.fetch_list = null;
 			
+			
+			
+			that.abotapi.set_shop_option_data_remove();
+			that.abotapi.set_option_list_str(that, that.callback_function);
+			
+			
 			uni.removeStorageSync('wordpress_data_list_str');
-			
-			
-			this.abotapi.set_option_list_str(this, this.callback_function);
-			
-			
 			uni.removeStorageSync('module_icon_list_cache');
 			
 			uni.stopPullDownRefresh();  //停止下拉刷新动画
 			
 			
 			setTimeout(function () {
-				
-			}, 1500);
+				uni.hideToast();
+			}, 2000);
 		},
 		  
 		  
@@ -338,16 +427,22 @@
 					that.is_http_working = true;
 				}
 				
-				that.abotapi.abotRequest({
-				    url:that.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/posts',
-				    method: 'get',
-				    data:{
+				var post_data = {
 						per_page: that.per_page,
 						page: that.current_page,
 						orderby: 'date',
 						order: 'desc',
 				    	sellerid: that.abotapi.get_sellerid(),
-				    },
+				    };
+					
+				if(that.hide_post_id_list){
+					post_data.exclude = that.hide_post_id_list.join(',');
+				}
+				
+				that.abotapi.abotRequest({
+				    url:that.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/posts',
+				    method: 'get',
+				    data: post_data,
 				    success(res) {
 						
 						that.is_http_working = false;
@@ -363,7 +458,7 @@
 						
 						that.is_OK = false;
 						
-						console.log('加载到的文章数据：', res.data)
+						//console.log('加载到的文章数据：', res.data)
 						
 						if(!that.fetch_list){
 							that.fetch_list = [];
@@ -470,11 +565,25 @@
 				//是否存在客服按钮
 				if (cb_params.wap_h5_show_kefu_button) {
 					
-					this.wap_h5_show_kefu_button = cb_params.wap_h5_show_kefu_button
+					this.wap_h5_show_kefu_button = parseInt(cb_params.wap_h5_show_kefu_button)
 					
 				}
 				
-				//客服按钮类型
+				//客服按钮背景颜色
+				if (cb_params.wap_h5_kefu_bg_color) {
+					
+					this.wap_h5_kefu_bg_color = cb_params.wap_h5_kefu_bg_color
+					
+				}
+				
+				if (cb_params.wap_h5_kefu_bg_no_color_flag) {
+					
+					this.wap_h5_kefu_bg_no_color_flag = parseInt(cb_params.wap_h5_kefu_bg_no_color_flag)
+					
+				}
+				
+				
+				//客服按钮类型   1 拨打电话   2 跳转网址
 				if (cb_params.wap_h5_kefu_button_type) {
 					
 					this.wap_h5_kefu_button_type = cb_params.wap_h5_kefu_button_type
@@ -502,18 +611,18 @@
 					
 				}
 				
-				//客服按钮背景颜色
-				if (cb_params.wap_h5_kefu_bg_color) {
+				if(cb_params.hide_post_id_list){
+					this.hide_post_id_list = cb_params.hide_post_id_list;
 					
-					this.wap_h5_kefu_bg_color = cb_params.wap_h5_kefu_bg_color
-					
+					this.abotapi.globalData.hide_post_id_list = cb_params.hide_post_id_list;
 				}
 				
-				if (cb_params.wap_h5_kefu_bg_no_color_flag) {
-					
-					this.wap_h5_kefu_bg_no_color_flag = cb_params.wap_h5_kefu_bg_no_color_flag
-					
+				//如果是拨打电话
+				if(this.wap_h5_kefu_button_type == 1){
+					this.wap_h5_kefu_form_url = 'tel:' + this.wap_h5_kefu_mobile_num
 				}
+				
+								
 				
 				
 				//是否开启评论
@@ -565,8 +674,16 @@
 					that.get_shop_index_images('pingpu');
 				}
 				
+				if(cb_params.function_images_list){
+					that.function_images_list = cb_params.function_images_list;
+				}
+				
 				
 				//定制开发的选项
+				// 获取并显示延誉宝的功能图标
+				if(cb_params.show_yanyubao_module_list){
+					that.show_yanyubao_module_list = cb_params.show_yanyubao_module_list;
+				}
 				if(cb_params.yanyubao_module_list_image){
 					that.yanyubao_module_list_image = cb_params.yanyubao_module_list_image;
 				}
@@ -613,16 +730,8 @@
 			},
 			
 			
-			//拨打客服电话
-			call_seller: function () {
-			    console.log('wap_h5_kefu_mobile_num', this.wap_h5_kefu_mobile_num)
-			    uni.makePhoneCall({
-					phoneNumber: this.wap_h5_kefu_mobile_num,
-			    })
-			},
-			
 
-			//首页图标、轮播图及其他h5链接跳转
+			//首页图标、轮播图及其他h5链接跳转  &&  拨打客服电话
 			onNavRedirect:function(url){
 				console.log('new url =====>>>>', url);
 				
@@ -796,7 +905,7 @@
 		text-align: center;
 		width: 100%;
 		overflow: hidden;
-		box-shadow: 0upx 8upx 25upx rgba(0, 0, 0, 0.2);
+		box-shadow: 0rpx 8rpx 25rpx rgba(0, 0, 0, 0.2);
 		position: relative;
 		z-index: 1;
 	}
@@ -818,121 +927,118 @@
 	
 	.search-button {
 	  border-left: 0 !important;
-	  border-top: 1px solid #fff !important;
-	  border-right: 1px solid #fff !important;
-	  border-bottom: 1px solid #fff !important;
+	  border-top: 1rpx solid #fff !important;
+	  border-right: 1rpx solid #fff !important;
+	  border-bottom: 1rpx solid #fff !important;
 	  background-color: #fff !important;
 	  border-bottom-left-radius: 0;
 	  border-top-left-radius: 0;
-	  border-top-right-radius: 4px;
-	  border-bottom-right-radius: 4px;
+	  border-top-right-radius: 8rpx;
+	  border-bottom-right-radius: 8rpx;
 	  color: #296fd0 !important;
 	  width: 20%;
 	  margin: 0 !important;
-	  box-shadow: 1px 1px 6px #ecf0f0;
-	  height: 83upx;
+	  box-shadow: 1rpx 1rpx 6px #ecf0f0;
+	  height: 83rpx;
 	}
 	
 	.search-button icon {
 	  position: absolute;
-	  margin: 28upx 16upx;
+	  margin: 28rpx 16rpx;
 	}
 	
 	.search-input {
 	  background-color: #fff;
-	  padding-left: 16upx;
+	  padding-left: 16rpx;
 	  min-height: 1rem;
-	  font-size: 30upx;
-	  border-bottom-left-radius: 4px;
-	  border-top-left-radius: 4px;
+	  font-size: 30rpx;
+	  border-bottom-left-radius: 8rpx;
+	  border-top-left-radius: 8rpx;
 	  border-top-right-radius: 0;
 	  border-bottom-right-radius: 0;
 	  border-right: 0 !important;
-	  height: 83upx;
+	  height: 83rpx;
 	  width: 80%;
 	  text-align: left;
-	  box-shadow: 1px 1px 6px #ecf0f0;
+	  box-shadow: 1rpx 1rpx 6px #ecf0f0;
 	}
 
 	.search-pancel {
 	  display: flex;
 	  flex-direction: row;
 	  background-color: #f5f7f7;
-	  padding: 24upx 24upx;
-	  height: 100upx;
+	  padding: 24rpx 24rpx;
+	  height: 100rpx;
 	}
 	
 	.search-pancel image {
-	  width: 50upx;
-	  height: 50upx;
-	  margin-left: 20upx;
+	  width: 50rpx;
+	  height: 50rpx;
+	  margin-left: 20rpx;
 	  vertical-align: middle;
 	}
 	
 	.top-Nav{
 		display: flex;
-		padding: 25upx 0;
+		padding: 25rpx 0;
 		background: #fff;
 		justify-content:space-around;
-		border-bottom: 1px solid #eee;
+		border-bottom: 1rpx solid #eee;
+		width: 100%;
 	}
 	
 	.top-item{
 		text-align: center;
 	}
 	.top-item image{
-		width: 88upx;
-		height: 88upx;
+		width: 88rpx;
+		height: 88rpx;
 	}
 	.top-item text{
-		line-height: 20upx;
-		font-size: 30upx;
+		line-height: 20rpx;
+		font-size: 30rpx;
 	}
 	
-	.u-go-home2{
-		border: none !important;
-	}
+	
 	.mid-img{
       width: 100%;
 	  overflow: hidden;
 	  background-color:white;
-	  margin-bottom:20upx;
+	  margin-bottom:20rpx;
 	}
 	.head1{
-		border-left:10upx solid;
-		font-size:40upx;
-		margin-top: 20upx;
-		padding-left: 20upx;
+		border-left:10rpx solid;
+		font-size:40rpx;
+		margin-top: 20rpx;
+		padding-left: 20rpx;
 	}
 	.img-h{
-		width:100upx;
-		height:100upx;
-		border-radius:20upx;
-		padding: 15upx;
+		width:100rpx;
+		height:100rpx;
+		border-radius:20rpx;
+		padding: 15rpx;
 	}
 	.txt-h{
-		font-size: 30upx;
-		margin-top: 10upx;
+		font-size: 30rpx;
+		margin-top: 10rpx;
 	}
 	.icn-con{
 		float: left;
 		text-align: center;
 		width: 33%;
-		margin-top: 40upx;
+		margin-top: 40rpx;
 		position: relative;
-		padding-bottom: 30upx;
+		padding-bottom: 30rpx;
 	}
 	
 	.icn-con .tips{
-		width: 40upx;
-		height: 40upx;
+		width: 40rpx;
+		height: 40rpx;
 		position: absolute;
-		right: 66upx;
-		top: -20upx;
+		right: 66rpx;
+		top: -20rpx;
 		z-index: 2;
 	}
 	
-	.u-tap-btn{
-		z-index:100;
-	}
+	
 </style>
