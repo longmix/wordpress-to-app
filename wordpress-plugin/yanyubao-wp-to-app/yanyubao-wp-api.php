@@ -66,100 +66,192 @@ function abot_wp2app_getPostImages($post_content,$post_id){
     
     if(empty($content_first_image))
     {
-        $content_first_image='';
+        $content_first_image = '';
     }
     
     
 
-    $post_thumbnail_image_150='';
-    $post_medium_image_300='';
-    $post_thumbnail_image_624=''; 
-    $post_thumbnail_image='';
-          
+    $post_thumbnail_image_150 = '';
+    $post_medium_image_300 = '';
+    $post_thumbnail_image_624 = ''; 
+    $post_thumbnail_image = '';
     
+    $post_thumbnail_image_150 = get_post_meta($post_id, 'post_thumbnail_image_150', true);
+    $post_medium_image_300 = get_post_meta($post_id, 'post_medium_image_300', true);
+    $post_thumbnail_image_624 = get_post_meta($post_id, 'post_thumbnail_image_624', true);
+    $post_thumbnail_image = get_post_meta($post_id, 'post_thumbnail_image', true);
     
-    $thumbnail_id = get_post_thumbnail_id($post_id);
-    
-    if($thumbnail_id ){
-        $thumb = wp_get_attachment_image_src($thumbnail_id, 'thumbnail');
-        $post_thumbnail_image = $thumb[0];
-    }
-    else if($content_first_image){          
-        $attachments = get_attached_media( 'image', $post_id ); //查找文章的附件
-        $index = array_keys($attachments);
-        $flag=0; 
-        
-        for ($i = 0; $i < sizeof($index); $i++) {
-            $arr =$attachments[$index[$i]];
-            $imageName = $arr->{"post_title"};            
-            if($imageName && (strpos($content_first_image,$imageName)!==false)){  //附件的名称如果和第一张图片相同,就取这个附件的缩略图
-                {
-                    $post_thumbnail_image_150 = wp_get_attachment_image_url($arr->{"ID"},'thumbnail');
-                    $post_medium_image_300=wp_get_attachment_image_url($arr->{"ID"},'medium');
-                    $post_thumbnail_image_624=wp_get_attachment_image_url($arr->{"ID"},'post-thumbnail');
-                    $id =$arr->{"ID"};                    
-                    $flag++;
-                    break;
-                }
-            }
-        }
-        
-        if($flag>0)
-            {
-                $post_thumbnail_image = $post_thumbnail_image_150;
-            }
-            else
-            {
-                $post_thumbnail_image = $content_first_image; 
-            }          
-    }
-    else
-    {
-        $post_thumbnail_image='';
-    }
-    
-    //设置 图片的 默认值
-    if(strlen($post_thumbnail_image) == 0){
+    //如果这些缩略图不存在，则查找并创建新的
+    if(!$post_thumbnail_image_150 || !$post_medium_image_300 || 
+    		!$post_thumbnail_image_624 || !$post_thumbnail_image){
     	
-    	$category_thumbnail_image = get_option('yanyubao_category_default_cover');
-    	if (!$category_thumbnail_image){
-    		$category_thumbnail_image = 'http://www.tseo.cn/wp-content/uploads/2019/12/Tu_Pian_1.png';
+    	
+    	// get_post_thumbnail_id()函数主要是用来获取文章缩略图ID，通过该函数，如果当前文章设置了特色图像，就可以返回该特色图像的ID，如果没有设置则返回null值。
+    	$thumbnail_id = get_post_thumbnail_id($post_id);
+    	
+    	//var_dump($thumbnail_id);
+    	
+    	
+    	if($thumbnail_id ){
+    		$thumb = wp_get_attachment_image_src($thumbnail_id, 'thumbnail');
+    		$post_thumbnail_image = $thumb[0];
+    	
+    		if(empty($content_first_image))
+    		{
+    			$content_first_image = $post_thumbnail_image;
+    		}
     	}
     	
-    	$post_thumbnail_image = $category_thumbnail_image;
-    }
-    if(strlen($content_first_image) == 0){
     	
-    	$category_thumbnail_image = get_option('yanyubao_category_default_cover');
-    	if (!$category_thumbnail_image){
-    		$category_thumbnail_image = 'http://www.tseo.cn/wp-content/uploads/2019/12/Tu_Pian_1.png';
+    	
+    	
+    	if(strlen($content_first_image)){
+    		$attachments = get_attached_media( 'image', $post_id ); //查找文章的附件
+    		
+    		abot_wp_log('$attachments ===>>>'.print_r($attachments, true));
+    		abot_wp_log('$content_first_image ===>>>'.print_r($content_first_image, true));
+    		
+    		
+    		$index = array_keys($attachments);
+    		
+    		$flag=0;
+    	
+    		for ($i = 0; $i < sizeof($index); $i++) {
+    			
+    			$arr =$attachments[$index[$i]];
+    			
+    			$imageName = $arr->{"post_title"};
+    			
+    			abot_wp_log('$arr ===>>>'.print_r($arr, true));
+    			abot_wp_log('$imageName ===>>>'.print_r($imageName, true));
+    			
+    			if($imageName && (strpos($content_first_image, $imageName)!==false)){  //附件的名称如果和第一张图片相同,就取这个附件的缩略图
+    				$post_thumbnail_image_150 = wp_get_attachment_image_url($arr->{"ID"},'thumbnail');
+    				$post_medium_image_300 = wp_get_attachment_image_url($arr->{"ID"},'medium');
+    				$post_thumbnail_image_624 = wp_get_attachment_image_url($arr->{"ID"},'post-thumbnail');
+    				
+    				$id =$arr->{"ID"};
+    				
+    				$flag++;
+    				
+    				break;
+    			}
+    		}
+    	
+    		if($flag > 0)
+    		{
+    			$post_thumbnail_image = $post_thumbnail_image_150;
+    		}
+    		else
+    		{
+    			$post_thumbnail_image = $content_first_image;
+    			
+    			//设置三张图片的缩略图
+    			$post_thumbnail_image_150 = plugin_dir_url(__FILE__).'timthumb.php?src='.urlencode($post_thumbnail_image).'&w='.'150';
+    			$post_medium_image_300 = plugin_dir_url(__FILE__).'timthumb.php?src='.urlencode($post_thumbnail_image).'&w='.'300';
+    			$post_thumbnail_image_624 = plugin_dir_url(__FILE__).'timthumb.php?src='.urlencode($post_thumbnail_image).'&w='.'624';
+    			
+    			$log_str = '通过自动缩略图插件：post_thumbnail_image_150==>>'.$post_thumbnail_image_150;
+    			$log_str .= '  post_medium_image_300==>>'.$post_medium_image_300;
+    			$log_str .= '  post_thumbnail_image_624==>>'.$post_thumbnail_image_624;
+    			
+    			abot_wp_log($log_str);
+    		}
+    	}
+    	 
+    	
+    	//设置 图片的 默认值
+    	if(strlen($post_thumbnail_image) == 0){
+    		 
+    		$category_thumbnail_image = get_option('yanyubao_category_default_cover');
+    		if (!$category_thumbnail_image){
+    			$category_thumbnail_image = 'http://www.tseo.cn/wp-content/uploads/2019/12/Tu_Pian_1.png';
+    		}
+    		 
+    		$post_thumbnail_image = $category_thumbnail_image;
+    	}
+    	if(strlen($content_first_image) == 0){
+    		 
+    		$category_thumbnail_image = get_option('yanyubao_category_default_cover');
+    		if (!$category_thumbnail_image){
+    			$category_thumbnail_image = 'http://www.tseo.cn/wp-content/uploads/2019/12/Tu_Pian_1.png';
+    		}
+    		 
+    		$content_first_image = $category_thumbnail_image;
     	}
     	
-    	$content_first_image = $category_thumbnail_image;
+    	$log_str = '准备保存：post_thumbnail_image_150==>>'.$post_thumbnail_image_150;
+    	$log_str .= '  post_medium_image_300==>>'.$post_medium_image_300;
+    	$log_str .= '  post_thumbnail_image_624==>>'.$post_thumbnail_image_624;
+    	$log_str .= '  post_thumbnail_image==>>'.$post_thumbnail_image;
+    	$log_str .= '  icon_big640_image==>>'.$content_first_image;
+    	abot_wp_log($log_str);
+    	
+    	
+    	
+    	//    && (strlen(trim(get_post_meta($post_id, 'post_thumbnail_image_150'))) > 0 )
+    	if(get_post_meta($post_id, 'post_thumbnail_image_150')){
+    		update_post_meta($post_id, 'post_thumbnail_image_150', $post_thumbnail_image_150);    		
+    	}
+    	else{
+    		add_post_meta($post_id, 'post_thumbnail_image_150', $post_thumbnail_image_150, true);
+    	}
+    	
+    	if(get_post_meta($post_id, 'post_medium_image_300')){
+    		update_post_meta($post_id, 'post_medium_image_300', $post_medium_image_300);
+    	}
+    	else{
+    		add_post_meta($post_id, 'post_medium_image_300', $post_medium_image_300, true);
+    	}
+    	
+    	if(get_post_meta($post_id, 'post_thumbnail_image_624')){
+    		update_post_meta($post_id, 'post_thumbnail_image_624', $post_thumbnail_image_624);
+    	}
+    	else{
+    		add_post_meta($post_id, 'post_thumbnail_image_624', $post_thumbnail_image_624, true);
+    	}
+    	
+    	if(get_post_meta($post_id, 'post_thumbnail_image')){
+    		update_post_meta($post_id, 'post_thumbnail_image', $post_thumbnail_image);
+    	}
+    	else{
+    		add_post_meta($post_id, 'post_thumbnail_image', $post_thumbnail_image, true);
+    	}
+    	//同时更新默认的缩略图
+    	if(get_post_meta($post_id, 'icon_big640_image')){
+    		update_post_meta($post_id, 'icon_big640_image', $content_first_image);
+    	}
+    	else{
+    		add_post_meta($post_id, 'icon_big640_image', $content_first_image, true);
+    	}
+    	
+    	
+    	
     }
-    
-    
-    
 
+    
     if(strlen($post_medium_image_300)>0)
     {
-        $_data['post_medium_image_300'] = $post_medium_image_300; 
+    	$_data['post_medium_image_300'] = $post_medium_image_300;
     }
     else
     {
-         $_data['post_medium_image_300'] = $content_first_image;
-    }  
-    
+    	$_data['post_medium_image_300'] = $content_first_image;
+    }
+     
     if(strlen($post_thumbnail_image_624)>0)
     {
-        $_data['post_thumbnail_image_624'] = $post_thumbnail_image_624; 
+    	$_data['post_thumbnail_image_624'] = $post_thumbnail_image_624;
     }
     else
     {
-         $_data['post_thumbnail_image_624'] = $content_first_image;
+    	$_data['post_thumbnail_image_624'] = $content_first_image;
     }
-                
+     
     $_data['post_thumbnail_image'] = $post_thumbnail_image;
+     
+    
+    
     $_data['content_first_image'] = $content_first_image;
     
     
@@ -169,8 +261,15 @@ function abot_wp2app_getPostImages($post_content,$post_id){
     //图片列表
     $_data['mp_baidu_seo_image'] = get_post_meta($post_id, 'mp_baidu_seo_image', true);
     
+    abot_wp_log('$_data  mp_baidu_seo_image 001====>>>'. $_data['mp_baidu_seo_image']);
+    
     //如果没有设置百度SEO的图标，则先尝试从文章中自动提取三张
-    if(strlen($_data['mp_baidu_seo_image']) < 10){
+    if(!is_string($_data['mp_baidu_seo_image']) 
+    		|| (strlen($_data['mp_baidu_seo_image']) < 10)  ){
+    	
+    	abot_wp_log('$_data  mp_baidu_seo_image 不存在====>>>准备提取图片');
+    	
+    	
     	$content_all_image_list = abot_wp2app_get_post_content_all_image_list($post_content);
     	
     	//if($post_id == 1001){
@@ -186,28 +285,62 @@ function abot_wp2app_getPostImages($post_content,$post_id){
     		$_data['mp_baidu_seo_image'] .= ' ';
     		$_data['mp_baidu_seo_image'] .= $content_all_image_list[2];
     		
-    		add_post_meta($post_id, 'mp_baidu_seo_image', $_data['mp_baidu_seo_image'], true);
+    		abot_wp_log('$_data  mp_baidu_seo_image 提取的图片为====>>>'.$_data['mp_baidu_seo_image']);
+    		
+    		if(get_post_meta($post_id, 'mp_baidu_seo_image')){
+    			update_post_meta($post_id, 'mp_baidu_seo_image', $_data['mp_baidu_seo_image']);
+    			
+    			abot_wp_log('$_data  mp_baidu_seo_image 记录已经存在，更新。');
+    		}
+    		else{
+    			//add_post_meta($post_id, 'mp_baidu_seo_image', implode(' ', $_data['mp_baidu_seo_image']), true);
+    			add_post_meta($post_id, 'mp_baidu_seo_image', $_data['mp_baidu_seo_image'], true);
+    			
+    			abot_wp_log('$_data  mp_baidu_seo_image 记录记录不存在，创建。');
+    		}
+    		
     	}
     	
     }
     
     
-    if(strlen($_data['mp_baidu_seo_image']) < 10){
+    //var_dump($_data['mp_baidu_seo_image']);exit;
+    
+    //2021.7.22. 如果文章中没有匹配到大约等于3张的图片
+    if(!is_string($_data['mp_baidu_seo_image']) 
+    		|| (strlen($_data['mp_baidu_seo_image']) < 10)  ){
+    	
+    	abot_wp_log('$_data  mp_baidu_seo_image 不存在====>>>但是文章内容中图片小于三张，准备使用缩略图');
+    	
+    	
     	//如果没有设置百度SEO的图标，则默认使用缩略图
     	$_data['mp_baidu_seo_image'] = array($_data['post_thumbnail_image']);
     	
-    	add_post_meta($post_id, 'mp_baidu_seo_image', $_data['mp_baidu_seo_image'], true);
+    	if(get_post_meta($post_id, 'mp_baidu_seo_image')){
+    		update_post_meta($post_id, 'mp_baidu_seo_image', implode(' ', $_data['mp_baidu_seo_image']));
+    	}
+    	else{
+    		add_post_meta($post_id, 'mp_baidu_seo_image', implode(' ', $_data['mp_baidu_seo_image']), true);
+    	}
+    	
     }
-    else{
-    	//将空格分开的URL转为数组
+    
+    
+    
+    abot_wp_log('$_data  mp_baidu_seo_image 002====>>>'. $_data['mp_baidu_seo_image']);
+    
+    
+    //执行到这里，$_data['mp_baidu_seo_image'] 肯定有值。   将空格分开的URL转为数组
+    if(is_string($_data['mp_baidu_seo_image'])){
     	$temp_list = explode(' ', $_data['mp_baidu_seo_image']);
-    
+    	
     	$_data['mp_baidu_seo_image'] = array();
-    
+    	
     	foreach ($temp_list as $temp_item){
     		$_data['mp_baidu_seo_image'][] = $temp_item;
     	}
     }
+    
     
     $_data['mp_baidu_seo_video'] = get_post_meta($post_id, 'mp_baidu_seo_video', true);
     if(strlen($_data['mp_baidu_seo_video']) < 10){
@@ -223,12 +356,10 @@ function abot_wp2app_getPostImages($post_content,$post_id){
     
     
     
-    
-    
-    
-
+	// 将  //www.abot.cn/xxxxx 转为   http://www.abot.cn/xxxxx
     foreach ($_data as $key=>$value){
-    	if(substr($value, 0, 2) == '//'){
+    	
+    	if(is_string($value) && (substr($value, 0, 2) == '//') ){
     		$_data[$key] = 'http:'.$value;
     	}
     }

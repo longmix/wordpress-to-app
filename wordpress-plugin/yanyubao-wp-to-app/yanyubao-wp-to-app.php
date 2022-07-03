@@ -9,8 +9,22 @@ Author URI: http://www.tseo.cn
 License: GPL v3
 */
 
+//Disable error reporting
+//error_reporting(0);
+
+//Report runtime errors
+error_reporting(E_ERROR | E_PARSE);
+
+//Report all errors
+//error_reporting(E_ALL);
 
 define('WP_APP_PLUGIN_YANYUBAO_DIR', plugin_dir_path(__FILE__));
+
+
+
+if(!function_exists('abot_wp_log')){
+	require_once 'abot_wp_function.php';
+}
 
 // 公用函数
 include(WP_APP_PLUGIN_YANYUBAO_DIR . 'yanyubao-wp-api.php');    
@@ -29,6 +43,8 @@ include(WP_APP_PLUGIN_YANYUBAO_DIR . 'yanyubao-wp-api.php');
 
 //禁止在rest api里显示用户列表
 
+//1、后台的设置选项  
+//2、重新参数（例如：重写获取posts列表的参数）以及返回内容（例如：重新返回的post内容）的钩子函数
 include(WP_APP_PLUGIN_YANYUBAO_DIR . 'yanyubao-wp-config.php');
 
 
@@ -45,11 +61,19 @@ include(WP_APP_PLUGIN_YANYUBAO_DIR . 'yanyubao-wp-post-like.php');    // 点赞
 //====以下是补充的一些插件函数
 
 //同步删除微读客的缓存
-function my_save_post_to_clean_cache_of_weiduke($post_id, $post, $is_update) {
+function my_save_post_to_clean_cache_of_weiduke($post_id, $post=null, $is_update=false) {
+	if(!$post){
+		return;
+	}
+	
+	if(!$is_update){
+		return;
+	}
+	
 	$yanyubao_sellersn = get_option('yanyubao_sellersn');
 	
 	if(($post_id > 0) && (strlen(yanyubao_sellersn) > 5) ){
-		$url = 'http://cms.weiduke.com/index.php/openapi/Wordpress/restapi_cache_delete?sellerid='.$yanyubao_sellersn.'&postid='.$post_id;
+		$url = 'http://yanyubao.tseo.cn/index.php/openapi/Wordpress/restapi_cache_delete?sellerid='.$yanyubao_sellersn.'&postid='.$post_id;
 		
 		abot_wp2app_get_content_post($url);
 	}

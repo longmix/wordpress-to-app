@@ -13,7 +13,7 @@ function register_wp_to_app_settings() {
     register_setting( 'wp-to-app-group', 'yanyubao_sellersn' );
     register_setting( 'wp-to-app-group', 'yanyubao_category_default_cover' );
     register_setting( 'wp-to-app-group', 'wf_poster_imageurl' );
-    register_setting( 'wp-to-app-group', 'wf_enable_comment_option' );
+    register_setting( 'wp-to-app-group', 'yanyubao_to_app_shenhe_comment_option' );
     register_setting( 'wp-to-app-group', 'yanyubao_to_app_wxa_show_qrcode' );
     register_setting( 'wp-to-app-group', 'yanyubao_to_app_wxa_appid' );
     register_setting( 'wp-to-app-group', 'yanyubao_to_app_wxa_page_path' );
@@ -72,33 +72,20 @@ function wp_to_app_settings_page() {
         
         
         <tr valign="top">
-        	<th scope="row">显示小程序码</th>
+        	<th scope="row">审核评论</th>
 	        <td>
 	
 	            <?php
 	
-	            $wf_enable_comment_option =get_option('yanyubao_to_app_wxa_show_qrcode');            
-	            $checkbox = empty($wf_enable_comment_option)?'':'checked';
-	            echo '<input name="yanyubao_to_app_wxa_show_qrcode"  type="checkbox"  value="1" '.$checkbox. ' />';
+	            $yanyubao_to_app_shenhe_comment_option = get_option('yanyubao_to_app_shenhe_comment_option');            
+	            $checkbox = empty($yanyubao_to_app_shenhe_comment_option)?'':'checked';
+	            echo '<input name="yanyubao_to_app_shenhe_comment_option"  type="checkbox"  value="1" '.$checkbox. ' />';
 	            
 	
-	                       ?>显示在文章详情页底部
-	                       <br/>并不是所有Wordpress模板都支持此选项。
+	                       ?>审核APP和小程序中文章详情页的评论功能提交的内容
 	        </td>
         </tr> 
         
-        <tr valign="top">
-        	<th scope="row">微信小程序Appid</th>
-	        <td><input type="text" name="yanyubao_to_app_wxa_appid" style="width:200px" value="<?php echo esc_attr( get_option('yanyubao_to_app_wxa_appid') ); ?>" />
-	        	<br/>小程序必须授权给延誉宝CMS生成小程序码。
-	        </td>
-        </tr>
-        <tr valign="top">
-        	<th scope="row">文章详情页路径</th>
-	        <td><input type="text" name="yanyubao_to_app_wxa_page_path" style="width:200px" value="<?php echo esc_attr( get_option('yanyubao_to_app_wxa_page_path') ); ?>" />
-	        	<br/>默认为 pages/wordpress/detail，如果不是使用Wordpress转小程序项目，或者在小程序源代码中自定义了，则按照实际情况填写。
-	        </td>
-        </tr>
         
         
         
@@ -126,6 +113,44 @@ function wp_to_app_settings_page() {
         		</div>
         	</td>
         </tr>
+        <tr valign="top">
+        	<th scope="row">文章列表中突出显示</th>
+        	<td>如果要让某篇文章的首图在文章列表中独占一行，在文章的自定义字段中增加“show_style_in_list_of_app”，值为“bigimg”。
+        		<br />同时增加自定义字段“show_style_bigimg_url”，值为要显示的图片网址；如果没有设置，则会使用自定义字段“post_thumbnail_image_624”中的图片网址。
+        		<br />如果要实现三张连图、两张连图，或者显示作者头像和名称等效果，建议直接拼图或PS处理“show_style_bigimg_url”对应的图片。
+        		<br />默认使用文章标题，如果自定义标题，请填写字段“show_style_bigimg_title”；图片下方如果不显示标题，将这个字段的值设置为“none”。
+        	</td>
+        </tr>
+        
+        <tr valign="top">
+        	<th scope="row">微信小程序码</th>
+	        <td>
+	
+	            <?php
+	
+	            $yanyubao_to_app_wxa_show_qrcode =get_option('yanyubao_to_app_wxa_show_qrcode');            
+	            $checkbox = empty($yanyubao_to_app_wxa_show_qrcode)?'':'checked';
+	            echo '<input name="yanyubao_to_app_wxa_show_qrcode"  type="checkbox"  value="1" '.$checkbox. ' />';
+	            
+	
+	                       ?>显示在文章详情页底部
+	                       <br/>并不是所有Wordpress模板都支持此选项。
+	        </td>
+        </tr> 
+        
+        <tr valign="top">
+        	<th scope="row">微信小程序Appid</th>
+	        <td><input type="text" name="yanyubao_to_app_wxa_appid" style="width:200px" value="<?php echo esc_attr( get_option('yanyubao_to_app_wxa_appid') ); ?>" />
+	        	<br/>小程序必须授权给延誉宝CMS生成小程序码。
+	        </td>
+        </tr>
+        <tr valign="top">
+        	<th scope="row">微信小程序文章详情页路径</th>
+	        <td><input type="text" name="yanyubao_to_app_wxa_page_path" style="width:200px" value="<?php echo esc_attr( get_option('yanyubao_to_app_wxa_page_path') ); ?>" />
+	        	<br/>默认为 pages/wordpress/detail，如果不是使用Wordpress转小程序项目，或者在小程序源代码中自定义了，则按照实际情况填写。
+	        </td>
+        </tr>
+        
         
                
     </table>
@@ -349,6 +374,36 @@ function abot_wp2app_custom_fields_rest_prepare_post( $data, $post, $request) {
 	//============= End ==============
 	
 	
+
+
+	//2021.11.20. 读取后台设置的文章列表的显示式样  show_style_in_list_of_app = normal/bigimg/
+	$_data['show_style_in_list_of_app'] = get_post_meta($post_id, 'show_style_in_list_of_app', true);
+	if(!$_data['show_style_in_list_of_app']){
+		$_data['show_style_in_list_of_app'] = 'normal';
+	}
+	if ($_data['show_style_in_list_of_app'] == 'bigimg'){
+		
+		$_data['show_style_bigimg_url'] = get_post_meta($post_id, 'show_style_bigimg_url', true);
+		
+		if(!$_data['show_style_bigimg_url'] || (strlen($_data['show_style_bigimg_url']) == 0)){
+			$_data['show_style_bigimg_url'] = $_data['post_thumbnail_image_624'];
+		}
+		
+		
+		
+		$_data['show_style_bigimg_title'] = get_post_meta($post_id, 'show_style_bigimg_title', true);
+		
+		if(!$_data['show_style_bigimg_title'] || (strlen($_data['show_style_bigimg_title']) == 0)){
+			$_data['show_style_bigimg_title'] = $_data['title']['rendered'];
+		}
+		else if($_data['show_style_bigimg_title'] == 'none'){
+			$_data['show_style_bigimg_title'] = '';
+		}
+	}
+	//================ End ==============
+	
+	
+	
 	/* 
 	unset($_data['featured_media']);
 	unset($_data['format']);
@@ -517,7 +572,84 @@ add_filter( 'rest_endpoints', function( $endpoints ){
 
 
 
- 
+
+
+
+//================= 2021.10.1 重新获取posts的参数，增加只是filter以及 category_name ======
+// http://www.tseo.cn/wp-json/wp/v2/posts?per_page=10&page=1&orderby=date&order=desc&category_name=tips
+// https://cms.weiduke.com/openapi/Wordpress/restapi/wp-json/wp/v2/posts?per_page=10&page=1&orderby=date&order=desc&sellerid=pQNNmSkaq&category_name=ebiz
+/**
+ * Plugin Name: WP REST API filter parameter
+ * Description: This plugin adds a "filter" query parameter to API post collections to filter returned results based on public WP_Query parameters, adding back the "filter" parameter that was removed from the API when it was merged into WordPress core.
+ * Author: WP REST API Team
+ * Author URI: http://v2.wp-api.org
+ * Version: 0.1
+ * License: GPL2+
+ * 
+ * https://github.com/WP-API/rest-filter
+ * 
+ **/
+
+add_action( 'rest_api_init', 'rest_api_filter_add_filters' );
+
+/**
+ * Add the necessary filter to each post type
+**/
+function rest_api_filter_add_filters() {
+	foreach ( get_post_types( array( 'show_in_rest' => true ), 'objects' ) as $post_type ) {
+		add_filter( 'rest_' . $post_type->name . '_query', 'rest_api_filter_add_filter_param', 10, 2 );
+	}
+}
+
+/**
+ * Add the filter parameter
+ *
+ * @param  array           $args    The query arguments.
+ * @param  WP_REST_Request $request Full details about the request.
+ * @return array $args.
+ **/
+function rest_api_filter_add_filter_param( $args, $request ) {
+	
+	//print_r($request['category_name']); exit;
+	//print_r($request['filter']);  print_r($request); exit;
+	
+	
+	//$args['category_name'] = '产品展示';
+	
+	//2021.10.1. 这里的 category_name 是  categorySlug的值，是分类的别名，不是分类的名称
+	if ($request['category_name']) {
+		$args['category_name'] = $request['category_name'];
+	}
+	//
+	
+	
+	
+	// Bail out if no filter parameter is set.
+	if ( !empty( $request['filter'] ) &&  is_array( $request['filter'] ) ) {
+		$filter = $request['filter'];
+	
+		if ( isset( $filter['posts_per_page'] ) && ( (int) $filter['posts_per_page'] >= 1 && (int) $filter['posts_per_page'] <= 100 ) ) {
+			$args['posts_per_page'] = $filter['posts_per_page'];
+		}
+	
+		global $wp;
+		$vars = apply_filters( 'rest_query_vars', $wp->public_query_vars );
+	
+		// Allow valid meta query vars.
+		$vars = array_unique( array_merge( $vars, array( 'meta_query', 'meta_key', 'meta_value', 'meta_compare' ) ) );
+	
+		foreach ( $vars as $var ) {
+			if ( isset( $filter[ $var ] ) ) {
+				$args[ $var ] = $filter[ $var ];
+			}
+		}
+	}
+
+	
+	return $args;
+}
+//================= 2021.10.1 重新获取posts的参数， End ======================
+
 
 
 

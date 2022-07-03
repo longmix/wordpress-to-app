@@ -1,7 +1,7 @@
 <?php 
 //获取是否启动小程序评论选项
 add_action( 'rest_api_init', function () {
-  register_rest_route( 'www-abot-cn/v1', '/options/enableComment', array(
+  register_rest_route( 'yanyubao-wp-api/v1', '/options/enableComment', array(
     'methods' => 'GET',
     'callback' => 'abot_wp2app_getEnableComment'    
   ) );
@@ -22,9 +22,10 @@ function abot_wp2app_getEnableComment($data) {
 }
 
 function abot_wp2app_get_enableComment_json() {
-    $wf_enable_comment_option  =get_option('wf_enable_comment_option');
-    if(empty($wf_enable_comment_option ))
+    $yanyubao_to_app_shenhe_comment_option  =get_option('yanyubao_to_app_shenhe_comment_option');
+    if( empty($yanyubao_to_app_shenhe_comment_option )  )
     {
+    	//不审核
         $result["code"]="success";
         $result["message"]= "get  enableComment success  ";
         $result["status"]="200";

@@ -104,20 +104,31 @@ function abot_wp2app_add_comment_json($post,$author_name,$author_email,$author_u
             $user_id = (int) $user->ID;
             
         }
+        
         $commentdata = array(
-        'comment_post_ID' => $post, // to which post the comment will show up
-        'comment_author' => $author_name, //fixed value - can be dynamic 
-        'comment_author_email' => $author_email, //fixed value - can be dynamic 
-        'comment_author_url' => $author_url, //fixed value - can be dynamic 
-        'comment_content' => $content, //fixed value - can be dynamic 
-        'comment_type' => '', //empty for regular comments, 'pingback' for pingbacks, 'trackback' for trackbacks
-        'comment_parent' => $parent, //0 if it's not a reply to another comment; if it's a reply, mention the parent comment ID here
-        'user_id' => $user_id, //passing current user ID or any predefined as per the demand
-		//'fromid'=>'wxa_miniapp',	fromid����wordpress comment�ı�׼�ֶΣ���functions.php��wp_insert_mobile_company������ȡ����
-		'comment_author_IP'=>$_SERVER['REMOTE_ADDR'],
-        'comment_approved' => 1,
-        'comment_meta'=>array('author_from'=>'wxa_miniapp'),
-    );
+	        'comment_post_ID' => $post, // to which post the comment will show up
+	        'comment_author' => $author_name, //fixed value - can be dynamic 
+	        'comment_author_email' => $author_email, //fixed value - can be dynamic 
+	        'comment_author_url' => $author_url, //fixed value - can be dynamic 
+	        'comment_content' => $content, //fixed value - can be dynamic 
+	        'comment_type' => '', //empty for regular comments, 'pingback' for pingbacks, 'trackback' for trackbacks
+	        'comment_parent' => $parent, //0 if it's not a reply to another comment; if it's a reply, mention the parent comment ID here
+	        'user_id' => $user_id, //passing current user ID or any predefined as per the demand
+			//'fromid'=>'wxa_miniapp',	fromid����wordpress comment�ı�׼�ֶΣ���functions.php��wp_insert_mobile_company������ȡ����
+			'comment_author_IP'=>$_SERVER['REMOTE_ADDR'],
+	        'comment_approved' => 1,
+	        'comment_meta'=>array('author_from'=>'wxa_miniapp'),
+    	);
+        
+        $result_message = '发布评论成功！';
+        
+        //2022.5.22. 审核评论
+        $yanyubao_to_app_shenhe_comment_option  =get_option('yanyubao_to_app_shenhe_comment_option');
+        if($yanyubao_to_app_shenhe_comment_option == '1'){
+        	$commentdata['comment_approved'] = 0;
+        	
+        	$result_message = '评论成功审核中';
+        }
 
 		//echo print_r(wp_filter_comment($commentdata), true);exit;
 
@@ -147,16 +158,18 @@ function abot_wp2app_add_comment_json($post,$author_name,$author_email,$author_u
 			
 
             $result["code"]="success";
+            
             if($addcommentmetaflag)
             {
-              $result["message"]= "add comment and formId success";  
+              $result["message"]= $result_message;  
             }
             else
              {
-                $result["message"]= "add comment success,add formId fail";
+                $result["message"]= "添加评论失败";
              } 
-            $result["status"]="200"; 
-            $result["useropenid"]=$useropenid;  
+            
+             $result["status"]="200"; 
+            $result["useropenid"] = $useropenid;  
             return $result;
         
         }
