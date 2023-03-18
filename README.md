@@ -153,6 +153,24 @@
 [点击这里设置]:http://yanyubao.tseo.cn/Supplier/Setting/supplier_option.html "系统配置>>全局配置选项"
 
 
+**小工具和小游戏**
+
+  - 简约时钟 /pages/tools/clock
+  
+  - 计算器 /pages/tools/calculator
+  
+  - 掷骰子 /pages/tools/dice
+  
+  - 扫雷 /pages/tools/mine_clearing
+  
+  - 拼图 /pages/tools/puzzle （内测版）
+  
+  - 涂鸦 /pages/tools/graffiti （微信小程序中正常，H5和APP中待验证）
+
+----
+
+
+
 ### 3.2 Tab页面和非Tab页面跳转
 
 * 如果页面被tabBar包含，那么跳转的时候，需要指定，具体格式为：
