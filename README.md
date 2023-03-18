@@ -29,6 +29,11 @@
 
 ### 2.2 源代码下载
 
+* 直接下载压缩包
+
+  [https://yanyubao.tseo.cn/download/wordpress-plugin/yanyubao-wp-to-app.zip](https://yanyubao.tseo.cn/download/wordpress-plugin/yanyubao-wp-to-app.zip)
+
+
 * 最新的代码发布在Github上，喜欢记得点个小星星！
 
   [https://github.com/longmix/wordpress-to-app](https://github.com/longmix/wordpress-to-app)
@@ -304,7 +309,7 @@
 [![WP后台插件列表截图](http://www.tseo.cn/wp-content/uploads/2020/03/Wordpress_Zhuan_APP_Xiao_Cheng_Xu_-01_Fu_Ben.jpg)](http://www.tseo.cn/wp-content/uploads/2020/03/Wordpress_Zhuan_APP_Xiao_Cheng_Xu_-01_Fu_Ben.jpg)
 
 
-  - 下载插件“WP转APP和小程序”： [https://github.com/longmix/wordpress-to-app/blob/master/wordpress-plugin/yanyubao-wp-to-app.zip](https://github.com/longmix/wordpress-to-app/blob/master/wordpress-plugin/yanyubao-wp-to-app.zip)
+  - 下载插件“WP转APP和小程序”：下载地址见本文第一部分。
 
   - 下载插件“WP-PostViews”：[https://yanyubao.tseo.cn/download/wordpress-plugin/wp-postviews.zip](https://yanyubao.tseo.cn/download/wordpress-plugin/wp-postviews.zip)
 
