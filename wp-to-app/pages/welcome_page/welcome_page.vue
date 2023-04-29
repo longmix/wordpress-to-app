@@ -30,9 +30,16 @@
 			</view>
 		</block>
 		
-		<block v-if="content_type == 'pic'">
+		<block v-else-if="content_type == 'pic'">
 			<view>
 				<image :src="content_pic_image" :data-url="content_pic_url" mode="widthFix" style="width:100%" @tap="content_pic_click"></image>
+			</view>
+		</block>
+		<block v-else-if="content_type == 'no_http_data'">
+			<view style="font-size: 36rpx; width:100%; text-align: center;">
+				<image src="https://yanyubao.tseo.cn/Tpl/static/images/empty_order.png" 
+					mode="widthFix" style="width:50%; margin: 30rpx auto;" ></image>
+				<view style="color:#666666;">{{no_http_data_msg}}</view>
 			</view>
 		</block>
 		
@@ -130,6 +137,9 @@ export default {
 			//get_default_imgid:false,
 			wxa_default_imgid_in_welcome_page:0,
 			content_type:'cms',
+			
+			no_http_data_msg:'迷途知返，方知今是而昨非，您是否迷路了？', 
+			
 			video_autoplay:false,
 			
 			//普通类型的文章，对应的标题和图片
@@ -545,10 +555,30 @@ export default {
 		    }
 		
 		  },
+		  /**
+		   * 获取数据失败是的界面组织
+		   * @param {Object} http_data
+		   */
+		  _handle_http_failure_data:function(http_data){
+			  var that = this;
+			  
+			  that.content_type = 'no_http_data';
+			  
+			  uni.setNavigationBarTitle({
+			  	title: '迷路了~'
+			  });
+			  
+			  if(http_data.msg){
+				  that.no_http_data_msg = http_data.msg;
+			  }
+			  
+		  },
 		  
 		  __handle_http_response_data:function(http_data){
 			  
 			var that = this;
+			
+			console.log('http_response_data ===>>> ', http_data);
 			
 			//如果有视频文件，则渲染视频
 			if (http_data.video_url) {
@@ -573,7 +603,7 @@ export default {
 			//如果类型为文章（自定义数据类型也必须符合文章的数据格式），则需要具体渲染  
 			uni.setNavigationBarTitle({
 				title: http_data.title
-			})
+			});
 			  
 			that.current_title = http_data.title;
 			
@@ -668,6 +698,10 @@ export default {
 				
 
 		      }
+			  else{
+				  //返回失败的时候，例如： {"code":0,"msg":"\u5185\u5bb9\u4e0d\u5b58\u5728\u6216\u5df2\u5220\u9664\uff01"}
+				  that._handle_http_failure_data(res.data);
+			  }
 		    };
 		    var cbError = function (res) {
 		      uni.hideLoading();
@@ -727,6 +761,9 @@ export default {
 				
 		
 		      }
+			  else{
+				  that._handle_http_failure_data(res.data);
+			  }
 		    };
 		    var cbError = function (res) {
 		      uni.hideLoading();
@@ -778,6 +815,9 @@ export default {
 				})
 				
 		      }
+			  else{
+				  that._handle_http_failure_data(res.data);
+			  }
 		    };
 		    var cbError = function (res) {
 		      uni.hideLoading();

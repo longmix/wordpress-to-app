@@ -67,7 +67,7 @@
 			</view>
 	
 			<view class="likeTitle-img">
-				<image src="static/wp-article-img/home-like.png" class="img-like" id="liketop" @catchtap="clickLike"></image>
+				<image src="/static/wp-article-img/home-like.png" class="img-like" id="liketop" @catchtap="clickLike"></image>
 			</view>
 			<view class="likeText">
 				<block v-for="(likeList1,index2) in likeList" :key="index2">
@@ -148,7 +148,7 @@
 						<view class="comment-respond">
 							<input maxlength="200" name="inputPostID" :value="detail.id" style="display:none" />
 							<view class="comment-box">
-								<image src="static/post_detail/entry-home.png" 
+								<image src="/static/post_detail/entry-home.png" 
 									class="img-plus" 
 									style="margin-left:20rpx;margin-right:20rpx" 
 									@tap="goHome"></image>
@@ -160,7 +160,7 @@
 									:focus="focus" 
 									 />
 								<button class="comment-button touch-active" formType="submit">发送</button>
-								<image src="static/post_detail/plus.png" class="img-plus" @tap="ShowHideMenu" mode=""></image>
+								<image src="/static/post_detail/plus.png" class="img-plus" @tap="ShowHideMenu" mode=""></image>
 							</view>
 							
 							<!--功能图标-->
@@ -176,7 +176,7 @@
 									
 										<view style="width:20%; float:left; text-align:center">
 											<view>
-												<image src="static/post_detail/poster.png" :data-src001="poster_url" @tap="getPoster()"  class="img-menu" mode="widthFix"></image>
+												<image src="/static/post_detail/poster.png" :data-src001="poster_url" @tap="getPoster()"  class="img-menu" mode="widthFix"></image>
 											</view>
 											<view>
 												<text>海报</text>
@@ -192,7 +192,7 @@
 										
 										<view style="width:20%; float:left; text-align:center">
 											<view>
-												<image :src="'static/post_detail/' + icon_favoriteImg"
+												<image :src="'/static/post_detail/' + icon_favoriteImg"
 													@tap="set_my_favorite()"  class="img-menu" mode="widthFix"></image>
 											</view>
 											<view>
@@ -210,7 +210,7 @@
 										<view style="width:20%; float:left; ">
 											
 											<view>
-												<image src="static/post_detail/appreciation.png" :data-src001="wp_zanshang_shoukuan_img_url" @tap="is_showPhotoModel = true"   class="img-menu"></image>
+												<image src="/static/post_detail/appreciation.png" :data-src001="wp_zanshang_shoukuan_img_url" @tap="is_showPhotoModel = true"   class="img-menu"></image>
 											</view>
 											<view>
 												<text>转载</text>
@@ -229,10 +229,10 @@
 										
 										
 										
-										<!-- #ifdef MP-BAIDU -->
+										<!-- #ifdef MP-BAIDU || MP-TOUTIAO -->
 										<view style="width:20%; float:left; text-align:center; display:none;">
 											<view>
-												<image src="static/post_detail/entry-home.png" class="img-menu" :data-url="detail.link" @tap="goHome()"></image>
+												<image src="/static/post_detail/entry-home.png" class="img-menu" :data-url="detail.link" @tap="goHome()"></image>
 											</view>
 											<view>
 												<text>返回首页</text>
@@ -240,17 +240,18 @@
 										</view>
 										<view style="width:20%; float:left; text-align:center">
 											<view>
-												<image :src="wap_h5_kefu_button_icon" mode="widthFix" class="img-menu" :data-url="detail.link" @tap="call_seller()"></image>
+												<image :src="wap_h5_kefu_button_icon" mode="widthFix" class="img-menu" 
+													:data-url="detail.link" @tap="call_seller()"></image>
 											</view>
 											<view>
 												<text>客服</text>
 											</view>
 										</view>
 										<!-- #endif -->
-										<!-- #ifndef MP-BAIDU -->
+										<!-- #ifndef MP-BAIDU || MP-TOUTIAO -->
 										<view style="width:20%; float:left; text-align:center">
 											<view>
-												<image src="static/post_detail/copy.png" class="img-menu" :data-url="detail.link" @tap="copyLink"></image>
+												<image src="/static/post_detail/copy.png" class="img-menu" :data-url="detail.link" @tap="copyLink"></image>
 											</view>
 											<view>
 												<text>复制链接</text>
@@ -266,7 +267,7 @@
 										
 										<view style="width:20%; float:left; text-align:center">
 											<view>
-												<image :src="'static/post_detail/' + icon_likeImg" @tap="set_my_like" id="likebottom" class="img-menu"></image>
+												<image :src="'/static/post_detail/' + icon_likeImg" @tap="set_my_like" id="likebottom" class="img-menu"></image>
 											</view>
 											<view>
 												<text>点赞</text>
@@ -276,7 +277,7 @@
 										<view style="width:20%; position: relative; float:left; text-align:center">
 											<!-- #ifdef MP -->
 												<view>
-													<image src="static/post_detail/forwarding.png" class="img-menu"></image>
+													<image src="/static/post_detail/forwarding.png" class="img-menu"></image>
 												</view>
 												<view>
 													<text>分享</text>
@@ -285,7 +286,7 @@
 											<!-- #endif -->
 											<!-- #ifdef APP-PLUS -->
 												<view>
-													<image src="static/post_detail/forwarding.png" class="img-menu" @click="is_share_api_show"></image>
+													<image src="/static/post_detail/forwarding.png" class="img-menu" @click="is_share_api_show"></image>
 												</view>
 												<view>
 													<text @click="is_share_api_show">分享</text>
@@ -293,7 +294,7 @@
 											<!-- #endif -->
 											<!-- #ifdef H5 -->
 												<view>
-													<image src="static/post_detail/forwarding.png" class="img-menu" @click="share_publish"></image>
+													<image src="/static/post_detail/forwarding.png" class="img-menu" @click="share_publish"></image>
 												</view>
 												<view>
 													<text @click="share_publish">分享</text>
@@ -801,11 +802,26 @@
 
 
 				//设置百度小程序中的页面SEO信息
-	// #ifdef MP-BAIDU				
+	// #ifdef MP-BAIDU || MP-TOUTIAO				
 				//2021.7.22. 删除所有的超链接和对应的超链文本
 				that.index_rich_html_content = that.index_rich_html_content.replace(/(<\/?a.*?>)[^>]*<\/a>/g, '');
 				
+				//console.log('1111111111111111===>>', that.index_rich_html_content);
+				
+				//that.index_rich_html_content = that.index_rich_html_content.replace(/(http[^A-Za-z0-9_]*)/g, '');
+				
+				//console.log('22222222222222222===>>', that.index_rich_html_content);
 	// #endif	
+	// #ifdef MP-TOUTIAO
+				//2021.7.22. 删除所有的超链接和对应的超链文本
+				that.index_rich_html_content = that.index_rich_html_content.replace('关注公众号', '');
+				
+				//console.log('1111111111111111===>>', that.index_rich_html_content);
+				
+				//that.index_rich_html_content = that.index_rich_html_content.replace(/(http[^A-Za-z0-9_]*)/g, '');
+				
+				//console.log('22222222222222222===>>', that.index_rich_html_content);
+	// #endif
 
 				
 	// #ifdef MP-ALIPAY 
@@ -1051,7 +1067,7 @@
 				console.log("e==>>",e.target.dataset.url);
 				
 				
-				// #ifdef MP-BAIDU
+				// #ifdef MP-BAIDU || MP-TOUTIAO
 					//return;
 				// #endif
 				
@@ -1066,7 +1082,7 @@
 							success: function (res) {
 								uni.showToast({
 									title: '链接已复制',
-									image: 'static/post_detail/link.png',
+									image: '/static/post_detail/link.png',
 									duration: 2000
 								})
 							}
@@ -1246,7 +1262,12 @@
 				// var userid = self.userid;
 				var comment_content = e.detail.value.inputComment;
 				that.toFromId = e.detail.toFromId;
-				that.formId = e.detail.formId;
+				
+				if(e.detail.formId){
+					that.formId = e.detail.formId;
+				}
+				
+				
 				if (comment_content == '') {
 					uni.showToast({
 						title: '评论不能为空',
@@ -1439,11 +1460,11 @@
 				var that = this;
 				
 				if (data_type == 'pirce_reprint' ){
-					var new_url = this.abotapi.globalData.weiduke_server_url + '/openapi/Wordpress/download_file?url='+ encodeURIComponent(that.wp_zanshang_shoukuan_img_url)+'&type=image';
+					var new_url = this.abotapi.globalData.yanyubao_server_url + '/openapi/Wordpress/download_file?url='+ encodeURIComponent(that.wp_zanshang_shoukuan_img_url)+'&type=image';
 					
 				}
 				if (data_type == 'pirce_poster' ){
-					var new_url = this.abotapi.globalData.weiduke_server_url + '/openapi/Wordpress/download_file?url='+ encodeURIComponent(that.poster_url)+'&type=image';
+					var new_url = this.abotapi.globalData.yanyubao_server_url + '/openapi/Wordpress/download_file?url='+ encodeURIComponent(that.poster_url)+'&type=image';
 					
 				}
 				
@@ -1494,23 +1515,36 @@
 				qrcode_type = 'alipay_qrcode';
 				// #endif
 				
+				// #ifdef MP-TOUTIAO
+				qrcode_type = 'toutiao_qrcode';
+				// #endif
+				
 				this.abotapi.abotRequest({
-					url: this.abotapi.globalData.weiduke_server_url + '/openapi/Wordpress/rest_qrcode_poster',
+					url: this.abotapi.globalData.yanyubao_server_url + '/openapi/Wordpress/rest_qrcode_poster',
 					method: "get",
 					data: {
 						postid: this.current_post_id,
 						sellerid:this.abotapi.globalData.default_sellerid,
-						qrcode_type:qrcode_type
+						qrcode_type: qrcode_type,
+						platform:  this.abotapi.globalData.current_platform
 					},
 					success(res){
 						console.log("Poster_res",res);
+						
 						if(res.data.code == 1){
 							
 							that.poster_url = res.data.url;
+							
+							that.is_PhotoModel = !that.is_PhotoModel;
+						}
+						else{
+							uni.showToast({
+								title:res.data.msg
+							})
 						}
 						
-						console.log('poster_url2222222===>>>',that.poster_url)
-						that.is_PhotoModel = !that.is_PhotoModel;
+						
+						
 						
 					}
 				});
@@ -1529,7 +1563,7 @@
 				console.log('99999999999>>>>>', new_url);
 				console.log('88888888888>>>>>', e);
 				
-				// #ifdef MP-BAIDU
+				// #ifdef MP-BAIDU || MP-TOUTIAO
 					console.log('index_rich_html_click_link====>>>>>百度小程序不做任何处理');
 					return;
 				// #endif
@@ -1737,7 +1771,10 @@
 				});
 				//newContent = newContent.replace(/<br[^>]*\/>/gi, '');
 				
-				newContent = newContent.replace(/<p[^>]*>/gi, '<p class="article_content_p_css">');
+				// 定义 article-content-p-css  再传给component，似乎没有效果，所以直接在这里写CSS。
+				// 2022.7.9. 或者使用 使用CSS穿透 也能生效，例如 
+				//  .entry-summary >>> .content-article-detail_h2
+				newContent = newContent.replace(/<p[^>]*>/gi, '<p class="article-content-p-css" style="line-height:1.2; margin-bottom:30px;">');
 				
 				newContent = newContent.replace(/\<img/gi, '<img style="max-width:100%;height:auto;display:inline-block;margin:10rpx auto;vertical-align: middle;"');
 				//newContent = newContent.replace(/\<img/gi, '<img width="5rem"');
@@ -1764,35 +1801,6 @@
 	}
 	
 	
-	.article_content_p_css{
-		margin:40rpx;
-		word-wrap: break-word;
-		white-space: normal;
-		word-break: break-all;
-	}
-	
-	.article_blockquote_css{
-		margin:20rpx 0 20rpx 0;
-		border-left: 6rpx solid #999;
-		padding-left: 10rpx;
-		font-size:25rpx;
-	}
-	
-	.article_pre_css {
-		white-space:pre;
-	}
-	
-	/* 需要使用CSS穿透，在H5中才会生效。 */
-	.entry-summary >>> .content-article-detail_h2 {
-		border-left: 10rpx solid #EA6418;
-		padding: 10rpx;
-		text-indent: 0em;
-		font-size: 40rpx;
-		margin: 20rpx 0rpx;
-	}
-	
-	
-	
 	
 	.entry-gap-like {
 	  width: 120rpx;
@@ -1814,13 +1822,17 @@
 	}
 	
 	.entry-summary .wxParse .p {
-		line-height: 1.9;
+		line-height: 1.2;
+		padding-bottom: 60rpx;
 	}
 	
-	
-	
-	
-	
+
+
+
+
+
+
+
 
 
 	.commentheader {

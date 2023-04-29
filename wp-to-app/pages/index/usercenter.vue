@@ -45,15 +45,15 @@
 			
 				<view class="money_box">
 					余额
-					<view @tap="toPage('/pages/user/log')" class="num" style="align-items: center;">{{balance_total}}</view>
+					<view @tap="goto_page('/pages/user/log')" class="num" style="align-items: center;">{{balance_total}}</view>
 				</view>
 				
-				<view @tap="toPage('/pages/user/log?type=zengkuan')" class="money_box" style="border-left: 1px solid #c3c3c3;">
+				<view @tap="goto_page('/pages/user/log?type=zengkuan')" class="money_box" style="border-left: 1px solid #c3c3c3;">
 					赠款
 					<view class="num">{{balance_zengkuan_total}}</view>
 				</view>
 				
-				<view @tap="toPage('/pages/user/logscore')" class="money_box" style="border-left: 1px solid #c3c3c3;">
+				<view @tap="goto_page('/pages/user/logscore')" class="money_box" style="border-left: 1px solid #c3c3c3;">
 					积分
 					<view class="num">{{balance_score_total}}</view>
 				</view>
@@ -70,7 +70,7 @@
 		<view class="toolbar">
 			<view class="title">我的工具栏</view>
 			<view class="list">
-				<view class="box" v-for="(row,index) in tool_icon_list" :key="index" @tap="toPage(row.url)">
+				<view class="box" v-for="(row,index) in tool_icon_list" :key="index" @tap="goto_page(row.url)">
 					<view class="img">
 						<image :src="row.src"></image>
 					</view>
@@ -84,6 +84,13 @@
 						<image src="https://yanyubao.tseo.cn/Tpl/static/images/scan_qrcode.png"></image>
 					</view>
 					<view class="text">扫一扫</view>
+				</view>
+				
+				<view class="box" @tap="goto_setting">
+					<view class="img">
+						<image src="https://yanyubao.tseo.cn/Tpl/static/images/setting.png"></image>
+					</view>
+					<view class="text">设置</view>
 				</view>
 				
 			</view>
@@ -252,15 +259,24 @@
 				var that = this;
 				
 				if(userInfo && userInfo.userid){
-					this.abotapi.abotRequest({
-						url: this.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=ShopAppWxa&a=get_user_info',
-						data: {
+					
+					var post_data = {
 							sellerid: this.abotapi.globalData.default_sellerid,
 							checkstr: userInfo.checkstr,
 							userid: userInfo.userid,
-							appid: this.abotapi.globalData.xiaochengxu_appid,
-						},
-						
+							//xiaochengxu_appid: this.abotapi.globalData.xiaochengxu_appid,
+						};
+					
+					// #ifdef MP-WEIXIN
+						post_data.xiaochengxu_appid = that.abotapi.globalData.xiaochengxu_appid,
+						post_data.xiaochengxu_openid = that.abotapi.get_current_openid('userid_openid_' + userInfo.userid);
+					// #endif
+					
+					
+					
+					this.abotapi.abotRequest({
+						url: this.abotapi.globalData.yanyubao_server_url + '/?g=Yanyubao&m=ShopAppWxa&a=get_user_info',
+						data: post_data,						
 						method: "POST",
 						success: function (res) {
 							console.log('get_user_info====', res);
@@ -320,7 +336,7 @@
 			},
 			
 			//工具栏图标跳转
-			toPage:function(url){
+			goto_page:function(url){
 				var userInfo = this.abotapi.get_user_info();
 				if(!userInfo || userInfo == null){
 					
@@ -389,6 +405,17 @@
 				// 	url:'/pages/user/myQR/myQR'
 				// })
 				var that = this;
+				
+				var userInfo = this.abotapi.get_user_info();
+				if(!userInfo || userInfo == null){
+					
+					var last_url = '/pages/index/usercenter';
+					this.abotapi.goto_user_login(last_url,'switchTab');
+					return;
+				}
+				
+				
+				
 			
 				uni.scanCode({
 					success: function(res) {
@@ -424,6 +451,9 @@
 			
 			
 			},
+			goto_setting:function(){
+				this.goto_page('/pages/user/setting');
+			}
 			
 			
 			

@@ -27,6 +27,9 @@
 				<!-- #ifdef H5 -->
 				<button class="xg_button" style="width:90%;margin: 0 auto;" @tap="call_seller" type="primary">联系客服</button>
 				<!-- #endif -->
+				<!-- #ifdef MP-TOUTIAO -->
+				<button class="xg_button" style="width:90%;margin: 0 auto;" @tap="call_seller" type="primary">联系客服</button>
+				<!-- #endif -->
 				<!-- #ifdef MP-WEIXIN -->
 				<button class="xg_button" style="width:90%;margin: 0 auto;" open-type="contact" type="primary">小程序客服</button>
 				<!-- #endif -->
@@ -55,17 +58,18 @@
 		
 		<!-- #ifdef MP-WEIXIN -->
 			<view style='text-align:center'>
-				<button class="praise-button" formType="submit" @tap="praise">赞赏软件开发记</button>
+				<button class="praise-button" formType="submit" @tap="praise_our">赞赏软件开发记</button>
 			</view>
 			
-			
-			
+		<!-- #endif --> 
+		
+		<!-- #ifndef MP-BAIDU || MP-TOUTIAO -->
 			<view class="praisePost">
 				<view style='text-align:center'>
-					<button class="payonline-button" formType="submit" @tap="payonline">微信支付宝转账</button>
+					<button class="payonline-button" formType="submit" @tap="pay_online_qrcode">扫码付款</button>
 				</view>
 			</view>
-		<!-- #endif --> 
+		<!-- #endif -->
 		
 		<view class="copyright" style="color: #666;">
 			<view>版本号： {{current_version_str}}</view>
@@ -277,11 +281,15 @@
 				
 				//2022.4.21. 如果没有设置pageid，或者设置了diy_tmp_sn_default_aboutus_page_url则优先使用。
 				if(cb_params.diy_tmp_sn_default_aboutus_page_url){					
-					that.current_page_request_url = cb_params.diy_tmp_sn_default_aboutus_page_url;
+					that.current_page_request_url = decodeURIComponent(cb_params.diy_tmp_sn_default_aboutus_page_url);
 				}
 				else{					
 					that.current_page_request_url = that.abotapi.globalData.wordpress_rest_api_url + '/wp-json/wp/v2/pages/'+that.current_pageid;
+					that.current_page_request_url += '?sellerid=' + that.abotapi.globalData.default_sellerid;
 				}
+				
+				console.log('that.current_page_request_url ===>>> ' + that.current_page_request_url);
+				
 				
 				//读取客服电话
 				if(cb_params.usercenter_kefu_telephone){
@@ -373,7 +381,7 @@
 				    url:that.current_page_request_url,
 				    method: 'get',
 				    data:{
-				    	sellerid:this.abotapi.globalData.default_sellerid,
+				    	//sellerid:this.abotapi.globalData.default_sellerid,
 				    },
 					
 				    success:function(res) {
@@ -427,7 +435,7 @@
 				this.abotapi.call_h5browser_or_other_goto_url(url, var_list, '');
 			},
 			
-			payonline:function(){
+			pay_online_qrcode:function(){
 				var src = this.abotapi.globalData.img_url_for_weixinpay;
 				var src2 = this.abotapi.globalData.img_url_for_alipay;
 				uni.previewImage({

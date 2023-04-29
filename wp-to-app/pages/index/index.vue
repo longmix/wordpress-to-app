@@ -950,7 +950,7 @@
 	.search-input {
 	  background-color: #fff;
 	  padding-left: 16rpx;
-	  min-height: 1rem;
+	  min-height: 28rpx;
 	  font-size: 30rpx;
 	  border-bottom-left-radius: 8rpx;
 	  border-top-left-radius: 8rpx;

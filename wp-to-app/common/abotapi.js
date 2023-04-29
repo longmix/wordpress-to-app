@@ -542,7 +542,7 @@ module.exports = {
 	
 	set_shop_option_data : function (that, callback_function) {
 		//如果不是调试状态
-		if(!this.system_debug_flag){
+		if(!this.system_debug_flag){			
 			// #ifdef MP-WEIXIN
 			this.globalData.current_platform = 'mp-weixin'
 			// #endif
@@ -554,6 +554,9 @@ module.exports = {
 			// #endif
 			// #ifdef H5
 			this.globalData.current_platform = 'h5'
+			// #endif
+			// #ifdef MP-TOUTIAO
+			this.globalData.current_platform = 'mp-toutiao'
 			// #endif
 		}
 		

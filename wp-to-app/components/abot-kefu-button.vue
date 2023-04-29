@@ -109,7 +109,7 @@
 	}
 	
 	.u-go-home2 .iconfont {
-	  font-size:1.5rem;
+	  font-size:40rpx;
 	  color:#FFF;
 	  align-self:center;
 	  border:0px solid #eee;

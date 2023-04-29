@@ -47,10 +47,10 @@
   padding:2rpx 10rpx;
 }
 .wxParse .h2{
-  margin: 12rpx 0;
+  margin: 30rpx 0;
   font-size:32rpx;
   border-left:10rpx solid #3369e8;
-  padding:2rpx 10rpx;
+  padding:0rpx 15rpx;
 }
 .wxParse .h3{
   margin: 14rpx 0;

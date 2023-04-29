@@ -3,33 +3,43 @@
 		
 		<div class="flex-center ">
 			<div @click="goHome()" class="flex-center">
-				<image :src="wxa_share_img"  style="width: 150upx; margin: 10% auto; border-radius: 10upx;"  mode="widthFix"  class="wh-60"></image>
+				<image :src="wxa_share_img"  style="width: 150rpx; margin: 10% auto; border-radius: 10rpx;"  mode="widthFix"  class="wh-60"></image>
 			</div>
 		</div>
 		<form class="loginBox"  id="login-form" @submit="formSubmit" :report-submit="true">
 			<view class="flexIcon">
 				<view class="flexIcon-icon iconfont icon-phone_light flexIcon-icon-current"></view>
-				<input type="text" class="flexIcon-text" placeholder-class="cl-white" name="telephone" @input="accountInput" placeholder="请输入账号" />
+				<input type="text" class="flexIcon-text" style="width:350rpx;"
+					placeholder-class="cl-white" 
+					placeholder-style="color: rgba(255,255,255,0.8);"
+					name="telephone" @input="accountInput" placeholder="请输入账号" />
 			</view>
 	  
 	  
 			<view class="flexIcon">
 				<view class="flexIcon-icon iconfont icon-password flexIcon-icon-current"></view>
-				<input type="text" password class="flexIcon-text"  name="password"  placeholder-class="cl-white" @input="passInput"  placeholder="请输入密码" />
+				<input type="text" password class="flexIcon-text" style="width:350rpx;"
+					name="password"  
+					placeholder-class="cl-white"
+					placeholder-style="color: rgba(255,255,255,0.8);"
+					@input="passInput"  placeholder="请输入密码" />
 			</view>
 	  
 	  
 			<view class="flexIcon">
 			<view class="flexIcon-icon iconfont icon-moban flexIcon-icon-current"></view>
 				<image @click="click_check" :src="img_checkcode_url"  class="img_checkcode" mode="widthFix" style="width: 30%;"></image>
-				<input type="text" class="flexIcon-text" placeholder-class="cl-white" name="telephone" @input="imgInput" placeholder="请输入答案" />
+				<input type="text" class="flexIcon-text" 
+					placeholder-class="cl-white" 
+					placeholder-style="color: rgba(255,255,255,0.8);"
+					name="telephone" @input="imgInput" placeholder="请输入答案" />
 			</view>
 	  
 			<div></div>
 			<button type="primary"  formType="submit" open-type="getUserInfo" class="btn-row-submit" style="width: 92%;background: #2E85D8;" @click="btn_user_login">登陆</button>
 			<div class="flex mgb-20">
 				<navigator class="cl-black pointer flex-1" 
-				style="margin-top: 30upx;text-align: right;font-size: 34upx;" 
+				style="margin-top: 30rpx;text-align: right;font-size: 30rpx; color:#666;" 
 				open-type="redirect"
 				url="/pages/login/login">手机验证码登录</navigator>
 			</div>
@@ -130,7 +140,8 @@
 				
 				
 				uni.setNavigationBarTitle({
-					title:this.wxa_shop_new_name+'登录页'
+					//title:this.wxa_shop_new_name+'登录页'
+					title:this.wxa_shop_new_name+''
 				})
 			
 			},
@@ -392,7 +403,7 @@
 	color: #FFFFFF;
 }
 .wh-60{
-	width: 140upx;
+	width: 140rpx;
 }
 
 
@@ -402,7 +413,7 @@
 
 
 .place-buttom1{
-	height: 150upx;
+	height: 150rpx;
 }
 
 .icon-jump1{
@@ -425,10 +436,10 @@
 }
 .send_btn{
 	float: right;
-	margin-top: -16upx;
-	font-size: 30upx;
-	padding: 0 40upx;
-	margin-right: 8upx;
+	margin-top: -16rpx;
+	font-size: 30rpx;
+	padding: 0 40rpx;
+	margin-right: 8rpx;
 }
 
 .flexIcon-icon-current{
@@ -436,34 +447,34 @@
 }	
 .img_checkcode{
 	float: right;
-	margin-top: -12upx;
-	margin-right: 16upx;
-	height: 72upx;
+	margin-top: -12rpx;
+	margin-right: 16rpx;
+	height: 72rpx;
 }
 	
 	
 	.otherBox {
 	position: relative;
-	height: 79.2upx;
+	height: 79.2rpx;
 }
 
 .otherBox-line {
 	width: 100%;
-	height: 2.2upx;
+	height: 2.2rpx;
 	background-color: #d0d0d0;
-	top: 39.6upx;
+	top: 39.6rpx;
 	position: absolute;
 }
 
 .otherBox-text {
 	background-color: #50a8db;
 	text-align: center;
-	padding: 0upx 22upx;
-	line-height: 79.2upx;
+	padding: 0rpx 22rpx;
+	line-height: 79.2rpx;
 	position: absolute;
-	width: 264upx;
+	width: 264rpx;
 	left: 50%;
-	margin-left: -132upx;
+	margin-left: -132rpx;
 	color: #fff;
 
 }
@@ -471,18 +482,23 @@
 .flexIcon {
 	flex-direction: row;
 	background-color: #2e85d8;
-	margin-bottom: 44upx;
-	border-radius: 44upx;
-	padding: 22upx 22upx;
+	margin-bottom: 44rpx;
+	border-radius: 44rpx;
+	padding: 22rpx 22rpx;
 	align-items: center;
 	width: 90%;
 	margin-left: 5%;
+	display: block;
+	clear: both;
+	height: 60rpx;
 }
 
 .flexIcon-icon {
-	margin-right: 13.2upx;
-	font-size: 39.6upx;
+	margin-right: 13rpx;
+	font-size: 40rpx;
 	color: #fff;
+	display: block;
+	float: left;
 }
 
 .flexIcon-text {
@@ -491,30 +507,32 @@
 	flex: 1;
 	background:inherit;
 	outline: 0;
-	font-size: 35.2upx;
-	display:block;
+	font-size: 32rpx;
+	display: block;
+	float: left;
+	width:190rpx;
 }
  
  
 .loginBox {
 	position: absolute;
 	top: 50%;
-	left: 22upx;
-	right: 22upx;
-	margin-top: -330upx;
-	padding: 33upx 22upx;
+	left: 22rpx;
+	right: 22rpx;
+	margin-top: -330rpx;
+	padding: 33rpx 22rpx;
 
-	border-radius: 44upx;
+	border-radius: 44rpx;
 }
 
 .loginBg {
 	background:  #EEEEEE/*linear-gradient( #29cee8,#619ad6)*/;
 	background-color: ;
 	position: absolute;
-	top: 0upx;
-	bottom: 0upx;
-	left: 0upx;
-	right: 0upx;
+	top: 0rpx;
+	bottom: 0rpx;
+	left: 0rpx;
+	right: 0rpx;
 }
 
 .flex-center {

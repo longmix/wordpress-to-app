@@ -2,8 +2,8 @@
     "name" : "软件开发记",
     "appid" : "__UNI__A1C4189",
     "description" : "",
-    "versionName" : "1.8.5",
-    "versionCode" : 182,
+    "versionName" : "1.8.8",
+    "versionCode" : 192,
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {
@@ -17,42 +17,73 @@
             "delay" : 0
         },
         /* 模块配置 */
-        "modules" : {},
+        "modules" : {
+            "Share" : {},
+            "Webview-x5" : {},
+            "Barcode" : {},
+            "Camera" : {},
+            "Record" : {},
+            "VideoPlayer" : {}
+        },
         /* 应用发布信息 */
         "distribute" : {
             /* android打包配置 */
             "android" : {
                 "permissions" : [
-                    "<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>",
-                    "<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>",
-                    "<uses-permission android:name=\"android.permission.READ_CONTACTS\"/>",
-                    "<uses-permission android:name=\"android.permission.VIBRATE\"/>",
-                    "<uses-permission android:name=\"android.permission.READ_LOGS\"/>",
-                    "<uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\"/>",
-                    "<uses-feature android:name=\"android.hardware.camera.autofocus\"/>",
-                    "<uses-permission android:name=\"android.permission.WRITE_CONTACTS\"/>",
+                    "<uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\"/>",
+                    "<uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\"/>",
                     "<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>",
-                    "<uses-permission android:name=\"android.permission.CAMERA\"/>",
-                    "<uses-permission android:name=\"android.permission.RECORD_AUDIO\"/>",
+                    "<uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.CALL_PHONE\"/>",
+                    "<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\"/>",
                     "<uses-permission android:name=\"android.permission.GET_ACCOUNTS\"/>",
                     "<uses-permission android:name=\"android.permission.MODIFY_AUDIO_SETTINGS\"/>",
+                    "<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>",
+                    "<uses-permission android:name=\"android.permission.READ_CONTACTS\"/>",
+                    "<uses-permission android:name=\"android.permission.READ_LOGS\"/>",
                     "<uses-permission android:name=\"android.permission.READ_PHONE_STATE\"/>",
-                    "<uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\"/>",
+                    "<uses-permission android:name=\"android.permission.VIBRATE\"/>",
                     "<uses-permission android:name=\"android.permission.WAKE_LOCK\"/>",
-                    "<uses-permission android:name=\"android.permission.CALL_PHONE\"/>",
-                    "<uses-permission android:name=\"android.permission.FLASHLIGHT\"/>",
-                    "<uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\"/>",
-                    "<uses-feature android:name=\"android.hardware.camera\"/>",
-                    "<uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\"/>",
+                    "<uses-permission android:name=\"android.permission.WRITE_CONTACTS\"/>",
                     "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
                 ]
             },
             /* ios打包配置 */
             "ios" : {
-                "idfa" : false
+                "idfa" : false,
+                "privacyDescription" : {
+                    "NSPhotoLibraryUsageDescription" : "读取相册以用于设置头像",
+                    "NSPhotoLibraryAddUsageDescription" : "保存视频或图片素材到相册",
+                    "NSCameraUsageDescription" : "使用相机拍摄商品以及设置头像",
+                    "NSMicrophoneUsageDescription" : "使用麦克风以获取录制视频时候的声音",
+                    "NSLocationWhenInUseUsageDescription" : "访问位置以计算最近的服务网点",
+                    "NSLocationAlwaysUsageDescription" : "访问位置以计算最近的服务网点"
+                },
+                "dSYMs" : false
             },
             /* SDK配置 */
-            "sdkConfigs" : {},
+            "sdkConfigs" : {
+                "push" : {},
+                "share" : {
+                    "weixin" : {
+                        "appid" : "wx5403058c22c21d35",
+                        "UniversalLinks" : "https://yanyubao.tseo.cn/app/ulink/yanyubao/"
+                    }
+                },
+                "payment" : {
+                    "weixin" : {
+                        "__platform__" : [ "ios", "android" ],
+                        "appid" : "wx5403058c22c21d35",
+                        "UniversalLinks" : "https://yanyubao.tseo.cn/app/ulink/yanyubao/"
+                    },
+                    "alipay" : {
+                        "__platform__" : [ "ios", "android" ]
+                    }
+                },
+                "ad" : {},
+                "geolocation" : {}
+            },
             "splashscreen" : {
                 "iosStyle" : "storyboard",
                 "androidStyle" : "default",
@@ -137,6 +168,10 @@
         "usingComponents" : true,
         "uniStatistics" : {
             "enable" : false
+        },
+        "appid" : "tt92e7e45a0dd9439f01",
+        "setting" : {
+            "urlCheck" : true
         }
     },
     "h5" : {
@@ -157,3 +192,5 @@
         }
     }
 }
+/* 5+App特有相关 */
+

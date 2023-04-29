@@ -21,7 +21,7 @@
 				"pagePath": "pages/index/topic",
 				"iconPath": "static/wp-tabbar-img/tar-topic.png",
 				"selectedIconPath": "static/wp-tabbar-img/tar-topic-on.png",
-				"text": "分类"
+				"text": "标签"
 			},
 			{
 				"pagePath": "pages/index/usercenter",
@@ -92,18 +92,46 @@
 				"enablePullDownRefresh": true
 			}
 		},
+		//======= wordpress相关的分包在mp-toutiao中不兼容，暂时放到这里 Begin  ====
+		{	//文章列表页
+		    "path" : "pages/wordpress/list",
+		    "style" : {
+				"backgroundTextStyle":"dark",
+				"enablePullDownRefresh": true
+			}
+		},
+		{	//文章详情页
+		    "path" : "pages/wordpress/detail",
+		    "style" : {
+				"backgroundTextStyle":"dark",
+				"enablePullDownRefresh": true,
+				"softinputNavBar":"none"
+			}
+		},
+		{	//'关于'页面
+		    "path" : "pages/wordpress/page",
+		    "style" : {
+				"backgroundTextStyle":"dark",
+				"enablePullDownRefresh": true
+			}
+		},
+		//======= wordpress相关的分包在mp-toutiao中不兼容，暂时放到这里 End  ====
 		{
 		    "path" : "pages/welcome_page/welcome_page",
-		    "style" : {}
+		    "style" : {
+				"enablePullDownRefresh": true
+			}
 		},
 		{
 		    "path" : "pages/publish/publish_write",
 		    "style" : {}
 		}
+		
     ],
 	
 	"subPackages": [
 		//======= wordpress相关的分包 Begin  ====
+		/*
 		{
 			"root": "pages/wordpress",
 			"pages": [
@@ -131,7 +159,7 @@
 				}
 			]
 			
-		},
+		},*/
 		//======= wordpress相关的分包 End  ====
 		//======= user相关的分包 Begin  ====
 		{
@@ -160,9 +188,16 @@
 						"backgroundTextStyle":"dark",
 						"enablePullDownRefresh": true
 					}
-				},{	//修改个人信息页
+				},
+				{	//修改个人信息页
 				    "path" : "usersetting",
 				    "style" : {}
+				},
+				{	//
+				    "path" : "setting",
+				    "style" : {
+						"navigationBarTitleText":"我的设置"
+					}
 				}
 			]
 			

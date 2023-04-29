@@ -43,7 +43,7 @@
 				</view>
 				<view class="topic-content-title-line" :style="{borderBottom:'solid 1rpx ' + wxa_shop_nav_font_color}"></view>
 				<view class="topic-content-brief">
-					<text>以下是标签“{{post_list_option.tag_name}}”相关的内容{{post_list_option.tag_name}}{{post_list_option.tag_name}}{{post_list_option.tag_name}}</text>
+					<text>以下是标签“{{post_list_option.tag_name}}”相关的内容</text>
 				</view>
 			</view>
 		</view>
@@ -64,7 +64,7 @@
 
 		<view class="container">
 			<view class="showerror" v-if="!fetch_list">
-				<image src="static/wp-article-img/smile.png" style="height:100rpx;width:100rpx"></image>
+				<image src="/static/wp-article-img/smile.png" style="height:100rpx;width:100rpx"></image>
 
 				<view class="errortext">
 					列表数据加载中……
@@ -278,8 +278,9 @@
 				that.isTagPage = 'block';
 				
 				//#ifdef MP-WEIXIN
-					that.post_list_option.tag_id = decodeURIComponent(that.post_list_option.tag_id);
+					//that.post_list_option.tag_id = decodeURIComponent(that.post_list_option.tag_id);
 				//#endif
+				that.post_list_option.tag_id = decodeURIComponent(that.post_list_option.tag_id);
 				
 				console.log('根据标签获取文章列表：', that.post_list_option.tag_id);
 				

@@ -1,46 +1,46 @@
 	/*common list  for  index  list page */
 	
 	.container {
-	  padding: 0 24upx;
+	  padding: 0 24rpx;
 	  
 	  font-family: Microsoft YaHei, Helvetica, Arial, sans-serif;
 	}
 	
 	.header {
-	  padding: 50upx 0;
+	  padding: 50rpx 0;
 	  text-align: center;
 	  font-weight: normal;
-	  font-size: 30upx;
-	  line-height: 40upx;
+	  font-size: 30rpx;
+	  line-height: 40rpx;
 	  color: #757575;
-	  border-bottom: 2upx solid #ededed;
-	  margin-bottom: 8upx;
+	  border-bottom: 2rpx solid #ededed;
+	  margin-bottom: 8rpx;
 	}
 	
 	
 	 .wxParse-p
 	{
-	  margin-top: 30upx;
+	  margin-top: 30rpx;
 	} 
 	
 	
 	/*  more   */
 	
 	.loadingmore {
-	  margin-top: 24upx;
+	  margin-top: 24rpx;
 	  text-align: center;
-	  margin-bottom: 24upx;
+	  margin-bottom: 24rpx;
 	}
 	
 	.more-button {
-	  font-size: 0.785714286rem;
+	  font-size: 30rpx;
 	  font-weight: normal;
 	  color: #959595;
 	  background-color: #eee;
 	  background-repeat: repeat-x;
-	  margin-top: 30upx;
-	  width: 240upx;
-	  border-radius: 300upx;
+	  margin-top: 30rpx;
+	  width: 240rpx;
+	  border-radius: 300rpx;
 	}
 	
 	.more-button::after {
@@ -49,11 +49,11 @@
 	
 	.no-more {
 	  color: #757575;
-	  font-size: 30upx;
-	  line-height: 1.8rem;
-	  margin-bottom: 15upx;
+	  font-size: 30rpx;
+	  line-height: 50rpx;
+	  margin-bottom: 15rpx;
 	  text-align: center;
-	  margin-top: 15upx;
+	  margin-top: 15rpx;
 	}
 	
 	/*  more  end  */
@@ -61,45 +61,45 @@
 	.showerror {
 	  text-align: center;
 	  font-weight: normal;
-	  font-size: 30upx;
-	  line-height: 40upx;
+	  font-size: 30rpx;
+	  line-height: 40rpx;
 	  color: #757575;
-	  margin-top: 100upx;
+	  margin-top: 100rpx;
 	  padding:100rpx;
 	}
 	
 	.errortext {
-	  margin-top: 50upx;
+	  margin-top: 50rpx;
 	  table-layout: center;
 	}
 	
 	.copyright {
-	  font-size: 26upx;
+	  font-size: 26rpx;
 	  line-height: 1.6;
 	  font-weight: 400;
 	  text-align: center;
 	  color: #c4c4c4;
-	  margin-top: 48upx;
-	  padding-bottom: 80upx;
+	  margin-top: 48rpx;
+	  padding-bottom: 80rpx;
 	}
 	
 	.common-gap {
 	  width: 100%;
-	  height: 24upx;
+	  height: 24rpx;
 	  background-color: #f5f7f7;
 	}
 	
 	
 	/* 进度条 */
 	.sk-three-bounce {
-	  margin: 20upx auto;
-	  width: 200upx;
+	  margin: 20rpx auto;
+	  width: 200rpx;
 	  text-align: center;
 	}
 	
 	.sk-three-bounce .sk-child {
-	  width: 30upx;
-	  height: 30upx;
+	  width: 30rpx;
+	  height: 30rpx;
 	  background-color: #118fff;
 	  border-radius: 100%;
 	  display: inline-block;
@@ -153,7 +153,7 @@
 	}
 	
 	.login-popup-wrapper {
-	    margin: 0 50upx;
+	    margin: 0 50rpx;
 	    
 	}
 	
@@ -164,8 +164,8 @@
 	
 	.login-popup .login-inner {
 	    background-color: #fff;
-	    padding: 20upx 30upx;
-	    border-radius:10upx;
+	    padding: 20rpx 30rpx;
+	    border-radius:10rpx;
 	}
 	
 	.login-inner {
@@ -173,15 +173,15 @@
 	}
 	
 	.login-inner .avatar {
-	    width: 100upx;
-	    height: 100upx;
-	    margin-right: 20upx;
+	    width: 100rpx;
+	    height: 100rpx;
+	    margin-right: 20rpx;
 	    flex-shrink: 0;
 	}
 	
 	.login-inner .close-btn {
-	    width: 40upx;
-	    height: 40upx;
+	    width: 40rpx;
+	    height: 40rpx;
 	}
 	
 	.login-inner .username {
@@ -193,7 +193,7 @@
 	    overflow: hidden;
 	    text-overflow: ellipsis;
 	    white-space: nowrap;
-	    font-size:32upx;
+	    font-size:32rpx;
 	
 	}
 	
@@ -202,9 +202,9 @@
 	.popup-btn {
 	    display: flex;
 	    width: 100%;
-	    height: 70upx;
-	    line-height: 70upx;
-	    font-size: 28upx;
+	    height: 70rpx;
+	    line-height: 70rpx;
+	    font-size: 28rpx;
 	    text-align: left;
 	    border: 0;
 	    border-radius: 0;
@@ -222,8 +222,8 @@
 	}
 	
 	.popup-btn .go-popup image {
-	    width: 30upx;
-	    height: 30upx;
+	    width: 30rpx;
+	    height: 30rpx;
 	}
 	
 	/* 弹窗 */
@@ -245,20 +245,20 @@
 	
 	.zan-popup .popup-wrapper {
 	    width: 100%;
-	    padding: 0 30upx;
-	    padding-bottom: 20upx;
+	    padding: 0 30rpx;
+	    padding-bottom: 20rpx;
 	    overflow: visible;
 	    
 	}
 	
 	.zan-popup .popup-wrapper .popup-title {
-	    font-size: 32upx;
-	    padding: 30upx 0;
+	    font-size: 32rpx;
+	    padding: 30rpx 0;
 	}
 	
 	.zan-popup .btn-primary.confirm {
-	    height: 100upx;
-	    line-height: 100upx;
+	    height: 100rpx;
+	    line-height: 100rpx;
 	    border-radius: 0;
 	}
 	

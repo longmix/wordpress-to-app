@@ -7,7 +7,7 @@
 			</view> -->
 			<view class="flex-center ">
 				<view @tap="goHome()" class="flex-center">
-					<image :src="wxa_share_img"  style="width: 150upx;margin: 10% auto; border-radius: 10upx;"  mode="widthFix"  class="wh-60"></image>
+					<image :src="wxa_share_img"  style="width: 150rpx;margin: 10% auto; border-radius: 10rpx;"  mode="widthFix"  class="wh-60"></image>
 				</view>
 			</view>
 		<!-- </view> -->
@@ -23,13 +23,22 @@
 			
 			<view class="flexIcon">
 				<view class="flexIcon-icon iconfont icon-phone_light flexIcon-icon-current"></view>
-				<input type="number" class="flexIcon-text" placeholder-class="cl-white" name="telephone" @input="phoneInput" placeholder-style="color: rgba(255,255,255,0.8);" placeholder="请输入手机号" />
+				<input type="number" class="flexIcon-text" style="width:350rpx;" 
+					placeholder-class="cl-white" 
+					name="telephone" @input="phoneInput" 
+					placeholder-style="color: rgba(255,255,255,0.8);" 
+					placeholder="请输入手机号" />
 			</view>
 				  
 			<view class="flexIcon">
-			  <view class="flexIcon-icon iconfont icon-moban flexIcon-icon-current"></view>
+				<view class="flexIcon-icon iconfont icon-moban flexIcon-icon-current"></view>
 				<image @click="click_check" :src="img_checkcode_url" mode="widthFix" class="img_checkcode"></image>
-				<input type="number" class="flexIcon-text" placeholder-class="cl-white" name="telephone" @input="imgInput" placeholder-style="color: rgba(255,255,255,0.8);" placeholder="请输入答案" />
+				<input type="number" class="flexIcon-text" 
+					placeholder-class="cl-white" 
+					placeholder-style="color: rgba(255,255,255,0.8);"
+					placeholder="请输入答案"
+					name="telephone" 
+					@input="imgInput" />
 			</view>
 			<view class="flexIcon">
 				<view class="flexIcon-icon iconfont icon-password flexIcon-icon-current"></view>
@@ -90,7 +99,7 @@
 				
 			<div class="flex mgb-20">
 				<navigator class="cl-black pointer flex-1" 
-				style="margin-top: 30upx;text-align: right;font-size: 30upx; color:#666;" 
+				style="margin-top: 30rpx;text-align: right;font-size: 30rpx; color:#666;" 
 				open-type="redirect"
 					url="/pages/login/login_by_password">账号密码登录</navigator>
 			</div>
@@ -846,14 +855,14 @@
 
 .send_btn{
 	float: right;
-	margin-top: -16upx;
-	font-size: 30upx;
-	padding: 0 40upx;
-	margin-right: 8upx;
+	margin-top: -16rpx;
+	font-size: 30rpx;
+	padding: 0 40rpx;
+	margin-right: 8rpx;
 	background-color: #fff;
 	color: #007aff;
-	height:60upx;
-	line-height: 60upx;
+	height:60rpx;
+	line-height: 60rpx;
 }
 
 .flexIcon-icon-current{
@@ -862,51 +871,56 @@
 .img_checkcode{
 	width: 25%;
 	float: right;
-	margin-top: -4upx;
-	margin-right: 16upx;
+	margin-top: -4rpx;
+	margin-right: 16rpx;
 }
 	
 	.otherBox {
 	position: relative;
-	height: 79.2upx;
+	height: 79.2rpx;
 }
 
 .otherBox-line {
 	width: 100%;
-	height: 2.2upx;
+	height: 2.2rpx;
 	background-color: #d0d0d0;
-	top: 39.6upx;
+	top: 39.6rpx;
 	position: absolute;
 }
 
 .otherBox-text {
 	
 	text-align: center;
-	padding: 0upx 22upx;
-	line-height: 79.2upx;
+	padding: 0rpx 22rpx;
+	line-height: 79.2rpx;
 	position: absolute;
-	width: 264upx;
+	width: 264rpx;
 	left: 50%;
-	margin-left: -132upx;
+	margin-left: -132rpx;
 	color: #444;
-	font-size:34upx;
+	font-size:34rpx;
 }
 
 .flexIcon {
 	flex-direction: row;
 	background-color: #2e85d8;
-	margin-bottom: 44upx;
-	border-radius: 44upx;
-	padding: 22upx 22upx;
+	margin-bottom: 44rpx;
+	border-radius: 44rpx;
+	padding: 22rpx 22rpx;
 	align-items: center;
 	width: 90%;
 	margin-left: 2%;
+	display: block;
+	clear: both;
+	height: 60rpx;
 }
 
 .flexIcon-icon {
-	margin-right: 13.2upx;
-	font-size: 39.6upx;
+	margin-right: 13rpx;
+	font-size: 40rpx;
 	color: #fff;
+	display: block;
+	float: left;
 }
 
 .flexIcon-text {
@@ -915,29 +929,31 @@
 	flex: 1;
 	background:inherit;
 	outline: 0;
-	font-size: 35.2upx;
-	display:block;
+	font-size: 32rpx;
+	display: block;
+	float: left;
+	width:190rpx;
 }
  
 .loginBox {
 	position: absolute;
 	top: 50%;
-	left: 22upx;
-	right: 22upx;
-	margin-top: -330upx;
-	padding: 33upx 22upx;
+	left: 22rpx;
+	right: 22rpx;
+	margin-top: -330rpx;
+	padding: 33rpx 22rpx;
 
-	border-radius: 44upx;
+	border-radius: 44rpx;
 }
 
 .loginBg {
 	background:  #EEEEEE/*linear-gradient( #29cee8,#619ad6)*/;
 	background-color: ;
 	position: absolute;
-	top: 0upx;
-	bottom: 0upx;
-	left: 0upx;
-	right: 0upx;
+	top: 0rpx;
+	bottom: 0rpx;
+	left: 0rpx;
+	right: 0rpx;
 }
 
 .btn-round{
@@ -945,13 +961,13 @@
 }
 .place{
 		//background-color: #f06c7a;
-		height: 100upx;
+		height: 100rpx;
 		/*  #ifdef  APP-PLUS  */
 		margin-top: var(--status-bar-height);
 		/*  #endif  */
 	}
 .place-buttom{
-	height: 150upx;
+	height: 150rpx;
 }
 .icon-jump{
 	height: 120rpx;

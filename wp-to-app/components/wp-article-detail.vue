@@ -2,17 +2,17 @@
 	<view class="content-article-detail">   <!-- :style="{display:display}" -->
 		<view class="entry-title"><text selectable="true" user-select="true">{{article_title}}</text></view>
 		<view class="entry-date" v-if="attr_list != ''">		
-			<image src="../static/wp-article-img/calendar.png" style="height:24upx;width:24upx;"></image>
+			<image src="../static/wp-article-img/calendar.png" style="height:24rpx;width:24rpx;"></image>
 			<text class="entry-date-text">{{attr_list.date_to_show}}</text>
 			<block ><!-- v-if="detail.category_name != null" -->
-				<image src="../static/wp-article-img/category.png" style="height:24upx;width:24upx;margin-left: 20upx;"></image>
+				<image src="../static/wp-article-img/category.png" style="height:24rpx;width:24rpx;margin-left: 20rpx;"></image>
 				<text class="entry-icon-text">{{attr_list.category_name}}</text>
 			</block>
-			<image src="../static/wp-article-img/comments.png" style="height:24upx;width:24upx;margin-left: 20upx;"></image>
+			<image src="../static/wp-article-img/comments.png" style="height:24rpx;width:24rpx;margin-left: 20rpx;"></image>
 			<text class="entry-icon-text">{{attr_list.total_comments}}</text>
-			<image src="../static/wp-article-img/pageviews.png" style="height:24upx;width:24upx;margin-left: 20upx;"></image>
+			<image src="../static/wp-article-img/pageviews.png" style="height:24rpx;width:24rpx;margin-left: 20rpx;"></image>
 			<text class="entry-icon-text">{{attr_list.pageviews}}</text>
-			<image src="../static/wp-article-img/home-like.png" style="height:24upx;width:24upx;margin-left: 20upx;"></image>
+			<image src="../static/wp-article-img/home-like.png" style="height:24rpx;width:24rpx;margin-left: 20rpx;"></image>
 			<text class="entry-icon-text">{{attr_list.like_count}}</text>
 		</view>
 			
@@ -97,8 +97,8 @@
 	@import url("@/components/gaoyia-parse/parse.css");
 	
 	.content-article-detail {
-	  border-bottom: 5upx solid #eee;
-	  margin-bottom: 50upx;
+	  border-bottom: 5rpx solid #eee;
+	  margin-bottom: 50rpx;
 	}
 	.entry-title {
 	  font-size: 36rpx;
@@ -106,27 +106,67 @@
 	  font-weight: bold;
 	  outline: none;
 	  color: #3a4040;
-	  margin-bottom: 24upx;
+	  margin-bottom: 24rpx;
 	  padding:25rpx;
 	}
 	.entry-date {
-	  font-size: 24upx;
+	  font-size: 24rpx;
 	  line-height: 1.6;
 	  color: #959595;
 	  font-weight: normal;
 	  outline: none;
-	  margin-bottom: 30upx;
-	  border-bottom:5upx solid #eee;
+	  margin-bottom: 30rpx;
+	  border-bottom:5rpx solid #eee;
 	}
 	.entry-date-text {
-	  margin-left: 10upx;
+	  margin-left: 10rpx;
 	}
 	.entry-icon-text {
-	  margin-left: 10upx;
+	  margin-left: 10rpx;
 	}
 	.entry-summary {
-	  font-size: 32upx;
-	  line-height: 64upx;
-	  letter-spacing: 2upx;
+	  font-size: 32rpx;
+	  line-height: 64rpx;
+	  letter-spacing: 2rpx;
 	}
+	
+	
+	
+	
+	
+	
+	.entry-summary >>> .article-content-p-css {
+		margin-bottom:60rpx;
+		word-wrap: break-word;
+		white-space: normal;
+		word-break: break-all;
+	}
+	
+	.entry-summary >>> .wp-block-image {
+		text-align: center;
+	}
+	
+	.entry-summary >>> .article_blockquote_css {
+		margin:20rpx 0 20rpx 0;
+		border-left: 6rpx solid #999;
+		padding-left: 10rpx;
+		font-size:25rpx;
+	}
+	
+	.entry-summary >>> .article_pre_css {
+		white-space:pre;
+	}
+	
+	
+	
+	
+	/* 需要使用CSS穿透，在H5中才会生效。 */
+	.entry-summary >>> .content-article-detail_h2 {
+		margin: 30rpx 0;
+		font-size:32rpx;
+		border-left:10rpx solid #3369e8;
+		padding:0rpx 15rpx;
+	}
+	
+	
 </style>
