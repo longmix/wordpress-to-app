@@ -68,6 +68,7 @@
 
 ---
 
+
 ## 3 常用路径设置说明
 
 如果你不会代码开发，那么在后台**设置路径**和挂接这些路径链接，即可以将你的WordPress网站组织成个性化的，功能丰富的小程序或者手机APP，APP完全符合苹果应用商店（App Store）的上架要求。
@@ -76,13 +77,20 @@
 
 [传送门]:http://yanyubao.tseo.cn/Supplier/WordpressMgr/index/setting_type/basic.html "SaaS云后台>>智能建站>>网站转APP和小程序>>基础信息"
 
+
 ### 3.1 小程序内链接设置
+
 
 * **主要跳转链接**：可直接挂在底部导航栏：
   - 首页 /pages/index/index
+  
   - 个人中心 /pages/index/usercenter
+  
   - 分类列表和标签列表 /pages/index/topic
+  
   - 关于页面 /pages/about/about
+
+
 
 * **跳转文章列表**：支持以下参数：
    - /pages/wordpress/list
@@ -111,13 +119,23 @@
 ```
 
 * **其他重要路径链接**
+
 * 跳转文章详情  
   - /pages/wordpress/detail?id=1234
     > id为文章ID，可以在Wordpress网站后台找到。
 
     > 可以直接参数参数one_article=1，不显示相关的文章列表。
+	
+* 跳转页面详情（新） 
+  - /pages/wordpress/detail?id=1234&is_page=1&page_no_comment=1
+  
+    > id为页面ID，可以在Wordpress网站后台找到。
+	> is_page=1为必填参数，省略会按照文章查询而得不到查询结果。
+	> page_no_comment为可选参数，如果设置了且值等于1，则页面显示评论列表和发表评论的功能。
+	> 备注：如果在服务器后台关闭了整个项目的评论功能，此参数（page_no_comment=1）也无法打开。
+	
 
-* 跳转页面详情 
+* 跳转页面详情（旧） 
   - /pages/wordpress/page?id=1234
     > id为页面ID，可以在Wordpress网站后台找到。
 
