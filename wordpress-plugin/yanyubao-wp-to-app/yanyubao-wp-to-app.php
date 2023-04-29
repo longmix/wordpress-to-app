@@ -60,7 +60,7 @@ include(WP_APP_PLUGIN_YANYUBAO_DIR . 'yanyubao-wp-post-like.php');    // 点赞
 
 //====以下是补充的一些插件函数
 
-//同步删除微读客的缓存
+//同步删除微读客的缓存，在Gutenberg编辑器中已经被deprecated。
 function my_save_post_to_clean_cache_of_weiduke($post_id, $post=null, $is_update=false) {
 	if(!$post){
 		return;
@@ -83,4 +83,41 @@ add_action( 'save_post', 'my_save_post_to_clean_cache_of_weiduke' );
 
 
 
+//2023.4.19. 通过rest api 触发保存事件 （ fire, for save_post hook was deprecated with Gutenberg）
+// Fires after a single post is completely created or updated via the REST API
+add_action( 'rest_insert_post', 'my_rest_insert_post', 10, 3 );
+
+function my_rest_insert_post( $post, $request, $creating ) {
+	// Do something with $post
+	
+	$post_id = $post->ID;
+	
+	$yanyubao_sellersn = get_option('yanyubao_sellersn');
+	
+	if(($post_id > 0) && (strlen(yanyubao_sellersn) > 5) ){
+		$url = 'http://yanyubao.tseo.cn/index.php/openapi/Wordpress/restapi_cache_delete?sellerid='.$yanyubao_sellersn.'&postid='.$post_id;
+	
+		abot_wp2app_get_content_post($url);
+	}
+	
+}
+
+// Fires after a single post is completely inserted via the REST API
+add_action( 'rest_after_insert_post', 'my_rest_after_insert_post', 10, 3 );
+
+function my_rest_after_insert_post( $post, $request, $creating ) {
+	// Do something with $post
+	
+	$post_id = $post->ID;
+	
+	$yanyubao_sellersn = get_option('yanyubao_sellersn');
+	
+	if(($post_id > 0) && (strlen(yanyubao_sellersn) > 5) ){
+		$url = 'http://yanyubao.tseo.cn/index.php/openapi/Wordpress/restapi_cache_delete?sellerid='.$yanyubao_sellersn.'&postid='.$post_id;
+	
+		abot_wp2app_get_content_post($url);
+	}
+	
+	
+}
 

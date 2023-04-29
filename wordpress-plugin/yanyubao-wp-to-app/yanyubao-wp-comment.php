@@ -127,7 +127,7 @@ function abot_wp2app_add_comment_json($post,$author_name,$author_email,$author_u
         if($yanyubao_to_app_shenhe_comment_option == '1'){
         	$commentdata['comment_approved'] = 0;
         	
-        	$result_message = '评论成功审核中';
+        	$result_message = '评论成功，审核中';
         }
 
 		//echo print_r(wp_filter_comment($commentdata), true);exit;
@@ -159,25 +159,34 @@ function abot_wp2app_add_comment_json($post,$author_name,$author_email,$author_u
 
             $result["code"]="success";
             
+            $result["message"]= $result_message;
+            
+            /*
             if($addcommentmetaflag)
             {
-              $result["message"]= $result_message;  
+                
             }
             else
              {
                 $result["message"]= "添加评论失败";
              } 
+            */
+            $result["status"]="200"; 
             
-             $result["status"]="200"; 
             $result["useropenid"] = $useropenid;  
+            
             return $result;
         
         }
         else
         {
             $result["code"]="success";
-            $result["message"]= "add  comment error";
+            
+            //$result["message"]= "add  comment error";
+            $result["message"]= "添加评论失败";
+            
             $result["status"]="500";                   
+            
             return $result;
         }
      

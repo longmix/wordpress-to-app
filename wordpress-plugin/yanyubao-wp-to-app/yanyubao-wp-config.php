@@ -193,6 +193,9 @@ add_filter('rest_prepare_post', 'abot_wp2app_custom_fields_rest_prepare_post', 1
 
 //在rest api 增加显示字段
 // 2021.4.30.  https://www.abot.cn/wp-json/wp/v2/posts/2660   这篇文章中含有视频
+// 2023.4.26. 这个接口已经不适应基于Gutenberg的编辑器了，因为触发的时机会在填内容之前
+//            考虑使用   rest_after_insert_post
+//            具体见：  https://developer.wordpress.org/reference/hooks/rest_after_insert_this-post_type/
 function abot_wp2app_custom_fields_rest_prepare_post( $data, $post, $request) {
 
 	global $wpdb;
@@ -203,6 +206,13 @@ function abot_wp2app_custom_fields_rest_prepare_post( $data, $post, $request) {
 
 	//$content = get_the_content();
 	$content = $_data['content']['rendered'];
+	
+	//2023.4.26. 
+	//if(strlen($content) == 0){
+	//	return $data;
+	//}
+	
+	
 	 
 	$siteurl = get_option('siteurl');
 	$upload_dir = wp_upload_dir();
