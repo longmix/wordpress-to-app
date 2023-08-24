@@ -7,7 +7,7 @@
 
 ## 1 在线预览
 
-![在线预览](https://saas.tseo.cn/staticsvc/uploads/2020/03/26/21945247ab3e1e5df10c8daaec620f993352.jpg)
+![在线预览](http://www.abot.cn/wp-content/themes/abotcn/uploads/2023/08/202308250022052420.jpg)
 
 
 
