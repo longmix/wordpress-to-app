@@ -7,8 +7,14 @@
 
 ## 1 在线预览
 
-![在线预览](http://www.abot.cn/wp-content/themes/abotcn/uploads/2023/08/202308250022052420.jpg)
+### 1.1 预览真实效果
 
+![在线预览](https://www.abot.cn/wp-content/themes/abotcn/uploads/2023/08/202308250022052420.jpg)
+
+### 1.2 查看软件运行效果截图
+
+  <img src="A40.jpg" width="100%">
+  <img src="A41.jpg" width="100%">
 
 
 ## 2 项目概况
